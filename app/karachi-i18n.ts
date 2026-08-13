@@ -1,4 +1,4 @@
-import type { CorridorId, DistrictId } from "./karachi-data";
+import type { CorridorId, DistrictId, TransitService } from "./karachi-data";
 
 /** Roman Urdu is intentionally the default: most first-time local readers can
  * understand it without switching keyboard/script. Place and official road
@@ -134,6 +134,15 @@ export interface SiteCopy {
     readonly placeholder: string;
     readonly noResults: string;
     readonly kindLabels: Record<"district" | "corridor" | "place", string>;
+    readonly transitLabel: string;
+    readonly locate: string;
+    readonly locating: string;
+    readonly locationNote: string;
+    readonly locationApproximate: string;
+    readonly locationUnavailable: string;
+    readonly locationDenied: string;
+    readonly locationOutside: string;
+    readonly nearest: (place: string) => string;
   };
   readonly safety: {
     readonly title: string;
@@ -221,7 +230,7 @@ const romanUrdu = {
         body: "District, town, neighbourhood, junction ya station? Guru Mandir district nahi.",
       },
       "movement-intro": {
-        title: "Safar 5 bari roads se samjhein.",
+        title: "Safar 7 bari roads se samjhein.",
         body: "Nearest spine → anchor → last mile.",
       },
       "landmark-language": {
@@ -359,6 +368,15 @@ const romanUrdu = {
     placeholder: "Guru Mandir, NIPA, Malir 15 try karein…",
     noResults: "Match nahi mila. Doosra naam try karein.",
     kindLabels: { district: "district", corridor: "road spine", place: "jagah" },
+    transitLabel: "public transport",
+    locate: "Meri location ka andaza",
+    locating: "Location ka andaza lag raha hai…",
+    locationNote: "Ruk kar use karein. Location save nahi hoti; result approximate hai.",
+    locationApproximate: "Approximate position:",
+    locationUnavailable: "Is device par location available nahi.",
+    locationDenied: "Location nahi mili. Permission check karein ya search use karein.",
+    locationOutside: "Aap Karachi guide area se bahar lag rahe hain—live navigation use karein.",
+    nearest: (place: string) => `${place} ke qareeb`,
   },
   safety: {
     title: "Nikalne se pehle check karein",
@@ -396,7 +414,7 @@ const romanUrdu = {
       },
       {
         id: "q2",
-        question: "M-9 Karachi se kahan se nikalti hai?",
+        question: "M-9 side ka familiar city gateway kya hai?",
         options: [
           { id: "sohrab-goth", label: "Sohrab Goth" },
           { id: "clifton", label: "Clifton" },
@@ -496,7 +514,7 @@ const english = {
         body: "District, town, neighbourhood, junction, or station? Guru Mandir is not a district.",
       },
       "movement-intro": {
-        title: "Understand trips through 5 major roads.",
+        title: "Understand trips through 7 major roads.",
         body: "Nearest spine → anchor → last mile.",
       },
       "landmark-language": {
@@ -634,6 +652,15 @@ const english = {
     placeholder: "Try Guru Mandir, NIPA, Malir 15…",
     noResults: "No match. Try another name.",
     kindLabels: { district: "district", corridor: "road spine", place: "place" },
+    transitLabel: "public transport",
+    locate: "Estimate my location",
+    locating: "Estimating location…",
+    locationNote: "Stop before using this. Location is not saved; the result is approximate.",
+    locationApproximate: "Approximate position:",
+    locationUnavailable: "Location is unavailable on this device.",
+    locationDenied: "Location unavailable. Check permission or use search.",
+    locationOutside: "You appear outside the Karachi guide area—use live navigation.",
+    nearest: (place: string) => `near ${place}`,
   },
   safety: {
     title: "Check before leaving",
@@ -671,7 +698,7 @@ const english = {
       },
       {
         id: "q2",
-        question: "The M-9 leaves Karachi from…",
+        question: "The familiar city-side gateway toward M-9 is…",
         options: [
           { id: "sohrab-goth", label: "Sohrab Goth" },
           { id: "clifton", label: "Clifton" },
@@ -729,6 +756,57 @@ export function getCopy(locale: Locale): SiteCopy {
 export function isLocale(value: string | null | undefined): value is Locale {
   return value === "ur-roman" || value === "en";
 }
+
+type TransitPresentation = {
+  readonly summary: string;
+  readonly status: string;
+  readonly caveat: string;
+};
+
+/** Roman Urdu presentation for canonical transit facts. Official names, route
+ * IDs and endpoints stay unchanged so they still match signs and search. */
+export const romanTransitPresentation = {
+  green: {
+    summary: "Surjani Town ↔ Numaish, North Karachi aur Nazimabad ke zariye.",
+    status: "Operational BRT; current official directory mein listed hai.",
+    caveat: "Station access, timing, fare aur last service safar ke din official route map se check karein.",
+  },
+  orange: {
+    summary: "Orangi Town Office ↔ Board Office; Green Line tak chhota feeder.",
+    status: "Operational short BRT feeder; current official directory mein listed hai.",
+    caveat: "Official pages ki status wording mukhtalif hai, is liye same-day service confirm karein.",
+  },
+  peoples: {
+    summary: "Ek line nahi, routes ka network hai; har route ka active status alag hota hai.",
+    status: "Mukhtalif residential, commercial aur industrial routes par chalti hai.",
+    caveat: "Sirf route number dekh kar service assume na karein; active flag aur current stop chain check karein.",
+  },
+  pink: {
+    summary: "Women-focused bus routes; route number ke mutabiq Karachi ke mukhtalif hisson ko jorti hain.",
+    status: "Official directory mein named routes ke sath operating service.",
+    caveat: "Pink Bus future colour-coded BRT nahi; route number, eligibility aur timing check karein.",
+  },
+  ev: {
+    summary: "EV-01 se EV-05 named routes; ek continuous line nahi.",
+    status: "Official directory mein named electric-bus routes operating hain.",
+    caveat: "Wohi EV route choose karein jo trip ke dono required points serve karta ho.",
+  },
+  red: {
+    summary: "Planned Malir Halt ↔ Tower corridor, Safoora, University Road aur Numaish ke zariye.",
+    status: "Infrastructure project hai; abhi passenger line operational nahi.",
+    caveat: "Construction ko bus service na samjhein; official passenger launch tak operating mode use karein.",
+  },
+  yellow: {
+    summary: "Planned Dawood Chowrangi ↔ Numaish corridor, Korangi aur Shahrah-e-Faisal ke zariye.",
+    status: "Implementation mein hai; abhi passenger operation nahi.",
+    caveat: "Aaj ka safar is future line par plan na karein; official launch ka intezar karein.",
+  },
+  kcr: {
+    summary: "Karachi ke historic circular/suburban rail system ki proposed restoration.",
+    status: "Restoration agreement operating timetable nahi hai.",
+    caveat: "Purane KCR station par regular service assume na karein; live railway timetable check karein.",
+  },
+} as const satisfies Record<TransitService["id"], TransitPresentation>;
 
 /** Use for road/district narrative lookup while keeping unlisted official names
  * unchanged. The narrowed parameter catches accidental non-story corridors.

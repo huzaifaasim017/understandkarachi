@@ -57,7 +57,13 @@ export type SourceId =
   | "commons-empress-market"
   | "commons-mazar-e-quaid"
   | "commons-karachi-seaport"
-  | "commons-jinnah-airport";
+  | "commons-jinnah-airport"
+  | "nha-national-highway-code"
+  | "nha-motorway-motorcycle-policy"
+  | "nhmp-highway-ordinance"
+  | "nhmp-contact-130"
+  | "karachi-traffic-1915"
+  | "ndma-infra-advisory-2026";
 
 export interface Provenanced {
   readonly sourceIds: readonly SourceId[];
@@ -85,7 +91,7 @@ export interface KarachiDistrict extends Provenanced {
   readonly coordinates: LngLat;
 }
 
-export interface MainCorridor {
+export interface MainCorridor extends Provenanced {
   readonly id: CorridorId;
   readonly name: string;
   readonly aliases: readonly string[];
@@ -98,6 +104,33 @@ export interface MainCorridor {
 }
 
 export const dataVerifiedOn: IsoDate = "2026-08-13";
+
+export type RoadConditionContactId = "city" | "highway";
+
+export interface RoadConditionContact extends Provenanced {
+  readonly id: RoadConditionContactId;
+  readonly service: string;
+  readonly number: string;
+  readonly verifiedOn: IsoDate;
+}
+
+/** Same-day road-condition contacts, kept separate from emergency services. */
+export const roadConditionContacts = [
+  {
+    id: "city",
+    service: "Karachi Traffic Police",
+    number: "1915",
+    verifiedOn: dataVerifiedOn,
+    sourceIds: ["karachi-traffic-1915"],
+  },
+  {
+    id: "highway",
+    service: "National Highways & Motorway Police",
+    number: "130",
+    verifiedOn: dataVerifiedOn,
+    sourceIds: ["nhmp-contact-130"],
+  },
+] as const satisfies readonly RoadConditionContact[];
 
 export const karachiFacts = {
   officialFrame: "Karachi Division, Sindh, Pakistan",
@@ -545,9 +578,9 @@ const mainCorridorRecords = [
       "Port Qasim turn",
     ],
     explanation:
-      "The south-eastern gateway through built-up Malir toward Steel Town, Port Qasim and Thatta.",
+      "The south-eastern gateway through built-up Malir toward Steel Town, Port Qasim, Gharo, Thatta and Hyderabad.",
     remember:
-      "Airport/Malir names appear early; Quaidabad and Steel Town mean you are moving farther out toward the industrial edge.",
+      "Quaidabad and Steel Town are Karachi-side markers; Gharo and Thatta are the regional markers before Hyderabad.",
   },
   {
     id: "m9-motorway",
@@ -569,9 +602,9 @@ const mainCorridorRecords = [
       "Hyderabad direction",
     ],
     explanation:
-      "Karachi's north-eastern intercity gateway; it begins at Sohrab Goth and leaves the continuous inner city quickly.",
+      "Karachi's north-eastern intercity gateway. Sohrab Goth is the familiar city-side changeover; the controlled motorway and toll-plaza environment lies farther out.",
     remember:
-      "Super Highway is the older everyday name; M-9 is the formal motorway name.",
+      "Super Highway is the older everyday name; M-9 is the formal motorway name. Motorcycles are prohibited on motorways.",
   },
   {
     id: "korangi-spine",
@@ -618,8 +651,8 @@ const mainCorridorRecords = [
   },
   {
     id: "mauripur-hub-river",
-    name: "Mauripur / Hub River approach",
-    aliases: ["Mauripur Road", "Maripur Road", "Hub River Road"],
+    name: "N-25 / Mauripur–Hub River approach",
+    aliases: ["N-25", "RCD Highway", "Mauripur Road", "Maripur Road", "Hub River Road"],
     color: "#2F8796",
     path: [
       [66.997, 24.849],
@@ -712,12 +745,21 @@ const mainCorridorRecords = [
     remember:
       "The hills and limited crossings funnel traffic; ask for the exact chowk, sector or colony, not just 'Orangi'.",
   },
-] as const satisfies readonly MainCorridor[];
+] as const;
+
+const nationallyDesignatedCorridors = new Set<CorridorId>([
+  "national-highway",
+  "m9-motorway",
+  "mauripur-hub-river",
+]);
 
 export const mainCorridors = mainCorridorRecords.map((corridor, index) => {
   const middle = corridor.path[Math.floor(corridor.path.length / 2)];
   return {
     ...corridor,
+    sourceIds: nationallyDesignatedCorridors.has(corridor.id)
+      ? (["nha-national-highway-code", "karachi-traffic-1915"] as const)
+      : (["smta-current-route-map", "karachi-traffic-1915"] as const),
     cameraCenter: [middle[0], middle[1]] as [number, number],
     cameraZoom: index < 6 ? 9.8 : 9.25,
   };
@@ -1056,13 +1098,13 @@ const landmarkRecords = [
   {
     id: "sohrab-goth",
     name: "Sohrab Goth",
-    aliases: ["Sohrab Goth interchange", "Al-Asif", "Super Highway start"],
+    aliases: ["Sohrab Goth interchange", "Al-Asif", "Super Highway side"],
     type: "gateway",
     districtId: "east",
     coordinates: [67.085, 24.947],
     nearbyCorridorId: "m9-motorway",
     plainMeaning:
-      "The north-eastern city gateway where Shahrah-e-Pakistan meets the M-9/Super Highway and intercity bus activity.",
+      "The familiar north-eastern city-side gateway toward M-9; the controlled motorway and toll plaza lie farther out.",
   },
   {
     id: "teen-hatti",
@@ -1483,6 +1525,8 @@ const landmarkRecords = [
       "A large gated development well outside the inner city on the M-9; allow intercity-scale travel time.",
   },
 ] as const satisfies readonly KarachiLandmark[];
+
+export type LandmarkId = (typeof landmarkRecords)[number]["id"];
 
 export const landmarks = landmarkRecords.map((place) => ({
   ...place,
@@ -1934,13 +1978,13 @@ const exampleJourneyRecords = [
     mentalRoute: "Airport → Shahrah-e-Faisal → Metropole → Saddar",
     steps: [
       {
-        label: "Leave the airport onto the main city spine",
+        label: "Airport connects to the main city spine",
         corridorId: "shahrah-e-faisal",
         lesson:
           "Malir Halt/Natha Khan are outward-side markers; Karsaz, Nursery and FTC mean the centre is getting closer.",
       },
       {
-        label: "Turn off around Metropole for the exact Saddar stop",
+        label: "Metropole marks the handoff toward an exact Saddar stop",
         corridorId: "ma-jinnah-road",
         lesson:
           "Saddar is a district of streets and markets, not a single pin—name Empress, Regal, Lucky Star or the hotel/office.",
@@ -1960,13 +2004,13 @@ const exampleJourneyRecords = [
     mentalRoute: "Surjani → north-central Karachi → Nazimabad → Numaish",
     steps: [
       {
-        label: "Follow the north–centre axis inward",
+        label: "The north–centre axis points inward",
         corridorId: "shahrah-e-pakistan",
         lesson:
           "Nagan, Ayesha Manzil, Liaquatabad and Teen Hatti are the descending milestones toward the inner city.",
       },
       {
-        label: "Finish at the Numaish hub",
+        label: "Numaish is the centre-side hub",
         corridorId: "ma-jinnah-road",
         lesson:
           "Numaish sits beside the Mazar and connects onward toward Tower or east toward University Road.",
@@ -1986,13 +2030,13 @@ const exampleJourneyRecords = [
     mentalRoute: "NIPA → University Road → Jail/Numaish → M.A. Jinnah Road → Tower",
     steps: [
       {
-        label: "Travel inward on University Road",
+        label: "University Road carries the inward connection",
         corridorId: "university-road",
         lesson:
           "Hasan Square and Jail Chowrangi show progress from East Karachi into the inner city.",
       },
       {
-        label: "Cross the old-city axis from Numaish to Tower",
+        label: "The old-city axis connects Numaish to Tower",
         corridorId: "ma-jinnah-road",
         lesson:
           "Tibet Centre and Jama Cloth are old-city milestones; Tower is the port-side end.",
@@ -2013,13 +2057,13 @@ const exampleJourneyRecords = [
       "Korangi Crossing → Qayyumabad/Kala Pul → Shahrah-e-Faisal → Shahrah-e-Quaideen → Numaish",
     steps: [
       {
-        label: "Move inward along the Korangi spine",
+        label: "The Korangi spine connects inward",
         corridorId: "korangi-spine",
         lesson:
           "Qayyumabad and Kala Pul are the bridge points between industrial Korangi and central Karachi.",
       },
       {
-        label: "Use the centre-side cross connection",
+        label: "FTC and Nursery mark the centre-side connection",
         corridorId: "shahrah-e-faisal",
         lesson:
           "FTC/Nursery marks the point where the Korangi approach meets the main airport–centre spine.",
@@ -2039,13 +2083,13 @@ const exampleJourneyRecords = [
     mentalRoute: "Orangi → Banaras/SITE edge → old-city western approach → Tower",
     steps: [
       {
-        label: "Exit the north-west through a named pass",
+        label: "Banaras marks a named north-west pass",
         corridorId: "orangi-manghopir",
         lesson:
           "Banaras is the key hinge; Board Office and SITE are different onward directions.",
       },
       {
-        label: "Approach the old core from the west",
+        label: "The western approach reaches the old core",
         corridorId: "mauripur-hub-river",
         lesson:
           "Gulbai/ICI and Tower explain the freight-heavy western side of central Karachi.",
@@ -2066,19 +2110,19 @@ const exampleJourneyRecords = [
       "Port Qasim → N-5 through Malir → Shahrah-e-Faisal → old city → Keamari",
     steps: [
       {
-        label: "Leave the far eastern port on the National Highway",
+        label: "The National Highway connects the far eastern port",
         corridorId: "national-highway",
         lesson:
           "Steel Town, Quaidabad, Malir 15 and Malir Halt count back toward the continuous city.",
       },
       {
-        label: "Cross the metropolitan centre",
+        label: "The airport–centre spine crosses metropolitan Karachi",
         corridorId: "shahrah-e-faisal",
         lesson:
           "The airport–centre spine carries you toward Saddar before the final old-city/harbour approach.",
       },
       {
-        label: "Finish on the western harbour side",
+        label: "Tower and Keamari mark the western harbour side",
         corridorId: "mauripur-hub-river",
         lesson:
           "Tower and Keamari belong to the western port system, many kilometres from Port Qasim.",
@@ -2384,6 +2428,64 @@ const sourceRecords = [
     url: "https://smta.gos.pk/route-map",
     usedFor:
       "Current Green/Orange listings and active/inactive People's, Pink, EV and Double Decker route chains.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "nha-national-highway-code",
+    title: "National Highways and Motorways route schedule",
+    publisher: "National Highway Authority",
+    kind: "official-data",
+    url: "https://nha.gov.pk/uploads/topics/17292307722622.pdf",
+    usedFor:
+      "Statutory route designations: N-5 through Karachi–Thatta–Hyderabad, N-25 through Karachi–Bela–Khuzdar–Quetta–Chaman, and M-9 Karachi–Hyderabad.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "nha-motorway-motorcycle-policy",
+    title: "Road policy for motorway access and vehicle classes",
+    publisher: "National Highway Authority",
+    kind: "official-data",
+    url: "https://nha.gov.pk/uploads/topics/16214878803297.pdf",
+    usedFor:
+      "The access rule that motorcycles are prohibited on motorways; bike scenarios therefore do not offer M-9.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "nhmp-highway-ordinance",
+    title: "National Highways Safety Ordinance",
+    publisher: "National Highways & Motorway Police",
+    kind: "official-data",
+    url: "https://nhmp.gov.pk/storage/trafficrules/NHSO-PDF-VERSION-BOOK.pdf",
+    usedFor:
+      "Highway motorcycle helmet and passenger requirements and general national-highway safety context.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "nhmp-contact-130",
+    title: "National Highways & Motorway Police contact information",
+    publisher: "National Highways & Motorway Police",
+    kind: "official-service",
+    url: "https://nhmp.gov.pk/contact_us",
+    usedFor: "Helpline 130 for same-day national-highway and motorway information or assistance.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "karachi-traffic-1915",
+    title: "Karachi Traffic Police public helpline announcement",
+    publisher: "Karachi Police",
+    kind: "official-service",
+    url: "https://karachipolice.gov.pk/public-announcement/important-announcement-for-citizens/",
+    usedFor: "Karachi Traffic Police helpline 1915 for current city traffic information.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "ndma-infra-advisory-2026",
+    title: "Infrastructure and urban-services monsoon advisory",
+    publisher: "National Disaster Management Authority",
+    kind: "official-service",
+    url: "https://www.ndma.gov.pk/public/index.php/infra_advisory",
+    usedFor:
+      "The 2026 warning that July–September urban flooding can disrupt transport and utilities; schematic drainage is never a passability guide.",
     accessedOn: dataVerifiedOn,
   },
   {

@@ -1,0 +1,40 @@
+.card {
+  position: absolute;
+  z-index: 12;
+  right: 1rem;
+  bottom: 2rem;
+  width: min(360px, calc(100% - 2rem));
+  max-height: min(72%, 540px);
+  overflow: auto;
+  padding: 1.1rem;
+  color: #071c24;
+  background: rgba(255, 247, 232, .97);
+  border: 1px solid rgba(7, 28, 36, .16);
+  border-radius: .75rem;
+  box-shadow: 0 20px 65px rgba(7, 28, 36, .24);
+  backdrop-filter: blur(16px);
+}
+.inline { position: relative; right: auto; bottom: auto; width: 100%; max-height: none; margin-top: 1rem; }
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.top > span { display: flex; align-items: center; gap: .45rem; color: #5c6665; font-family: var(--font-geist-mono); font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; }
+.top > span::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--entity-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--entity-color), transparent 72%); }
+.top button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid rgba(7, 28, 36, .14); border-radius: 50%; background: transparent; cursor: pointer; }
+.card h3 { margin: .8rem 0 .5rem; font-size: clamp(1.5rem, 2.3vw, 2.1rem); line-height: 1; letter-spacing: -.04em; }
+.summary { margin: 0; color: #4f5d5d; font-size: .78rem; line-height: 1.55; }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; margin: 1rem 0 0; }
+.facts div { padding: .65rem; background: #eee5d7; }
+.facts dt { color: #505b5a; font-size: .53rem; text-transform: uppercase; letter-spacing: .08em; }
+.facts dd { margin: .22rem 0 0; font-size: .7rem; font-weight: 700; line-height: 1.35; }
+.chain { display: flex; flex-wrap: wrap; gap: .3rem .1rem; margin-top: 1rem; }
+.chain span { display: inline-flex; align-items: center; gap: .05rem; color: #17353a; font-size: .64rem; font-weight: 700; }
+.chain svg { color: #f06f55; flex: 0 0 auto; }
+.aliases { margin: 1rem 0 0; color: #65706f; font-size: .61rem; line-height: 1.5; }
+.caution { margin: 1rem 0 0; padding-top: .8rem; display: flex; align-items: flex-start; gap: .45rem; border-top: 1px solid rgba(7, 28, 36, .14); color: #6c493e; font-size: .63rem; line-height: 1.5; }
+.caution svg { flex: 0 0 auto; color: #f06f55; }
+
+@media (max-width: 760px) {
+  .card { right: .65rem; bottom: .65rem; width: calc(100% - 1.3rem); max-height: 72%; padding: .9rem; }
+  .card.inline { right: auto; bottom: auto; width: 100%; max-height: none; }
+  .facts { grid-template-columns: 1fr 1fr; }
+}

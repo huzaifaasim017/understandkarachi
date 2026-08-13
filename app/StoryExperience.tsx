@@ -6,6 +6,7 @@ import {
   ArrowRight,
   ChevronDown,
   ExternalLink,
+  LocateFixed,
   MapPin,
   Menu,
   Moon,
@@ -18,17 +19,27 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import BrandMark from "./BrandMark";
 import IntroWorld from "./IntroWorld";
-import KarachiMap, { type MapChapter } from "./KarachiMap";
+import KarachiMap, { type MapChapter, type MapRouteOverlay } from "./KarachiMap";
+import {
+  CrossCityGuide,
+  crossCityScenarios,
+  type CrossCityMapFocus,
+} from "./features/cross-city";
+import MapDetailsCard from "./features/map/MapDetailsCard";
+import { resolveMapEntity, type MapEntityRef } from "./features/map/map-entities";
 import {
   districts,
   emergencies,
+  landmarks,
   mainCorridors,
   normaliseSearchTerm,
   photoManifest,
   searchIndex,
   sources,
   streetGlossary,
+  transitCategories,
   utilitySystems,
 } from "./karachi-data";
 import {
@@ -62,7 +73,7 @@ const districtCameras: Record<string, { center: [number, number]; zoom: number }
   malir: { center: [67.31, 25.03], zoom: 8.75 },
 };
 
-const ACT_KEYS: readonly ActKey[] = ["orient", "districts", "movement", "systems", "apply"];
+const ACT_KEYS: readonly ActKey[] = ["orient", "movement", "districts", "systems", "apply"];
 const JOURNEY_IDS: readonly JourneyId[] = [
   "airport-to-saddar",
   "surjani-to-numaish",
@@ -80,11 +91,11 @@ let inMemoryLocale: Locale = DEFAULT_LOCALE;
 const pageMetadata = {
   "ur-roman": {
     title: "Understand Karachi — Shehar ko zero se samjhein",
-    description: "Karachi ko zero se samjhein: samandar, saat districts, bari roads, transport, gateways, infrastructure aur rozmarra direction language.",
+    description: "Bike, car ya transit se Karachi cross karna samjhein: entry gates, bari roads, junctions, landmarks, districts aur last-mile handoff.",
   },
   en: {
     title: "Understand Karachi — Learn the city from zero",
-    description: "Understand Karachi from zero: the sea, seven districts, major roads, transit, gateways, infrastructure, and everyday direction language.",
+    description: "Learn how to cross Karachi by bike, car, or transit using entry gates, major roads, junctions, landmarks, districts, and a last-mile handoff.",
   },
 } as const;
 
@@ -94,6 +105,8 @@ const corridorStoryConfig = [
   { dataId: "university-road", mapId: "university-spine", center: [67.105, 24.918] as [number, number], zoom: 9.8 },
   { dataId: "korangi-spine", mapId: "korangi-spine", center: [67.13, 24.835] as [number, number], zoom: 9.75 },
   { dataId: "mauripur-hub-river", mapId: "west-spine", center: [66.95, 24.9] as [number, number], zoom: 9.45 },
+  { dataId: "national-highway", mapId: "airport-spine", center: [67.24, 24.86] as [number, number], zoom: 9.15 },
+  { dataId: "m9-motorway", mapId: "north-spine", center: [67.2, 25.01] as [number, number], zoom: 8.75 },
 ] as const;
 
 const photoFiles: Readonly<Record<PhotoStoryId, string>> = {
@@ -174,8 +187,20 @@ function PhotoPause({ photoId, copy }: { photoId: PhotoStoryId; copy: SiteCopy }
 function IconForType({ type }: { type: string }) {
   if (type.toLowerCase().includes("airport")) return <Plane size={17} />;
   if (type.toLowerCase().includes("port")) return <Ship size={17} />;
-  if (type.toLowerCase().includes("rail")) return <TrainFront size={17} />;
+  if (type.toLowerCase().includes("rail") || type.toLowerCase().includes("transit")) return <TrainFront size={17} />;
   return <MapPin size={17} />;
+}
+
+function distanceKm(a: [number, number], b: readonly [number, number]) {
+  const radiusKm = 6371;
+  const toRadians = (value: number) => value * Math.PI / 180;
+  const latitudeDelta = toRadians(b[1] - a[1]);
+  const longitudeDelta = toRadians(b[0] - a[0]);
+  const latitudeA = toRadians(a[1]);
+  const latitudeB = toRadians(b[1]);
+  const haversine = Math.sin(latitudeDelta / 2) ** 2
+    + Math.cos(latitudeA) * Math.cos(latitudeB) * Math.sin(longitudeDelta / 2) ** 2;
+  return radiusKm * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
 }
 
 export default function StoryExperience() {
@@ -188,6 +213,14 @@ export default function StoryExperience() {
   const reducedMotion = motionOverride ?? systemReducedMotion;
   const [search, setSearch] = useState("");
   const [selectedPlace, setSelectedPlace] = useState<{ name: string; coordinates: [number, number] } | null>(null);
+  const [selectedEntity, setSelectedEntity] = useState<MapEntityRef | null>(null);
+  const [locationStatus, setLocationStatus] = useState("");
+  const [crossMapFocus, setCrossMapFocus] = useState<CrossCityMapFocus>({
+    scenarioId: "hub-to-thatta",
+    checkpointId: "hub-n25-entry",
+    coordinates: [67.08, 24.9],
+    zoom: 8.75,
+  });
   const [quizAnswers, setQuizAnswers] = useState<Record<string, string>>({});
   const storyRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);
@@ -243,6 +276,7 @@ export default function StoryExperience() {
           id: `corridor-${corridor.id}`,
           mode: "corridors",
           corridor: config.mapId,
+          detailCorridor: corridor.id,
           center: config.center,
           zoom: config.zoom,
           pitch: 30,
@@ -279,6 +313,11 @@ export default function StoryExperience() {
 
     return [
       makeFixedStep("compass", "orient", { id: "compass", mode: "context", center: [67.08, 24.96], zoom: 8.55, pitch: 28 }),
+      makeFixedStep("anchors", "orient", { id: "anchors", mode: "gateways", center: [67.07, 24.92], zoom: 9.4, pitch: 30 }),
+      makeFixedStep("movement-intro", "movement", { id: "movement-intro", mode: "corridors", center: [67.08, 24.93], zoom: 8.85, pitch: 32 }),
+      ...corridorSteps,
+      makeFixedStep("landmark-language", "movement", { id: "landmark-language", mode: "gateways", center: [67.09, 24.9], zoom: 9.6, pitch: 24 }, glossaryDetail),
+      makeFixedStep("transit", "movement", { id: "transit", mode: "transit", center: [67.095, 24.91], zoom: 9.25, pitch: 26 }, transitDetail),
       makeFixedStep(
         "scale",
         "orient",
@@ -292,7 +331,6 @@ export default function StoryExperience() {
           <p className="data-note">{copy.story.dataNote}</p>
         </>,
       ),
-      makeFixedStep("anchors", "orient", { id: "anchors", mode: "gateways", center: [67.07, 24.92], zoom: 9.4, pitch: 30 }),
       makeFixedStep(
         "layers",
         "districts",
@@ -301,10 +339,6 @@ export default function StoryExperience() {
       ),
       ...districtSteps,
       makeFixedStep("names", "districts", { id: "names", mode: "gateways", center: [67.08, 24.91], zoom: 10, pitch: 22 }),
-      makeFixedStep("movement-intro", "movement", { id: "movement-intro", mode: "corridors", center: [67.08, 24.93], zoom: 9, pitch: 32 }),
-      ...corridorSteps,
-      makeFixedStep("landmark-language", "movement", { id: "landmark-language", mode: "gateways", center: [67.09, 24.9], zoom: 9.6, pitch: 24 }, glossaryDetail),
-      makeFixedStep("transit", "movement", { id: "transit", mode: "transit", center: [67.095, 24.91], zoom: 9.25, pitch: 26 }, transitDetail),
       makeFixedStep("gateways", "systems", { id: "gateways", mode: "gateways", center: [67.14, 24.87], zoom: 8.75, pitch: 30 }, gatewayDetail),
       makeFixedStep(
         "systems",
@@ -404,6 +438,19 @@ export default function StoryExperience() {
     const tokens = query.split(" ");
     return searchIndex.filter((entry) => tokens.every((token) => entry.searchText.includes(token))).slice(0, 8);
   }, [search]);
+  const transitResults = useMemo(() => {
+    const query = normaliseSearchTerm(search);
+    if (!query) return [];
+    const tokens = query.split(" ");
+    return transitCategories.filter((service) => {
+      const text = normaliseSearchTerm([service.name, ...service.aliases].join(" "));
+      return tokens.every((token) => text.includes(token));
+    }).slice(0, 4);
+  }, [search]);
+  const selectedEntityDetails = useMemo(
+    () => selectedEntity ? resolveMapEntity(selectedEntity, locale) : null,
+    [locale, selectedEntity],
+  );
 
   const scrollToAct = (act: ActKey) => {
     const step = storySteps.find((item) => item.act === act);
@@ -411,13 +458,79 @@ export default function StoryExperience() {
     setMenuOpen(false);
   };
 
+  const crossScenario = useMemo(
+    () => crossCityScenarios.find((scenario) => scenario.id === crossMapFocus.scenarioId) ?? crossCityScenarios[0],
+    [crossMapFocus.scenarioId],
+  );
+  const crossRouteOverlay = useMemo<MapRouteOverlay>(() => ({
+    id: crossScenario.id,
+    name: crossScenario.title[locale],
+    checkpoints: crossScenario.checkpoints.map((checkpoint) => ({
+      id: checkpoint.id,
+      label: checkpoint.label[locale],
+      stage: checkpoint.stage,
+      coordinates: checkpoint.coordinates,
+    })),
+    selectedCheckpointId: crossMapFocus.checkpointId,
+  }), [crossMapFocus.checkpointId, crossScenario, locale]);
+  const crossMapChapter = useMemo<MapChapter>(() => ({
+    id: `cross-${crossScenario.id}-${crossMapFocus.checkpointId ?? "all"}`,
+    mode: "corridors",
+    center: [crossMapFocus.coordinates[0], crossMapFocus.coordinates[1]],
+    zoom: crossMapFocus.zoom,
+    pitch: reducedMotion ? 0 : 24,
+  }), [crossMapFocus.checkpointId, crossMapFocus.coordinates, crossMapFocus.zoom, crossScenario.id, reducedMotion]);
+  const selectCrossMapCheckpoint = (checkpointId: string) => {
+    const checkpoint = crossScenario.checkpoints.find((item) => item.id === checkpointId);
+    if (!checkpoint) return;
+    setCrossMapFocus({
+      scenarioId: crossScenario.id,
+      checkpointId,
+      coordinates: checkpoint.coordinates,
+      zoom: checkpoint.zoom,
+    });
+  };
+
+  const locateUser = () => {
+    if (!("geolocation" in navigator)) {
+      setLocationStatus(copy.explorer.locationUnavailable);
+      return;
+    }
+    setLocationStatus(copy.explorer.locating);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const coordinates: [number, number] = [position.coords.longitude, position.coords.latitude];
+        let nearest = landmarks[0];
+        let nearestDistance = Number.POSITIVE_INFINITY;
+        for (const landmark of landmarks) {
+          const currentDistance = distanceKm(coordinates, landmark.coordinates);
+          if (currentDistance < nearestDistance) {
+            nearest = landmark;
+            nearestDistance = currentDistance;
+          }
+        }
+        const isInGuideArea = nearestDistance <= 75;
+        setSelectedPlace({
+          name: isInGuideArea ? copy.explorer.nearest(nearest.name) : copy.explorer.locationOutside,
+          coordinates,
+        });
+        setSelectedEntity(isInGuideArea ? { kind: "place", id: nearest.id } : null);
+        setLocationStatus(isInGuideArea
+          ? `${copy.explorer.locationApproximate} ${copy.explorer.nearest(nearest.name)}`
+          : copy.explorer.locationOutside);
+      },
+      () => setLocationStatus(copy.explorer.locationDenied),
+      { enableHighAccuracy: false, timeout: 9000, maximumAge: 60_000 },
+    );
+  };
+
   return (
     <main className={reducedMotion ? "reduced-motion" : ""} data-locale={locale}>
-      <a href="#story" className="skip-link">{copy.common.skipToGuide}</a>
+      <a href="#cross-city" className="skip-link">{copy.common.skipToGuide}</a>
       <div className="progress-rail" aria-hidden="true"><span ref={progressRef} /></div>
 
       <header className="site-header">
-        <a className="wordmark" href="#top" aria-label={copy.common.homeAria}><span>UK</span><b>UNDERSTAND<br />KARACHI</b></a>
+        <a className="wordmark" href="#top" aria-label={copy.common.homeAria}><BrandMark /></a>
         <nav aria-label={copy.common.guideChaptersAria}>
           {ACT_KEYS.map((act) => <button key={act} onClick={() => scrollToAct(act)}>{copy.acts[act]}</button>)}
         </nav>
@@ -443,24 +556,44 @@ export default function StoryExperience() {
         <IntroWorld reducedMotion={reducedMotion} />
         <div className="hero-copy">
           <h1>{copy.hero.title}</h1>
-          <a href="#story" className="start-button"><span>{copy.hero.start}</span><ArrowDown size={18} /></a>
+          <a href="#cross-city" className="start-button"><span>{copy.hero.start}</span><ArrowDown size={18} /></a>
         </div>
       </section>
 
+      <div id="cross-city">
+        <CrossCityGuide
+          locale={locale}
+          reducedMotion={reducedMotion}
+          onFocusMap={setCrossMapFocus}
+          externalCheckpointId={crossMapFocus.checkpointId}
+          mapSlot={(
+            <KarachiMap
+              chapter={crossMapChapter}
+              reducedMotion={reducedMotion}
+              locale={locale}
+              routeOverlay={crossRouteOverlay}
+              onRouteCheckpointSelect={selectCrossMapCheckpoint}
+              interactive
+              inspectable
+            />
+          )}
+        />
+      </div>
+
       <section className="story" id="story" ref={storyRef}>
         <aside className="story-stage">
-          <KarachiMap chapter={activeStep.map} reducedMotion={reducedMotion} locale={locale} />
+          <KarachiMap chapter={activeStep.map} reducedMotion={reducedMotion} locale={locale} inspectable />
           <div className="stage-status"><span>{copy.acts[activeStep.act]}</span><b>{String(storySteps.indexOf(activeStep) + 1).padStart(2, "0")} / {storySteps.length}</b></div>
         </aside>
         <div className="story-copy-column">
-          {storySteps.map((step, index) => (
+          {storySteps.map((step) => (
             <article className={`story-step ${activeId === step.id ? "is-active" : ""}`} data-story-step id={`step-${step.id}`} key={step.id}>
               <div className="step-card">
                 <h2>{step.title}</h2>
                 {step.body && <p>{step.body}</p>}
                 {step.detail}
               </div>
-              {index === 2 && <PhotoPause photoId="empress-market" copy={copy} />}
+              {step.id === "landmark-language" && <PhotoPause photoId="empress-market" copy={copy} />}
               {step.id === "district-south" && <PhotoPause photoId="mazar-e-quaid" copy={copy} />}
               {step.id === "corridor-shahrah-e-faisal" && <PhotoPause photoId="jinnah-airport" copy={copy} />}
               {step.id === "gateways" && <PhotoPause photoId="karachi-port" copy={copy} />}
@@ -481,18 +614,25 @@ export default function StoryExperience() {
       </section>
 
       <section className="explorer-section" id="explore">
-        <div className="explorer-map"><KarachiMap chapter={EXPLORE_CHAPTER} reducedMotion={reducedMotion} selectedPlace={selectedPlace} interactive locale={locale} /></div>
+        <div className="explorer-map"><KarachiMap chapter={EXPLORE_CHAPTER} reducedMotion={reducedMotion} selectedPlace={selectedPlace} focusedEntity={selectedEntity} onEntitySelect={(entity) => { setSelectedEntity(entity); if (entity) setSelectedPlace(null); }} interactive inspectable showDetailsCard={false} locale={locale} /></div>
         <div className="explorer-panel">
           <h2>{copy.explorer.title}</h2>
           <label className="search-box"><span className="sr-only">{copy.explorer.searchLabel}</span><Search size={19} aria-hidden="true" /><input ref={searchInputRef} aria-label={copy.explorer.searchLabel} aria-keyshortcuts="/" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={copy.explorer.placeholder} /><kbd>/</kbd></label>
+          <div className="explorer-tools">
+            <button type="button" className="locate-button" onClick={locateUser}><LocateFixed size={17} aria-hidden="true" />{copy.explorer.locate}</button>
+            <p>{copy.explorer.locationNote}</p>
+          </div>
+          {locationStatus && <p className="location-status" role="status">{locationStatus}</p>}
           <div className="result-list">
             {results.map((result) => {
               const district = result.districtId ? districts.find((item) => item.id === result.districtId)?.name : undefined;
-              return <button key={result.id} onClick={() => setSelectedPlace({ name: result.label, coordinates: [result.coordinates[0], result.coordinates[1]] })}><IconForType type={result.kind} /><span><b>{result.label}</b><small>{copy.explorer.kindLabels[result.kind]}{district ? ` · ${district}` : ""}</small></span><ArrowRight size={16} /></button>;
+              return <button key={result.id} onClick={() => { setSelectedPlace({ name: result.label, coordinates: [result.coordinates[0], result.coordinates[1]] }); setSelectedEntity({ kind: result.kind, id: result.targetId }); setLocationStatus(""); }}><IconForType type={result.kind} /><span><b>{result.label}</b><small>{copy.explorer.kindLabels[result.kind]}{district ? ` · ${district}` : ""}</small></span><ArrowRight size={16} /></button>;
             })}
-            {results.length === 0 && <p className="no-results">{copy.explorer.noResults}</p>}
+            {transitResults.map((service) => <button key={`transit:${service.id}`} onClick={() => { setSelectedPlace(null); setSelectedEntity({ kind: "transit", id: service.id }); setLocationStatus(""); }}><IconForType type="transit" /><span><b>{service.name}</b><small>{copy.explorer.transitLabel}</small></span><ArrowRight size={16} /></button>)}
+            {results.length === 0 && transitResults.length === 0 && <p className="no-results">{copy.explorer.noResults}</p>}
           </div>
-          {selectedPlace && <div className="selected-place"><MapPin /><div><span>{copy.common.selected}</span><b>{selectedPlace.name}</b></div><button onClick={() => setSelectedPlace(null)} aria-label={copy.common.clearSelectedAria}><X size={15} /></button></div>}
+          {selectedPlace && <div className="selected-place"><MapPin /><div><span>{copy.common.selected}</span><b>{selectedPlace.name}</b></div><button onClick={() => { setSelectedPlace(null); setSelectedEntity(null); setLocationStatus(""); }} aria-label={copy.common.clearSelectedAria}><X size={15} /></button></div>}
+          {selectedEntityDetails && <MapDetailsCard inline details={selectedEntityDetails} locale={locale} onClose={() => { setSelectedPlace(null); setSelectedEntity(null); setLocationStatus(""); window.requestAnimationFrame(() => searchInputRef.current?.focus()); }} />}
         </div>
       </section>
 
@@ -521,7 +661,7 @@ export default function StoryExperience() {
       </section>
 
       <footer>
-        <div className="footer-main"><div className="footer-brand"><span>UK</span><h2>Understand<br />Karachi</h2></div><nav className="source-list" aria-label={`${copy.footer.primarySources} / ${copy.footer.moreVerification}`}>{sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer" lang="en">{source.label}<ExternalLink size={12} /></a>)}</nav></div>
+        <div className="footer-main"><div className="footer-brand"><BrandMark showName={false} size={52} /><h2>Understand<br />Karachi</h2></div><nav className="source-list" aria-label={`${copy.footer.primarySources} / ${copy.footer.moreVerification}`}>{sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer" lang="en">{source.label}<ExternalLink size={12} /></a>)}</nav></div>
         <div className="footer-bottom"><span>{copy.footer.reviewed}</span><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" lang="en">{copy.footer.mapAttribution}</a><a href="#top">{copy.footer.backToTop} <ChevronDown size={14} /></a></div>
       </footer>
     </main>

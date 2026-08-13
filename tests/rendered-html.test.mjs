@@ -33,6 +33,15 @@ test("server-renders the direct Roman Urdu Karachi guide by default", async () =
   assert.match(html, /6 asal safar/);
   assert.match(html, /Jagah search karein/);
   assert.match(html, /Nikalne se pehle check karein/);
+  assert.match(html, /Karachi crossing samjhein/);
+  assert.match(html, /MODE/);
+  assert.match(html, /Hyderabad side via Thatta \/ N-5 → Hub \/ N-25/);
+  assert.match(html, /Motorcycles motorways par prohibited hain/);
+  assert.match(html, /1915/);
+  assert.match(html, /130/);
+  assert.match(html, /Meri location ka andaza/);
+  assert.match(html, /logo-mark\.svg/);
+  assert.match(html, /site\.webmanifest/);
   assert.match(html, /Emergency numbers/);
   assert.match(html, /3 sawal/);
   assert.match(html, /Karachi: 4 cheezen yaad rakhein/);
@@ -53,13 +62,19 @@ test("server-renders the direct Roman Urdu Karachi guide by default", async () =
 });
 
 test("ships bilingual direct copy and valid, attributed map and media assets", async () => {
-  const [districtRaw, networkRaw, dataReadme, packageRaw, pageSource, i18nSource] = await Promise.all([
+  const [districtRaw, networkRaw, dataReadme, packageRaw, pageSource, mapSource, i18nSource, mapEntitiesSource, crossingSource, agentsSource, faviconSource, manifestSource] = await Promise.all([
     readFile(new URL("../public/data/karachi-districts.geojson", import.meta.url), "utf8"),
     readFile(new URL("../public/data/karachi-network.geojson", import.meta.url), "utf8"),
     readFile(new URL("../public/data/README.md", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(new URL("../app/StoryExperience.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/KarachiMap.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/karachi-i18n.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/features/map/map-entities.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/features/cross-city/crossCityData.ts", import.meta.url), "utf8"),
+    readFile(new URL("../AGENTS.md", import.meta.url), "utf8"),
+    readFile(new URL("../public/favicon.svg", import.meta.url), "utf8"),
+    readFile(new URL("../public/site.webmanifest", import.meta.url), "utf8"),
   ]);
 
   const districts = JSON.parse(districtRaw);
@@ -81,6 +96,14 @@ test("ships bilingual direct copy and valid, attributed map and media assets", a
   assert.doesNotMatch(packageRaw, /react-loading-skeleton/);
   assert.match(pageSource, /prefers-reduced-motion/);
   assert.match(pageSource, /aria-keyshortcuts|searchInputRef/);
+  for (const interactionContract of [
+    /active-route-hit/,
+    /anchor-hit/,
+    /transit-hit/,
+    /dragRotate\.disable\(\)/,
+    /touchZoomRotate\.disableRotation\(\)/,
+    /CHECKPOINT ORDER · NOT ROAD GEOMETRY/,
+  ]) assert.match(mapSource, interactionContract);
   assert.match(i18nSource, /title: "Karachi ko zero se samjhein\."/);
   assert.match(i18nSource, /title: "Understand Karachi from zero\."/);
   assert.match(i18nSource, /DEFAULT_LOCALE: Locale = "ur-roman"/);
@@ -90,4 +113,36 @@ test("ships bilingual direct copy and valid, attributed map and media assets", a
   assert.match(i18nSource, /title: "Search a place"/);
   assert.match(i18nSource, /title: "Nikalne se pehle check karein"/);
   assert.match(i18nSource, /title: "Check before leaving"/);
+  for (const mappedId of ["north-spine", "airport-spine", "university-spine", "korangi-spine", "west-spine", "lyari-expressway"]) {
+    assert.match(mapEntitiesSource, new RegExp(`"${mappedId}"`));
+  }
+  assert.match(crossingSource, /nha-motorway-motorcycle-policy/);
+  assert.match(crossingSource, /featureIds: checkpointFeatureIds/);
+  assert.match(crossingSource, /satisfies Readonly<Record<CrossCityCheckpointId/);
+  assert.doesNotMatch(crossingSource, /closestPointFeatureId|closestCorridorId/);
+  assert.match(agentsSource, /canonical operating guide/);
+  assert.match(faviconSource, /Understand Karachi/);
+  const manifest = JSON.parse(manifestSource);
+  assert.equal(manifest.name, "Understand Karachi");
+  assert.deepEqual(manifest.icons.map((icon) => icon.sizes), ["192x192", "512x512"]);
+});
+
+test("keeps the civic documentation and clean runtime boundary reproducible", async () => {
+  const required = [
+    "../CLAUDE.md",
+    "../CONTRIBUTING.md",
+    "../SECURITY.md",
+    "../docs/README.md",
+    "../docs/project-charter.md",
+    "../docs/architecture/system-and-repository-boundaries.md",
+    "../docs/adrs/0004-bounded-browser-location-estimate.md",
+    "../docs/rfcs/0001-traveller-crossing-model.md",
+    "../docs/specs/cross-city-guidance.md",
+    "../docs/specs/map-interaction.md",
+  ];
+  await Promise.all(required.map((path) => readFile(new URL(path, import.meta.url), "utf8")));
+
+  const packageRaw = await readFile(new URL("../package.json", import.meta.url), "utf8");
+  assert.doesNotMatch(packageRaw, /drizzle|db:generate/);
+  assert.match(packageRaw, /"typecheck"/);
 });

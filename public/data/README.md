@@ -12,6 +12,21 @@ relation(id:16347667,16349281,16350242,16350632,16350836,16351022,16351916);
 out geom;
 ```
 
+To reproduce the snapshot, save the JSON response as the intentionally ignored
+`work/karachi-districts-overpass.json`, then run:
+
+```bash
+node scripts/build-districts.mjs
+```
+
+The script fails if a relation is missing, an unexpected relation appears, or
+an inner ring needs manual assignment. Display metadata is currently checked
+against `app/karachi-data.ts`. A future generator or validation task under
+[P0.5](../../docs/plans/active.md) and the
+[roadmap](../../docs/roadmap.md) should derive or validate this metadata;
+[ADR-0003](../../docs/adrs/0003-canonical-data-direction.md) defines the
+required one-way ownership.
+
 Source: © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright), licensed under the [Open Data Commons Open Database License](https://opendatacommons.org/licenses/odbl/1-0/). The relation members were stitched into local polygons and given familiar names, colours, and label points. Current relations contained no inner rings at extraction time.
 
 The polygons are for orientation. They may include broad maritime or peripheral administrative extents, so their apparent map area is not directly comparable with the Census 2023 land-area figures printed in the guide.

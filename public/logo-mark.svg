@@ -1,5 +1,6 @@
-<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <title>Understand Karachi</title>
+<svg width="128" height="128" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">Understand Karachi</title>
+  <desc id="description">UK monogram above a Karachi coast and route line</desc>
   <rect width="64" height="64" rx="14" fill="#071C24"/>
   <path d="M0 52C12 45 22 52 31 47C40 42 49 45 64 36V64H0Z" fill="#0D6F78"/>
   <path d="M13 14V28C13 36 17.5 40 24 40C30.5 40 35 36 35 28V14M43 14V40M43 28L54 14M43 28L55 41" fill="none" stroke="#FFF7E8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>

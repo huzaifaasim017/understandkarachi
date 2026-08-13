@@ -1,0 +1,804 @@
+.guide {
+  --cross-panel: color-mix(in srgb, var(--cream) 94%, white 6%);
+  --cross-soft: color-mix(in srgb, var(--sand) 46%, var(--cream));
+  --cross-line: color-mix(in srgb, var(--ink) 15%, transparent);
+  position: relative;
+  padding: clamp(4.5rem, 8vw, 8rem) clamp(1rem, 5vw, 5rem);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 100% 0, color-mix(in srgb, var(--sea-bright) 17%, transparent), transparent 34rem),
+    var(--paper);
+  color: var(--ink);
+}
+
+.guide button,
+.guide a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  max-width: 1440px;
+  margin: 0 auto 2rem;
+}
+
+.header h2 {
+  max-width: 920px;
+  margin: 0;
+  font-size: clamp(3.2rem, 7vw, 7.4rem);
+  font-weight: 620;
+  line-height: .84;
+  letter-spacing: -.075em;
+}
+
+.orientation { max-width: 920px; margin: 0 0 1rem; color: var(--sea); font-family: var(--font-geist-mono), monospace; font-size: clamp(.58rem, 1vw, .72rem); font-weight: 750; line-height: 1.55; letter-spacing: .035em; }
+
+.reviewed {
+  flex: 0 0 auto;
+  color: color-mix(in srgb, var(--ink) 68%, transparent);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .58rem;
+  letter-spacing: .04em;
+}
+
+.model {
+  max-width: 1440px;
+  margin: 0 auto 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--ink);
+  color: var(--cream);
+  box-shadow: 0 24px 80px rgba(7, 28, 36, .13);
+}
+
+.modelLabel,
+.controlLabel,
+.pickerHeading > span,
+.checkpointHeading > strong {
+  display: block;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.modelLabel {
+  padding: .2rem .25rem .85rem;
+  color: color-mix(in srgb, var(--cream) 58%, transparent);
+}
+
+.model ol {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: .5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.model li {
+  position: relative;
+  min-height: 88px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 247, 232, .12);
+  border-radius: .65rem;
+  background: rgba(255, 247, 232, .055);
+}
+
+.stageCode {
+  display: block;
+  margin-bottom: .7rem;
+  color: var(--sea-bright);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .6rem;
+  letter-spacing: .12em;
+}
+
+.model li strong {
+  display: block;
+}
+
+.model li strong {
+  font-size: .9rem;
+}
+
+.modelArrow {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: -.78rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--coral);
+  color: var(--ink);
+  font-size: .65rem;
+  transform: translateY(-50%);
+}
+
+.controls {
+  max-width: 1440px;
+  min-height: 88px;
+  margin: 0 auto;
+  padding: 1rem 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border: 1px solid var(--cross-line);
+  border-radius: 1rem 1rem 0 0;
+  background: var(--cross-panel);
+}
+
+.controlLabel {
+  margin-bottom: .55rem;
+  color: color-mix(in srgb, var(--ink) 68%, transparent);
+}
+
+.modeTabs {
+  display: flex;
+  gap: .35rem;
+}
+
+.modeTabs button {
+  min-width: 88px;
+  min-height: 44px;
+  padding: .55rem .9rem;
+  border: 1px solid var(--cross-line);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: .72rem;
+  font-weight: 680;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.modeTabs button:hover {
+  border-color: var(--sea);
+  transform: translateY(-1px);
+}
+
+.modeTabs button.activeMode {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.modeNote {
+  max-width: 610px;
+  margin: 0;
+  color: color-mix(in srgb, var(--ink) 68%, transparent);
+  font-size: .72rem;
+  line-height: 1.55;
+  text-align: right;
+}
+
+.bikeBan {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: .8rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  background: var(--coral);
+  color: var(--ink);
+}
+
+.bikeBan strong {
+  flex: 0 0 auto;
+  padding: .28rem .45rem;
+  border: 1px solid currentColor;
+  border-radius: .25rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .72rem;
+}
+
+.bikeBan span {
+  display: block;
+  font-size: .72rem;
+  font-weight: 680;
+  line-height: 1.4;
+}
+.bikeBan small { display: block; margin-top: .28rem; font-size: .6rem; line-height: 1.45; opacity: .82; }
+
+.routeWorkspace {
+  max-width: 1440px;
+  min-height: 650px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(240px, 310px) minmax(0, 1fr);
+  border: 1px solid var(--cross-line);
+  border-top: 0;
+  border-radius: 0 0 1rem 1rem;
+  overflow: hidden;
+  background: var(--cross-panel);
+  box-shadow: 0 28px 90px rgba(7, 28, 36, .1);
+}
+
+.scenarioPicker {
+  min-width: 0;
+  padding: 1rem;
+  border-right: 1px solid var(--cross-line);
+  background: color-mix(in srgb, var(--sand) 34%, var(--cream));
+}
+
+.pickerHeading {
+  padding: .45rem .4rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.pickerHeading small {
+  color: color-mix(in srgb, var(--ink) 68%, transparent);
+  font-size: .6rem;
+}
+
+.scenarioPicker ul {
+  display: grid;
+  gap: .45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scenarioPicker button {
+  width: 100%;
+  min-height: 74px;
+  padding: .85rem;
+  border: 1px solid transparent;
+  border-radius: .55rem;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.scenarioPicker button:hover {
+  border-color: var(--cross-line);
+  background: rgba(255, 247, 232, .66);
+  transform: translateX(2px);
+}
+
+.scenarioPicker button.selectedScenario {
+  border-color: color-mix(in srgb, var(--sea) 35%, transparent);
+  background: var(--cream);
+  box-shadow: 0 10px 30px rgba(7, 28, 36, .07);
+}
+
+.scenarioPicker button strong,
+.scenarioPicker button span {
+  display: block;
+}
+
+.scenarioPicker button strong {
+  font-size: .76rem;
+  line-height: 1.25;
+}
+
+.scenarioPicker button span {
+  margin-top: .38rem;
+  color: color-mix(in srgb, var(--ink) 68%, transparent);
+  font-size: .56rem;
+  line-height: 1.42;
+}
+
+.routePanel {
+  min-width: 0;
+  padding: clamp(1.25rem, 3vw, 3rem);
+}
+
+.routeHeader {
+  min-height: 112px;
+  padding-bottom: 1.6rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--cross-line);
+}
+
+.routeHeader h3 {
+  max-width: 620px;
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 4.1rem);
+  line-height: .94;
+  letter-spacing: -.055em;
+}
+
+.routeHeader p {
+  max-width: 370px;
+  margin: 0;
+  color: color-mix(in srgb, var(--ink) 68%, transparent);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .58rem;
+  line-height: 1.55;
+  text-align: right;
+}
+
+.mapSlot {
+  position: relative;
+  min-height: clamp(300px, 35vw, 470px);
+  margin-top: 1.2rem;
+  overflow: hidden;
+  border: 1px solid var(--cross-line);
+  border-radius: .75rem;
+  background: var(--ink);
+}
+
+.checkpointHeading {
+  padding: 1.6rem 0 .85rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.checkpointHeading span {
+  color: color-mix(in srgb, var(--ink) 68%, transparent);
+  font-size: .62rem;
+}
+
+.checkpointRail {
+  position: relative;
+  margin: 0;
+  padding: .15rem 0 .85rem;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(136px, 1fr);
+  gap: .45rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline proximity;
+  scrollbar-color: color-mix(in srgb, var(--sea) 45%, transparent) transparent;
+  scrollbar-width: thin;
+  list-style: none;
+}
+
+.checkpointRail::before {
+  content: "";
+  position: absolute;
+  top: 1.48rem;
+  left: 1.1rem;
+  right: 1.1rem;
+  height: 2px;
+  background: color-mix(in srgb, var(--sea) 34%, transparent);
+}
+
+.checkpointRail li {
+  position: relative;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.checkpointRail button {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 158px;
+  padding: .62rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid var(--cross-line);
+  border-radius: .6rem;
+  background: color-mix(in srgb, var(--cream) 93%, transparent);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .2s ease, background-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.checkpointRail button:hover {
+  border-color: color-mix(in srgb, var(--sea) 55%, transparent);
+  transform: translateY(-2px);
+}
+
+.checkpointRail button.selectedCheckpoint {
+  border-color: var(--sea);
+  background: color-mix(in srgb, var(--sea-bright) 18%, var(--cream));
+  box-shadow: 0 10px 28px rgba(7, 28, 36, .09);
+}
+
+.checkpointIndex {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-bottom: 1rem;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--cross-panel);
+  border-radius: 50%;
+  background: var(--sea);
+  color: var(--cream);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .52rem;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--sea) 40%, transparent);
+}
+
+.selectedCheckpoint .checkpointIndex {
+  background: var(--coral);
+  color: var(--ink);
+}
+
+.checkpointStage,
+.checkpointDirection {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .48rem;
+  letter-spacing: .1em;
+}
+
+.checkpointStage {
+  color: var(--sea);
+}
+
+.checkpointRail button > strong {
+  margin-top: .35rem;
+  font-size: .66rem;
+  line-height: 1.35;
+}
+
+.checkpointDirection {
+  margin-top: auto;
+  padding-top: .75rem;
+  color: color-mix(in srgb, var(--ink) 68%, transparent);
+}
+
+.checkpointDetail {
+  min-height: 150px;
+  padding: 1.2rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  border-radius: .65rem;
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.checkpointDetail > div {
+  max-width: 700px;
+}
+
+.checkpointDetail > div > span {
+  color: var(--sea-bright);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: .5rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.checkpointDetail h4 {
+  margin: .42rem 0 .5rem;
+  font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+  letter-spacing: -.025em;
+}
+
+.checkpointDetail p {
+  margin: 0;
+  color: rgba(255, 247, 232, .67);
+  font-size: .72rem;
+  line-height: 1.58;
+}
+
+.checkpointDetail button {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: .65rem .9rem;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  border: 1px solid rgba(255, 247, 232, .3);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: .65rem;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.checkpointDetail button:hover {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.scenarioNote {
+  margin: 1rem 0 0;
+  padding-left: .75rem;
+  border-left: 2px solid var(--coral);
+  color: color-mix(in srgb, var(--ink) 63%, transparent);
+  font-size: .65rem;
+  line-height: 1.5;
+}
+
+.scenarioSource {
+  width: fit-content;
+  margin-top: .65rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  color: var(--coral);
+  font-size: .64rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--coral) 45%, transparent);
+  text-underline-offset: .2rem;
+}
+
+.scenarioSource:hover {
+  text-decoration-color: currentColor;
+}
+
+.safetyFooter {
+  max-width: 1440px;
+  margin: 1rem auto 0;
+  padding: 1.2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, .72fr);
+  gap: 2rem;
+  border: 1px solid var(--cross-line);
+  border-radius: 1rem;
+  background: var(--cross-panel);
+}
+
+.safetyFooter > div:first-child > strong {
+  font-size: .78rem;
+}
+
+.safetyFooter p {
+  max-width: 780px;
+  margin: .48rem 0 0;
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+  font-size: .64rem;
+  line-height: 1.55;
+}
+
+.helplines {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .5rem;
+}
+
+.helplines a {
+  min-height: 66px;
+  padding: .75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  border-radius: .55rem;
+  background: var(--cross-soft);
+  color: inherit;
+  transition: background-color .2s ease, transform .2s ease;
+}
+
+.helplines a:hover {
+  background: var(--sand);
+  transform: translateY(-1px);
+}
+
+.helplines a span {
+  max-width: 140px;
+  font-size: .58rem;
+  line-height: 1.35;
+}
+
+.helplines a strong {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 1.25rem;
+}
+
+.reducedMotion *,
+.reducedMotion *::before,
+.reducedMotion *::after {
+  scroll-behavior: auto !important;
+  transition-duration: .001ms !important;
+}
+
+@media (max-width: 1050px) {
+  .routeWorkspace {
+    grid-template-columns: 1fr;
+  }
+
+  .scenarioPicker {
+    border-right: 0;
+    border-bottom: 1px solid var(--cross-line);
+  }
+
+  .scenarioPicker ul {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(220px, 1fr);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline proximity;
+  }
+
+  .scenarioPicker li {
+    scroll-snap-align: start;
+  }
+
+  .scenarioPicker button:hover {
+    transform: translateY(-1px);
+  }
+
+  .safetyFooter {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .guide {
+    padding: 4.5rem 1rem;
+  }
+
+  .header {
+    display: block;
+  }
+
+  .header h2 {
+    font-size: clamp(3.25rem, 17vw, 5.2rem);
+  }
+
+  .reviewed {
+    display: block;
+    margin-top: 1rem;
+  }
+
+  .model {
+    overflow: visible;
+  }
+
+  .model ol {
+    grid-template-columns: 1fr;
+    grid-auto-flow: row;
+    overflow: visible;
+  }
+
+  .model li {
+    min-height: 0;
+  }
+
+  .modelArrow {
+    display: none;
+  }
+
+  .scenarioPicker ul {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  .controls {
+    display: block;
+  }
+
+  .modeTabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .modeTabs button {
+    min-width: 0;
+  }
+
+  .modeNote {
+    margin-top: 1rem;
+    text-align: left;
+  }
+
+  .routeWorkspace {
+    min-height: 0;
+  }
+
+  .routePanel {
+    padding: 1rem;
+  }
+
+  .routeHeader {
+    min-height: 0;
+    display: block;
+  }
+
+  .routeHeader h3 {
+    font-size: clamp(2.2rem, 11vw, 3.8rem);
+  }
+
+  .routeHeader p {
+    margin-top: 1rem;
+    text-align: left;
+  }
+
+  .checkpointHeading {
+    display: block;
+  }
+
+  .checkpointHeading span {
+    display: block;
+    margin-top: .45rem;
+  }
+
+  .checkpointRail {
+    display: grid;
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    gap: .4rem;
+    overflow: visible;
+  }
+
+  .checkpointRail::before {
+    top: 1.2rem;
+    bottom: 1.2rem;
+    left: 1.55rem;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+
+  .checkpointRail button {
+    min-height: 82px;
+    padding: .7rem .7rem .7rem .72rem;
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    column-gap: .65rem;
+    align-items: center;
+  }
+
+  .checkpointIndex {
+    grid-row: 1 / 3;
+    align-self: center;
+    margin: 0;
+  }
+
+  .checkpointStage {
+    grid-column: 2;
+  }
+
+  .checkpointRail button > strong {
+    grid-column: 2;
+    margin-top: .18rem;
+  }
+
+  .checkpointDirection {
+    grid-column: 3;
+    grid-row: 1 / 3;
+    margin: 0;
+    padding: 0;
+  }
+
+  .checkpointDetail {
+    min-height: 0;
+    display: block;
+  }
+
+  .checkpointDetail button {
+    margin-top: 1rem;
+  }
+
+  .safetyFooter {
+    padding: 1rem;
+    gap: 1.2rem;
+  }
+
+  .helplines {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide *,
+  .guide *::before,
+  .guide *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+  }
+}

@@ -3,7 +3,7 @@ import StoryExperience from "./StoryExperience";
 
 export const metadata: Metadata = {
   title: "Understand Karachi — Shehar ko zero se samjhein",
-  description: "Karachi ko zero se samjhein: samandar, saat districts, bari roads, transport, gateways, infrastructure aur rozmarra direction language.",
+  description: "Bike, car ya transit se Karachi cross karna samjhein: entry gates, bari roads, junctions, landmarks, districts aur last-mile handoff.",
 };
 
 export default function Home() {

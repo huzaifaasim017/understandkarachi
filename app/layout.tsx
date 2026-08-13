@@ -17,17 +17,22 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase,
     title: "Understand Karachi — Shehar ko zero se samjhein",
-    description: "Roman Urdu mein interactive scroll guide jo Karachi ke districts, raaston, landmarks aur infrastructure ko ek clear mental map mein jor deta hai.",
+    description: "Roman Urdu-first interactive guide for crossing Karachi through entry gates, major roads, junctions, landmarks, districts, and last-mile checks.",
     applicationName: "Understand Karachi",
+    manifest: "/site.webmanifest",
     keywords: ["Karachi map", "Karachi districts", "Karachi roads", "Karachi guide", "Sindh", "Pakistan"],
-    icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+    icons: {
+      icon: [{ url: "/favicon.svg", type: "image/svg+xml" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+      shortcut: "/favicon.svg",
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    },
     openGraph: {
       title: "Understand Karachi",
-      description: "Samandar neeche. Shehar samajh aa gaya.",
+      description: "Karachi ke gates, routes aur junctions ko ek clear mental map mein samjhein.",
       type: "website",
       images: [{ url: socialImage, width: 1200, height: 630, alt: "Understand Karachi — Sea below. City decoded." }],
     },
-    twitter: { card: "summary_large_image", title: "Understand Karachi", description: "Samandar neeche. Shehar samajh aa gaya.", images: [socialImage] },
+    twitter: { card: "summary_large_image", title: "Understand Karachi", description: "Karachi ke gates, routes aur junctions ko ek clear mental map mein samjhein.", images: [socialImage] },
   };
 }
 
