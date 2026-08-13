@@ -6,7 +6,6 @@ import {
   ArrowRight,
   ChevronDown,
   ExternalLink,
-  Eye,
   MapPin,
   Menu,
   Moon,
@@ -24,7 +23,6 @@ import KarachiMap, { type MapChapter } from "./KarachiMap";
 import {
   districts,
   emergencies,
-  exampleJourneys,
   mainCorridors,
   normaliseSearchTerm,
   photoManifest,
@@ -48,10 +46,8 @@ import {
 type StoryStep = {
   id: string;
   act: ActKey;
-  eyebrow: string;
   title: string;
-  body: string;
-  remember: string;
+  body?: string;
   map: MapChapter;
   detail?: React.ReactNode;
 };
@@ -67,6 +63,14 @@ const districtCameras: Record<string, { center: [number, number]; zoom: number }
 };
 
 const ACT_KEYS: readonly ActKey[] = ["orient", "districts", "movement", "systems", "apply"];
+const JOURNEY_IDS: readonly JourneyId[] = [
+  "airport-to-saddar",
+  "surjani-to-numaish",
+  "nipa-to-tower",
+  "korangi-to-numaish",
+  "orangi-to-tower",
+  "port-to-port",
+];
 const districtStoryOrder = ["south", "keamari", "west", "central", "east", "korangi", "malir"] as const;
 const EXPLORE_CHAPTER: MapChapter = { id: "explore", mode: "explore", center: [67.08, 24.93], zoom: 9.2, pitch: 25 };
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
@@ -156,7 +160,7 @@ function PhotoPause({ photoId, copy }: { photoId: PhotoStoryId; copy: SiteCopy }
         style={{ objectPosition: photo?.objectPosition }}
       />
       <figcaption>
-        <div><span>{copy.common.cityPause}</span><h3>{content.title}</h3><p>{content.body}</p></div>
+        <h3>{content.title}</h3>
         {photo && (
           <a href={photo.sourcePage} target="_blank" rel="noreferrer" aria-label={`${copy.common.photoCreditAria}: ${photo.creator}, ${photo.license}. ${copy.common.externalLinkHint}`}>
             <span className="credit-text" lang="en">{photo.creator} · {photo.license}</span> <ExternalLink size={13} aria-hidden="true" />
@@ -196,19 +200,17 @@ export default function StoryExperience() {
       act: ActKey,
       map: MapChapter,
       detail?: React.ReactNode,
-    ): StoryStep => ({ id, act, ...fixed[id], map, detail });
+    ): StoryStep => ({ id, act, title: fixed[id].title, body: fixed[id].body, map, detail });
 
-    const districtSteps: StoryStep[] = districtStoryOrder.flatMap((districtId, index) => {
+    const districtSteps: StoryStep[] = districtStoryOrder.flatMap((districtId) => {
       const district = districts.find((item) => item.id === districtId);
       if (!district) return [];
       const narrative = copy.districtNarrative[district.id];
       return [{
         id: `district-${district.id}`,
         act: "districts",
-        eyebrow: copy.story.districtProgress(index + 1),
         title: district.name,
         body: narrative.body,
-        remember: narrative.remember,
         map: {
           id: `district-${district.id}`,
           mode: "districts",
@@ -224,23 +226,19 @@ export default function StoryExperience() {
               <span>{copy.story.people(district.population2023.toLocaleString("en-US"))}</span>
             </div>
             <div className="subdivision-list">{district.subdivisions.map((item) => <span key={item}>{item}</span>)}</div>
-            <p><strong>{copy.story.attachTo}</strong> {district.anchor} · {district.mainCorridor}</p>
+            <p>{district.anchor} · {district.mainCorridor}</p>
           </div>
         ),
       }];
     });
 
-    const corridorSteps: StoryStep[] = corridorStoryConfig.flatMap((config, index) => {
+    const corridorSteps: StoryStep[] = corridorStoryConfig.flatMap((config) => {
       const corridor = mainCorridors.find((item) => item.id === config.dataId);
       if (!corridor) return [];
-      const narrative = copy.corridorNarrative[config.dataId];
       return [{
         id: `corridor-${corridor.id}`,
         act: "movement",
-        eyebrow: copy.story.spineProgress(index + 1),
         title: corridor.name,
-        body: narrative.body,
-        remember: narrative.remember,
         map: {
           id: `corridor-${corridor.id}`,
           mode: "corridors",
@@ -444,19 +442,9 @@ export default function StoryExperience() {
         <div className="hero-noise" />
         <IntroWorld reducedMotion={reducedMotion} />
         <div className="hero-copy">
-          <span className="kicker">{copy.hero.kicker}</span>
-          <h1>{copy.hero.titleBeforeEmphasis}<br /><em>{copy.hero.titleEmphasis}</em></h1>
-          <p>{copy.hero.body}</p>
+          <h1>{copy.hero.title}</h1>
           <a href="#story" className="start-button"><span>{copy.hero.start}</span><ArrowDown size={18} /></a>
         </div>
-        <div className="hero-coordinate">24.8607° N<br />67.0011° E</div>
-        <div className="hero-promise"><span>{copy.hero.promiseNumber}</span><p>{copy.hero.promise}</p></div>
-      </section>
-
-      <section className="opening-statement">
-        <span>{copy.opening.eyebrow}</span>
-        <h2>{copy.opening.title}</h2>
-        <p>{copy.opening.body}</p>
       </section>
 
       <section className="story" id="story" ref={storyRef}>
@@ -468,11 +456,9 @@ export default function StoryExperience() {
           {storySteps.map((step, index) => (
             <article className={`story-step ${activeId === step.id ? "is-active" : ""}`} data-story-step id={`step-${step.id}`} key={step.id}>
               <div className="step-card">
-                <span className="step-eyebrow">{step.eyebrow}</span>
                 <h2>{step.title}</h2>
-                <p>{step.body}</p>
+                {step.body && <p>{step.body}</p>}
                 {step.detail}
-                <div className="remember"><Eye size={17} /><div><span>{copy.common.keepThis}</span><b>{step.remember}</b></div></div>
               </div>
               {index === 2 && <PhotoPause photoId="empress-market" copy={copy} />}
               {step.id === "district-south" && <PhotoPause photoId="mazar-e-quaid" copy={copy} />}
@@ -485,11 +471,11 @@ export default function StoryExperience() {
       </section>
 
       <section className="journeys-section">
-        <div className="section-heading"><span>{copy.journeys.eyebrow}</span><h2>{copy.journeys.title}</h2><p>{copy.journeys.intro}</p></div>
+        <div className="section-heading"><h2>{copy.journeys.title}</h2></div>
         <div className="journey-grid">
-          {exampleJourneys.map((journey, index) => {
-            const item = copy.journeys.items[journey.id as JourneyId];
-            return <article key={journey.id}><span>{String(index + 1).padStart(2, "0")}</span><h3>{item.title}</h3><div>{item.steps.map((step) => <p key={step}><ArrowRight size={14} />{step}</p>)}</div><b>{item.note}</b></article>;
+          {JOURNEY_IDS.map((journeyId) => {
+            const item = copy.journeys.items[journeyId];
+            return <article key={journeyId}><p className="journey-route">{item.steps[0]}</p></article>;
           })}
         </div>
       </section>
@@ -497,7 +483,6 @@ export default function StoryExperience() {
       <section className="explorer-section" id="explore">
         <div className="explorer-map"><KarachiMap chapter={EXPLORE_CHAPTER} reducedMotion={reducedMotion} selectedPlace={selectedPlace} interactive locale={locale} /></div>
         <div className="explorer-panel">
-          <span className="section-label">{copy.explorer.eyebrow}</span>
           <h2>{copy.explorer.title}</h2>
           <label className="search-box"><span className="sr-only">{copy.explorer.searchLabel}</span><Search size={19} aria-hidden="true" /><input ref={searchInputRef} aria-label={copy.explorer.searchLabel} aria-keyshortcuts="/" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={copy.explorer.placeholder} /><kbd>/</kbd></label>
           <div className="result-list">
@@ -512,31 +497,31 @@ export default function StoryExperience() {
       </section>
 
       <section className="safety-section">
-        <div className="safety-copy"><span>{copy.safety.eyebrow}</span><h2>{copy.safety.title}</h2><p>{copy.safety.body}</p><div className="safety-rules">{copy.safety.rules.map((rule) => <p key={rule}>{rule}</p>)}</div></div>
-        <div className="emergency-card"><span>{copy.safety.saveOffline}</span><h3>{copy.safety.emergencyTitle}</h3>{emergencies.map((item) => <a key={item.id} href={`tel:${item.number}`}><span>{copy.safety.serviceLabels[item.id] ?? item.service}</span><b>{item.number}</b></a>)}<small>{copy.safety.verifiedNote}</small></div>
+        <div className="safety-copy"><h2>{copy.safety.title}</h2><div className="safety-rules">{copy.safety.rules.map((rule) => <p key={rule}>{rule}</p>)}</div></div>
+        <div className="emergency-card"><h3>{copy.safety.emergencyTitle}</h3>{emergencies.map((item) => <a key={item.id} href={`tel:${item.number}`}><span>{copy.safety.serviceLabels[item.id] ?? item.service}</span><b>{item.number}</b></a>)}<small>{copy.safety.verifiedNote}</small></div>
       </section>
 
       <section className="quiz-section">
-        <div className="section-heading light"><span>{copy.quiz.eyebrow}</span><h2>{copy.quiz.title}</h2></div>
+        <div className="section-heading light"><h2>{copy.quiz.title}</h2></div>
         <div className="quiz-grid">
-          {copy.quiz.questions.map((quiz, index) => {
+          {copy.quiz.questions.map((quiz) => {
             const selectedAnswer = quizAnswers[quiz.id];
-            return <article key={quiz.id} role="group" aria-labelledby={`${quiz.id}-label`}><span>{String(index + 1).padStart(2, "0")}</span><h3 id={`${quiz.id}-label`}>{quiz.question}</h3>{quiz.options.map((option) => {
+            return <article key={quiz.id} role="group" aria-labelledby={`${quiz.id}-label`}><h3 id={`${quiz.id}-label`}>{quiz.question}</h3>{quiz.options.map((option) => {
               const isSelected = selectedAnswer === option.id;
               const isCorrect = option.id === quiz.answerId;
-              return <button key={option.id} aria-pressed={isSelected} className={isSelected ? (isCorrect ? "correct" : "wrong") : ""} onClick={() => setQuizAnswers((value) => ({ ...value, [quiz.id]: option.id }))}>{option.label}{isSelected && (isCorrect ? " ✓" : ` ${copy.quiz.wrongSuffix}`)}</button>;
+              return <button key={option.id} aria-pressed={isSelected} className={isSelected ? (isCorrect ? "correct" : "wrong") : ""} onClick={() => setQuizAnswers((value) => ({ ...value, [quiz.id]: option.id }))}>{option.label}{isSelected && isCorrect ? " ✓" : ""}</button>;
             })}<p className="quiz-feedback" role="status">{selectedAnswer ? (selectedAnswer === quiz.answerId ? copy.quiz.correct : copy.quiz.wrongFeedback) : ""}</p></article>;
           })}
         </div>
       </section>
 
       <section className="cheat-sheet">
-        <div className="cheat-top"><div><span>{copy.cheatSheet.eyebrow}</span><h2>{copy.cheatSheet.title}</h2></div><button onClick={() => window.print()}><Printer size={17} />{copy.cheatSheet.print}</button></div>
+        <div className="cheat-top"><div><h2>{copy.cheatSheet.title}</h2></div><button onClick={() => window.print()}><Printer size={17} />{copy.cheatSheet.print}</button></div>
         <div className="cheat-grid">{copy.cheatSheet.cards.map((card) => <div key={card.label}><span>{card.label}</span><p>{card.body}</p></div>)}</div>
       </section>
 
       <footer>
-        <div className="footer-main"><div className="footer-brand"><span>UK</span><h2>Understand<br />Karachi</h2><p>{copy.footer.description}</p></div><div className="source-columns"><div><span>{copy.footer.primarySources}</span>{sources.slice(0, Math.ceil(sources.length / 2)).map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer" lang="en">{source.label}<ExternalLink size={12} /></a>)}</div><div><span>{copy.footer.moreVerification}</span>{sources.slice(Math.ceil(sources.length / 2)).map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer" lang="en">{source.label}<ExternalLink size={12} /></a>)}</div></div></div>
+        <div className="footer-main"><div className="footer-brand"><span>UK</span><h2>Understand<br />Karachi</h2></div><nav className="source-list" aria-label={`${copy.footer.primarySources} / ${copy.footer.moreVerification}`}>{sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer" lang="en">{source.label}<ExternalLink size={12} /></a>)}</nav></div>
         <div className="footer-bottom"><span>{copy.footer.reviewed}</span><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" lang="en">{copy.footer.mapAttribution}</a><a href="#top">{copy.footer.backToTop} <ChevronDown size={14} /></a></div>
       </footer>
     </main>

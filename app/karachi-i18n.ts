@@ -58,21 +58,16 @@ export type QuizOptionId =
   | "separate-ports";
 
 export interface LessonCopy {
-  readonly eyebrow: string;
   readonly title: string;
   readonly body: string;
-  readonly remember: string;
 }
 
 export interface NarrativeCopy {
   readonly body: string;
-  readonly remember: string;
 }
 
 export interface JourneyCopy {
-  readonly title: string;
   readonly steps: readonly string[];
-  readonly note: string;
 }
 
 export interface QuizQuestionCopy {
@@ -102,8 +97,6 @@ export interface SiteCopy {
     readonly toggleMotionTitle: string;
     readonly motion: string;
     readonly still: string;
-    readonly keepThis: string;
-    readonly cityPause: string;
     readonly selected: string;
     readonly clearSelectedAria: string;
     readonly photoCreditAria: string;
@@ -111,28 +104,15 @@ export interface SiteCopy {
   };
   readonly acts: Record<ActKey, string>;
   readonly hero: {
-    readonly kicker: string;
-    readonly titleBeforeEmphasis: string;
-    readonly titleEmphasis: string;
-    readonly body: string;
-    readonly start: string;
-    readonly promiseNumber: string;
-    readonly promise: string;
-  };
-  readonly opening: {
-    readonly eyebrow: string;
     readonly title: string;
-    readonly body: string;
+    readonly start: string;
   };
   readonly story: {
     readonly fixed: Record<FixedLessonId, LessonCopy>;
-    readonly districtProgress: (current: number, total?: number) => string;
-    readonly spineProgress: (current: number, total?: number) => string;
     readonly people: (formattedPopulation: string) => string;
     readonly districtsStat: string;
     readonly subdivisionsStat: string;
     readonly divisionStat: string;
-    readonly attachTo: string;
     readonly dataNote: string;
     readonly hierarchy: readonly string[];
     readonly operating: string;
@@ -143,15 +123,12 @@ export interface SiteCopy {
   readonly districtNarrative: Record<DistrictId, NarrativeCopy>;
   readonly corridorNarrative: Record<StoryCorridorId, NarrativeCopy>;
   readonly glossaryMeanings: Record<"Chowrangi" | "Chowk" | "Mor" | "Pul" | "Phatak" | "Naka", string>;
-  readonly photos: Record<PhotoStoryId, { readonly title: string; readonly body: string; readonly alt: string }>;
+  readonly photos: Record<PhotoStoryId, { readonly title: string; readonly alt: string }>;
   readonly journeys: {
-    readonly eyebrow: string;
     readonly title: string;
-    readonly intro: string;
     readonly items: Record<JourneyId, JourneyCopy>;
   };
   readonly explorer: {
-    readonly eyebrow: string;
     readonly title: string;
     readonly searchLabel: string;
     readonly placeholder: string;
@@ -159,31 +136,24 @@ export interface SiteCopy {
     readonly kindLabels: Record<"district" | "corridor" | "place", string>;
   };
   readonly safety: {
-    readonly eyebrow: string;
     readonly title: string;
-    readonly body: string;
     readonly rules: readonly string[];
-    readonly saveOffline: string;
     readonly emergencyTitle: string;
     readonly verifiedNote: string;
     readonly serviceLabels: Record<string, string>;
   };
   readonly quiz: {
-    readonly eyebrow: string;
     readonly title: string;
     readonly questions: readonly QuizQuestionCopy[];
     readonly correct: string;
-    readonly wrongSuffix: string;
     readonly wrongFeedback: string;
   };
   readonly cheatSheet: {
-    readonly eyebrow: string;
     readonly title: string;
     readonly print: string;
     readonly cards: readonly { readonly label: string; readonly body: string }[];
   };
   readonly footer: {
-    readonly description: string;
     readonly primarySources: string;
     readonly moreVerification: string;
     readonly reviewed: string;
@@ -212,8 +182,6 @@ const romanUrdu = {
     toggleMotionTitle: "Animation on ya off karein",
     motion: "Animation",
     still: "Band",
-    keepThis: "Yeh yaad rakhein",
-    cityPause: "Shehar ka ek manzar",
     selected: "Select hua",
     clearSelectedAria: "Selected jagah hata dein",
     photoCreditAria: "Tasveer ka source aur credit",
@@ -227,102 +195,65 @@ const romanUrdu = {
     apply: "Amal",
   },
   hero: {
-    kicker: "Scroll se banta zehni naqsha · کراچی",
-    titleBeforeEmphasis: "Karachi ko ratne ki zarurat nahi.",
-    titleEmphasis: "Bas samajhne ki hai.",
-    body: "Aap ko sirf samandar, saat zilay, paanch bari road spines aur chand mashhoor landmarks chahiye. Ek dafa scroll karein aur dekhein ke poora shehar kaise jurta hai.",
-    start: "Bilkul zero se shuru karein",
-    promiseNumber: "01",
-    promise: "Aakhir tak har anjaan ilaqay ka naam aap ke zehni naqshay mein kahin na kahin fit ho jayega.",
-  },
-  opening: {
-    eyebrow: "SAB SE ZAROORI QAIDA",
-    title: "Samandar neeche. Purana shehar neeche-baen. Airport daen. M-9 upar-daen.",
-    body: "Yeh compass zehan mein rakhein, phir Karachi ilaqon ke uljhay huay naam nahi lagega.",
+    title: "Karachi ko zero se samjhein.",
+    start: "Shuru karein",
   },
   story: {
     fixed: {
       compass: {
-        eyebrow: "Sabaq 01 · Compass",
-        title: "Sab se pehle samandar ko neeche rakhein.",
-        body: "Karachi ka rukh Arabian Sea ki taraf hai. Purana markaz aur pehla port south-west mein hain. Wahan se shehar andar ki taraf phailta hai—north mein M-9, east mein airport aur N-5, aur west mein Hub aur Balochistan.",
-        remember: "Samandar neeche · purana shehar neeche-baen · airport daen · M-9 upar-daen.",
+        title: "Samandar south mein hai.",
+        body: "Old city south-west, airport east, M-9 north-east aur Hub west.",
       },
       scale: {
-        eyebrow: "Sabaq 02 · Phelao",
-        title: "Karachi ki sarhad, bane huay shehar se kaafi bari hai.",
-        body: "Karachi Division mein lagataar bana hua shehar bhi aata hai aur us ke gird bohat bara dehati aur peri-urban hissa bhi. Isi liye official Karachi ka outline un ghani sarkon se kaafi bara dikhta hai jinhein aksar log Karachi samajhte hain.",
-        remember: "3,527 km² · 20,382,881 log · 92.57% shehri abadi",
+        title: "Karachi Division 3,527 km² hai.",
+        body: "Is mein ghana shehar aur bara rural/peri-urban hissa dono shamil hain.",
       },
       anchors: {
-        eyebrow: "Sabaq 03 · Chaar anchors",
-        title: "Naam yaad karne se pehle ek triangle banayein.",
-        body: "Tower/Saddar ko puranay markaz mein rakhein, us ke paas Karachi Port, east mein Jinnah Airport, aur Sohrab Goth ko us jagah rakhein jahan se M-9 shehar se bahar nikalti hai. Har naya naam in tarafon mein se kisi ek se jor sakte hain.",
-        remember: "Purana markaz · airport · M-9 gateway · port ka kinara.",
+        title: "4 anchors: Saddar/Tower, Karachi Port, Airport aur Sohrab Goth.",
+        body: "Har nayi jagah ko qareebi anchor se jorein.",
       },
       layers: {
-        eyebrow: "Zilon se pehle",
-        title: "Shehar ek hai, magar us ke naqshay kai hain.",
-        body: "Revenue district, municipal town, cantonment, police jurisdiction aur neighbourhood ek hi jagah ko alag tareeqay se cover kar sakte hain. Yeh mukhtalif jawab nahi—har layer ek alag sawal ka jawab deti hai.",
-        remember: "District ≠ town ≠ neighbourhood ≠ cantonment.",
+        title: "District, town aur neighbourhood alag layers hain.",
+        body: "Ek jagah har layer mein alag hudood rakh sakti hai.",
       },
       names: {
-        eyebrow: "Naam ka dhoka",
-        title: "Ek mashhoor naam chaar alag cheezen ho sakta hai.",
-        body: "Malir, Korangi, Saddar aur Keamari ka matlab context ke mutabiq alag administrative ya rozmarra jagah ho sakta hai. Guru Mandir directions mein junction/locality hai—saat zilon mein se koi district nahi.",
-        remember: "Hamesha poochein: district, town, neighbourhood, junction ya station?",
+        title: "Malir ya Korangi kehne par context poochein.",
+        body: "District, town, neighbourhood, junction ya station? Guru Mandir district nahi.",
       },
       "movement-intro": {
-        eyebrow: "Ab bari sarkein",
-        title: "District tarteeb batate hain. Corridors safar samjhate hain.",
-        body: "Sainkron ilaqay ratne ke bajaye paanch radial spines seekhein to Karachi bohat asaan ho jata hai. Aksar local safar pehle kisi spine par aata hai, phir mashhoor landmark se guzarta hai, aur aakhir mein last mile hoti hai.",
-        remember: "Sab se qareeb spine → mashhoor anchor → last mile.",
+        title: "Safar 5 bari roads se samjhein.",
+        body: "Nearest spine → anchor → last mile.",
       },
       "landmark-language": {
-        eyebrow: "Directions kaise sunai deti hain",
-        title: "Karachi junctions ki zubaan bolta hai.",
-        body: "Log aksar route ko street numbers se nahi, pehchani hui jagahon ki kadi se samjhate hain. Tower, Numaish, Nursery, Karsaz, NIPA, Malir 15 aur Korangi Crossing navigation ki grammar hain.",
-        remember: "Anchors kis tarteeb mein aa rahe hain, us par dhyan dein.",
+        title: "Directions landmarks ki chain hoti hain.",
+        body: "Tower, Numaish, Nursery, Karsaz aur NIPA ki tarteeb sunein.",
       },
       transit: {
-        eyebrow: "Public transport · 13 Aug 2026 ko verify hua",
-        title: "Chalti lines solid hain. Aanay wali lines dashed hain.",
-        body: "Green aur Orange BRT abhi chalti hain; in ke saath People’s, Pink, EV aur doosri bus services bhi hain. Red aur Yellow BRT abhi development mein hain. Proposed modern KCR abhi chalti hui citywide metro loop nahi.",
-        remember: "Route map waqt ke saath badalta hai—safar se pehle dobara check karein.",
+        title: "Chal rahi aur ban rahi lines.",
+        body: "Green/Orange aur People’s/Pink/EV services chal rahi hain; Red/Yellow development mein aur KCR proposed hai.",
       },
       gateways: {
-        eyebrow: "Shehar ke darwazay",
-        title: "Ek airport, do ports aur rail ke kai darwazay.",
-        body: "Jinnah Airport markaz se east mein hai. Karachi Cantt intercity rail ka main arrival point hai. Karachi Port puranay shehar ke paas hai; Port Qasim south-east mein bohat door ek alag industrial port hai.",
-        remember: "Dono ports ek doosray ke paas nahi hain.",
+        title: "Airport east; Karachi Port south-west; Port Qasim far south-east.",
+        body: "Karachi Cantt main intercity rail station hai.",
       },
       systems: {
-        eyebrow: "Nazar na anay wala infrastructure",
-        title: "Karachi ek shehar hai—magar ek service authority nahi.",
-        body: "Pani, bijli, gas, drainage, roads, kachra aur transit alag public bodies sambhalti hain. Neeche jo district ho, us se alag road NHA, Sindh, KMC, KDA ya cantonment ki ho sakti hai.",
-        remember: "Complaint ke liye sirf district nahi, asset ka zimmedar idara maloom karein.",
+        title: "Har service ka alag zimmedar idara hai.",
+        body: "Complaint se pehle asset owner check karein.",
       },
       weather: {
-        eyebrow: "Mausam network badal deta hai",
-        title: "Faasla aur travel time ek cheez nahi.",
-        body: "Traffic, construction aur tez monsoon barish chhota safar bhi badal sakti hai. Lyari aur Malir drainage systems bhi hain; underpasses, causeways aur neechay crossings doosri jagah ke pani se bhi bottleneck ban sakte hain.",
-        remember: "Jama pani ki gehrai ya rawani maloom na ho to us mein kabhi na jayein.",
+        title: "Faasla travel time nahi batata.",
+        body: "Traffic, construction aur barish route badal sakte hain.",
       },
       address: {
-        eyebrow: "Address parhna seekhein",
-        title: "Sirf ilaqay ka naam nahi, paanch cheezen poochein.",
-        body: "Kaam ka Karachi address ilaqa ya society, block/sector/phase, road ya junction, qareebi mashhoor landmark aur map pin ko jorta hai. Administrative district likha hona zaroori nahi.",
-        remember: "Ilaqa + block + road + landmark + pin.",
+        title: "Address = ilaqa + block + road + landmark + pin.",
+        body: "Sirf ilaqay ka naam kaafi nahi.",
       },
     },
-    districtProgress: (current: number, total = 7) => `${String(current).padStart(2, "0")} / ${String(total).padStart(2, "0")} zilay`,
-    spineProgress: (current: number, total = 5) => `${String(current).padStart(2, "0")} / ${String(total).padStart(2, "0")} spines`,
     people: (formattedPopulation: string) => `${formattedPopulation} log`,
     districtsStat: "zilay",
     subdivisionsStat: "subdivisions",
     divisionStat: "Karachi Division",
-    attachTo: "Is se jor kar yaad rakhein:",
-    dataNote: "Diye gaye area Census 2023 ke statistical figures hain. Orientation overlay OSM administrative geometry follow karta hai, jismein samandari ya door ke ilaqay bhi shamil ho sakte hain; drawing dekh kar area na napain.",
+    dataNote: "Areas Census 2023 ke figures hain; OSM overlay sirf orientation ke liye hai.",
     hierarchy: ["Sindh", "Karachi Division", "7 zilay", "31 subdivisions", "area / block / sector"],
     operating: "Chal rahi hai",
     developing: "Ban rahi hai",
@@ -331,54 +262,42 @@ const romanUrdu = {
   },
   districtNarrative: {
     central: {
-      body: "Beech se north ki taraf chhota magar bohat ghana district: purane grid walay ilaqay jo old centre aur northern edge ke darmiyan hain.",
-      remember: "North Karachi, New Karachi aur North Nazimabad miltay-jultay naam hain, magar teen alag ilaqay hain.",
+      body: "Liaquatabad, Nazimabad, New Karachi aur North Karachi ka ghana middle-north; miltay-jultay naam alag ilaqay hain.",
     },
     east: {
-      body: "Inner city ke east mein taleem aur services ka belt: Gulshan, Johar, universities, hospitals aur M-9 gateway yahan milte hain.",
-      remember: "Gulshan, Johar aur Scheme 33 bohat baray rozmarra labels hain; address ke saath block, road ya landmark bhi chahiye.",
+      body: "Gulshan, Johar, universities, hospitals aur M-9 gateway; address ke saath block ya road zaroor lein.",
     },
     south: {
-      body: "Tareekhi aur commercial south: old city markets, Saddar, financial core, Lyari, Clifton aur seafront.",
-      remember: "Clifton aur DHA location ke mashhoor naam hain, lekin cantonment aur district administration alag layers hain.",
+      body: "Old city, Saddar, Lyari, Clifton aur seafront ka historic-commercial south.",
     },
     west: {
-      body: "Pahari aur tezi se barhta north-west: Orangi aur Manghopir dense centre se aagay hain, jahan safar chand passes aur junctions se guzarta hai.",
-      remember: "Keamari alag district bana to West ki hudood badlein; purane addresses mein ab bhi pehle wala Karachi West mil sakta hai.",
+      body: "Orangi aur Manghopir ka hilly north-west; routes chand passes aur junctions se guzarte hain.",
     },
     keamari: {
-      body: "West ka port aur industry district: harbour, SITE, Baldia aur western beaches ek lambi hud mein aate hain.",
-      remember: "Keamari district bhi ho sakta hai, harbour ka neighbourhood bhi, ya port area bhi—poochein kis jagah ki baat ho rahi hai.",
+      body: "Harbour, SITE, Baldia aur western beaches; ‘Keamari’ district, neighbourhood ya port area ho sakta hai.",
     },
     korangi: {
-      body: "South-east ka residential aur industrial belt: Shah Faisal aur Model Colony airport approach ke paas, jabke Korangi aur Landhi heavy industry ki taraf phailte hain.",
-      remember: "Korangi district, Korangi neighbourhood se bara hai; Landhi, Shah Faisal aur Model Colony bhi isi district mein hain.",
+      body: "Shah Faisal/Model Colony se Korangi/Landhi industry tak south-east belt; district neighbourhood se bara hai.",
     },
     malir: {
-      body: "Karachi ka bohat bara eastern aur north-eastern envelope: airport, purani Malir abadion, gaon, nayi housing, Steel Town aur Port Qasim tak.",
-      remember: "Area mein Malir sab se bara district hai; route mein ‘Malir’ aksar Malir 15/Halt wali built-up side hota hai, poora district nahi.",
+      body: "Airport se gaon, Steel Town aur Port Qasim tak bara east; route mein ‘Malir’ aksar Malir 15/Halt hota hai.",
     },
   },
   corridorNarrative: {
     "shahrah-e-pakistan": {
       body: "Inner city se Central aur M-9 gateway tak janay wali main northbound line.",
-      remember: "South ki taraf naam Numaish ke qareeb aate jate hain; north ki taraf aakhir Sohrab Goth aur Super Highway milte hain.",
     },
     "shahrah-e-faisal": {
       body: "Airport ko centre se jornay wali Karachi ki sab se mashhoor spine; railway ke saath offices, hotels aur bari cross-roads ko milati hai.",
-      remember: "Sirf ek east–west road yaad rakhni ho to Shahrah-e-Faisal rakhein: ek taraf airport, doosri taraf Saddar/Metropole.",
     },
     "university-road": {
       body: "East Karachi ki universities, hospitals aur civic jagahon ki spine, jo inner city se Safoora ki taraf jati hai.",
-      remember: "Hasan Square aur NIPA is ke do mazboot anchors hain; east-side ke bohat se routes in mein se kisi ek ko chhoote hain.",
     },
     "korangi-spine": {
       body: "Central Karachi se Korangi hotay huay Landhi tak lambi industrial aur residential approach.",
-      remember: "Chowrangi milestones hain: Crossing, Singer aur Dawood batate hain ke aap Korangi/Landhi mein kitna andar aa gaye.",
     },
     "mauripur-hub-river": {
       body: "Western freight aur neighbourhood approach jo old core ko Keamari district, Baldia aur Balochistan side se jorti hai.",
-      remember: "Yahan port traffic heavy hota hai; naqshay par qareeb jagah bhi pohanchne mein der laga sakti hai.",
     },
   },
   glossaryMeanings: {
@@ -391,108 +310,65 @@ const romanUrdu = {
   },
   photos: {
     "empress-market": {
-      title: "Saddar ek ilaqa bhi hai, subdivision bhi—aur shehar ka ek khaas ehsaas bhi.",
-      body: "Purana commercial core naye musafir ko ghani, ek doosray se judi landmarks ki pehli kadi deta hai.",
+      title: "Empress Market, Saddar ka historic commercial core.",
       alt: "Saddar Karachi mein Empress Market ki tareekhi imarat",
     },
     "mazar-e-quaid": {
-      title: "Ek landmark shehar ki poori taraf samjha sakta hai.",
-      body: "Mazar-e-Quaid old core, Jamshed side aur northbound spine ke darmiyani mor ke paas hai.",
+      title: "Mazar-e-Quaid: old core aur northbound spine ke darmiyan.",
       alt: "Bagh se nazar aata Mazar-e-Quaid ka safed sang-e-marmar maqbara",
     },
     "jinnah-airport": {
-      title: "East ka gateway",
-      body: "Bilkul sahi terminal pin chunein: Airport, Star Gate aur Jinnah Terminal ek hi destination nahi.",
+      title: "Airport, Star Gate aur Jinnah Terminal alag pins hain.",
       alt: "Karachi ke Jinnah International Airport ka terminal",
     },
     "karachi-port": {
-      title: "Shehar ki shuruat harbour ke paas hui",
-      body: "Karachi Port old city ke paas barha; Port Qasim bohat door south-east ka alag industrial landscape hai.",
+      title: "Karachi Port old city ke paas; Port Qasim far south-east.",
       alt: "Karachi Port ke pani mein jahaz aur harbour cranes",
     },
     "clifton-skyline": {
-      title: "Coast sirf destination nahi—compass bhi hai",
-      body: "Clifton skyline Arabian Sea ki taraf dekhti hai; yahi fixed southern edge baqi shehar ko samajhna asaan banata hai.",
+      title: "Clifton coast Karachi ka southern edge hai.",
       alt: "Arabian Sea ke saath Clifton Karachi ki apartment skyline",
     },
   },
   journeys: {
-    eyebrow: "Model ko istemal karein",
-    title: "Chhay safar. Ek hi tareeqa.",
-    intro: "Samandar se simt samjhein. Spine join karein. Anchor par transfer karein. Aakhri last mile poori karein.",
+    title: "6 asal safar",
     items: {
       "airport-to-saddar": {
-        title: "Jinnah International Airport → Saddar",
-        steps: [
-          "Airport se main city spine par niklein — Malir Halt/Natha Khan bahar wali side ke markers hain; Karsaz, Nursery aur FTC ka matlab centre qareeb aa raha hai.",
-          "Metropole ke aas paas exact Saddar stop ke liye utarein — Saddar ek pin nahi; Empress, Regal, Lucky Star ya exact hotel/office ka naam dein.",
-        ],
-        note: "Shahrah-e-Faisal ek hi road mein samjha deti hai ke airport central Karachi se kaise jurta hai.",
+        steps: ["Airport → Shahrah-e-Faisal → Karsaz → Nursery/FTC → Metropole → exact Saddar stop"],
       },
       "surjani-to-numaish": {
-        title: "Surjani Town → Numaish / Mazar-e-Quaid",
-        steps: [
-          "North–centre axis par andar ki taraf chalein — Nagan, Ayesha Manzil, Liaquatabad aur Teen Hatti inner city tak aane wale milestones hain.",
-          "Numaish hub par safar mukammal karein — Numaish Mazar ke paas hai; yahan se Tower ya east mein University Road ja sakte hain.",
-        ],
-        note: "Central Karachi north–south seedhi ki tarah hai, jis ke kaam ke paidan mashhoor junctions hain.",
+        steps: ["Surjani → Nagan → Ayesha Manzil → Liaquatabad → Teen Hatti → Numaish"],
       },
       "nipa-to-tower": {
-        title: "NIPA Chowrangi → Tower",
-        steps: [
-          "University Road par andar ki taraf chalein — Hasan Square aur Jail Chowrangi East Karachi se inner city tak progress dikhate hain.",
-          "Numaish se M.A. Jinnah Road par Tower tak jayein — Tibet Centre aur Jama Cloth old-city milestones hain; Tower port-side ka aakhri anchor hai.",
-        ],
-        note: "NIPA → Numaish → Tower east se old city ka sab se asaan chain hai.",
+        steps: ["NIPA → Hasan Square → Jail Chowrangi → Numaish → M.A. Jinnah Road → Tower"],
       },
       "korangi-to-numaish": {
-        title: "Korangi Crossing → Numaish",
-        steps: [
-          "Korangi spine par centre ki taraf aayein — Qayyumabad aur Kala Pul industrial Korangi aur central Karachi ke bridge points hain.",
-          "Centre-side cross connection lein — FTC/Nursery par Korangi approach main airport–centre spine se milti hai.",
-        ],
-        note: "Korangi chand river/road crossings se centre se jurta hai, is liye in crossings ke naam poora safar samjhate hain.",
+        steps: ["Korangi Crossing → Qayyumabad → Kala Pul → FTC/Nursery → Numaish"],
       },
       "orangi-to-tower": {
-        title: "Orangi No. 5 → Tower",
-        steps: [
-          "North-west se kisi named pass ke zariye niklein — Banaras main hinge hai; Board Office aur SITE aagay ki alag directions hain.",
-          "West se old core ki taraf aayein — Gulbai/ICI aur Tower central Karachi ki freight-heavy western side samjhate hain.",
-        ],
-        note: "West samajhne ke liye pehle yeh maloom karein ke safar Banaras, Board Office, Manghopir ya Hub River mein se kaunsa pass use karta hai.",
+        steps: ["Orangi No. 5 → Banaras → SITE/Gulbai → ICI → Tower"],
       },
       "port-to-port": {
-        title: "Port Qasim → Karachi Port / Keamari",
-        steps: [
-          "National Highway se far-eastern port chhorein — Steel Town, Quaidabad, Malir 15 aur Malir Halt continuous city ki taraf wapsi ginte hain.",
-          "Metropolitan centre cross karein — airport–centre spine Saddar ki taraf lati hai, phir old-city/harbour approach aati hai.",
-          "Western harbour side par pohanchein — Tower aur Keamari western port system hain, Port Qasim se kai kilometre door.",
-        ],
-        note: "Karachi ke do baray port worlds built-up metropolis ke bilkul mukhtalif siron par hain.",
+        steps: ["Port Qasim → N-5 → Steel Town → Quaidabad → Malir 15/Halt → Shahrah-e-Faisal → Saddar → Tower/Keamari"],
       },
     },
   },
   explorer: {
-    eyebrow: "Yeh jagah kahan hai…?",
-    title: "Naam ko shehar ke naqshay se jorein.",
+    title: "Jagah search karein",
     searchLabel: "Karachi ki jagah, district ya road search karein",
     placeholder: "Guru Mandir, NIPA, Malir 15 try karein…",
-    noResults: "Curated list mein abhi match nahi mila. Kisi ilaqay, junction ya gateway ka naam try karein.",
+    noResults: "Match nahi mila. Doosra naam try karein.",
     kindLabels: { district: "district", corridor: "road spine", place: "jagah" },
   },
   safety: {
-    eyebrow: "Local ki tarah safar karein",
-    title: "Safar plan karein. Phir live haal check karein.",
-    body: "Yeh guide aap ko zehni naqsha deti hai—live traffic ya emergency routing nahi. Nikalne se pehle exact pin, terminal ya stop, current route status, traffic, barish aur closures confirm karein.",
+    title: "Nikalne se pehle check karein",
     rules: [
-      "Ilaqa + block + landmark + live pin",
       "Safar ki details kisi bharosay walay shakhs ko bhejein",
       "Anjaan gehrai walay jama pani mein kabhi na jayein",
       "Traffic aur bheer mein qeemti cheezen numayan na rakhein",
     ],
-    saveOffline: "Inhein offline save kar lein",
     emergencyTitle: "Emergency numbers",
-    verifiedNote: "Numbers 13 Aug 2026 ko verify kiye gaye. Emergency mein apni surat-e-haal ke mutabiq sahi service ko call karein.",
+    verifiedNote: "13 Aug 2026 ko verify hua.",
     serviceLabels: {
       "rescue-1122": "Sindh Emergency Rescue Service",
       "police-15": "Madadgar Police",
@@ -506,8 +382,7 @@ const romanUrdu = {
     },
   },
   quiz: {
-    eyebrow: "30-second check",
-    title: "Ab Karachi samajh aaya?",
+    title: "3 sawal",
     questions: [
       {
         id: "q1",
@@ -541,12 +416,10 @@ const romanUrdu = {
       },
     ],
     correct: "Bilkul sahi.",
-    wrongSuffix: "— dobara koshish karein",
     wrongFeedback: "Abhi nahi—doosra jawab try karein.",
   },
   cheatSheet: {
-    eyebrow: "Ek screen mein Karachi",
-    title: "Anchors yaad rakhein. Uljhan bhool jayein.",
+    title: "Karachi: 4 cheezen yaad rakhein",
     print: "Cheat sheet print karein",
     cards: [
       { label: "01 · COMPASS", body: "Samandar south · old core south-west · airport east · M-9 north-east · Hub west." },
@@ -556,7 +429,6 @@ const romanUrdu = {
     ],
   },
   footer: {
-    description: "Ek azad educational orientation guide. Yeh official navigation, emergency ya live-service product nahi.",
     primarySources: "Bunyadi sources",
     moreVerification: "Mazeed tasdeeq",
     reviewed: "Facts aur transport status 13 August 2026 ko review huay",
@@ -585,8 +457,6 @@ const english = {
     toggleMotionTitle: "Toggle motion",
     motion: "Motion",
     still: "Still",
-    keepThis: "Keep this",
-    cityPause: "City pause",
     selected: "Selected",
     clearSelectedAria: "Clear selected place",
     photoCreditAria: "Photo source and credit",
@@ -600,102 +470,65 @@ const english = {
     apply: "Apply",
   },
   hero: {
-    kicker: "A scroll-built mental map · کراچی",
-    titleBeforeEmphasis: "You don’t need to memorize Karachi.",
-    titleEmphasis: "You need to understand it.",
-    body: "You need the sea, seven districts, five road spines, and a few landmarks. Scroll once. See how the whole city connects.",
-    start: "Start from zero",
-    promiseNumber: "01",
-    promise: "By the end, every unfamiliar area name will have somewhere to attach.",
-  },
-  opening: {
-    eyebrow: "THE ONE RULE",
-    title: "Sea below. Old city lower-left. Airport right. M-9 upper-right.",
-    body: "Keep that compass alive and Karachi stops feeling like a pile of names.",
+    title: "Understand Karachi from zero.",
+    start: "Start",
   },
   story: {
     fixed: {
       compass: {
-        eyebrow: "Lesson 01 · The compass",
-        title: "First, put the sea below you.",
-        body: "Karachi faces the Arabian Sea. Its old heart and first port sit toward the southwest. The city then spreads inland—north toward M-9, east toward the airport and N-5, and west toward Hub and Balochistan.",
-        remember: "Sea below. Old city lower-left. Airport right. M-9 upper-right.",
+        title: "The sea is south.",
+        body: "Old city southwest, airport east, M-9 northeast, and Hub west.",
       },
       scale: {
-        eyebrow: "Lesson 02 · Scale",
-        title: "The boundary is bigger than the built city.",
-        body: "Karachi Division includes the continuous urban city plus a large rural and peri-urban fringe. This is why an official Karachi outline looks much larger than the dense streets most visitors imagine.",
-        remember: "3,527 km² · 20,382,881 people · 92.57% urban",
+        title: "Karachi Division covers 3,527 km².",
+        body: "It includes the dense city and a large rural/peri-urban fringe.",
       },
       anchors: {
-        eyebrow: "Lesson 03 · Four anchors",
-        title: "Build one triangle before learning names.",
-        body: "Start with Tower/Saddar in the old core, Karachi Port beside it, Jinnah Airport to the east, and Sohrab Goth where the M-9 leaves the city. Every unfamiliar name can attach to one of these sides.",
-        remember: "Old core · airport · M-9 gateway · port edge.",
+        title: "4 anchors: Saddar/Tower, Karachi Port, Airport, and Sohrab Goth.",
+        body: "Attach each new place to its nearest anchor.",
       },
       layers: {
-        eyebrow: "Before the districts",
-        title: "One city. Several maps.",
-        body: "A revenue district, municipal town, cantonment, police jurisdiction and neighbourhood can cover the same ground differently. They are not competing answers—they answer different questions.",
-        remember: "District ≠ town ≠ neighbourhood ≠ cantonment.",
+        title: "District, town, and neighbourhood are different layers.",
+        body: "One place can have different boundaries in each layer.",
       },
       names: {
-        eyebrow: "The naming trap",
-        title: "A familiar name may be four different things.",
-        body: "Malir, Korangi, Saddar and Keamari can each mean different administrative or everyday geographies. Guru Mandir is a junction/locality used in directions—not one of the seven districts.",
-        remember: "Always ask: district, town, neighbourhood, junction—or station?",
+        title: "Ask what names like Malir or Korangi mean in context.",
+        body: "District, town, neighbourhood, junction, or station? Guru Mandir is not a district.",
       },
       "movement-intro": {
-        eyebrow: "Now the roads",
-        title: "Districts organize. Corridors explain movement.",
-        body: "Karachi becomes much simpler when you stop memorizing hundreds of areas and instead learn five radial spines. Local journeys usually join one of these, pass a known landmark, then leave for the last mile.",
-        remember: "Nearest spine → known anchor → last mile.",
+        title: "Understand trips through 5 major roads.",
+        body: "Nearest spine → anchor → last mile.",
       },
       "landmark-language": {
-        eyebrow: "How directions sound",
-        title: "Karachi speaks in junctions.",
-        body: "People often describe a route as a chain of recognized points—not only street numbers. Tower, Numaish, Nursery, Karsaz, NIPA, Malir 15 and Korangi Crossing are navigation grammar.",
-        remember: "Listen for the sequence of anchors.",
+        title: "Directions are chains of landmarks.",
+        body: "Listen for the order of Tower, Numaish, Nursery, Karsaz, and NIPA.",
       },
       transit: {
-        eyebrow: "Public transport · verified 13 Aug 2026",
-        title: "Operating lines are solid. Future lines are dashed.",
-        body: "Green and Orange BRT operate today, alongside People’s, Pink, EV and other bus services. Red and Yellow BRT remain under development. The proposed modern KCR is not an operating citywide metro loop.",
-        remember: "A route map is a dated layer—check before travel.",
+        title: "Operating and developing lines.",
+        body: "Green/Orange and People’s/Pink/EV services operate; Red/Yellow are developing and KCR is proposed.",
       },
       gateways: {
-        eyebrow: "Gateways",
-        title: "One airport, two ports, several rail doors.",
-        body: "Jinnah Airport sits east of the core. Karachi Cantt is the main intercity rail arrival. Karachi Port is beside the historic city; Port Qasim is a separate industrial port far to the southeast.",
-        remember: "The two ports are not beside each other.",
+        title: "Airport east; Karachi Port southwest; Port Qasim far southeast.",
+        body: "Karachi Cantt is the main intercity rail station.",
       },
       systems: {
-        eyebrow: "Invisible infrastructure",
-        title: "Karachi is one city—not one service authority.",
-        body: "Water, power, gas, drainage, roads, waste and transit are handled by different public bodies. A road may belong to NHA, Sindh, KMC, KDA or a cantonment regardless of the district beneath it.",
-        remember: "For a complaint, identify the asset owner—not only the district.",
+        title: "Different authorities manage different services.",
+        body: "Check the asset owner before reporting a problem.",
       },
       weather: {
-        eyebrow: "Weather changes the network",
-        title: "Distance is not the same as travel time.",
-        body: "Traffic, construction and intense monsoon rain can transform a short trip. Lyari and Malir are drainage systems; underpasses, causeways and low crossings can become bottlenecks far beyond the flooded street.",
-        remember: "Never enter standing water when depth or current is unknown.",
+        title: "Distance does not predict travel time.",
+        body: "Traffic, construction, and rain can change a route.",
       },
       address: {
-        eyebrow: "Read an address",
-        title: "Ask for five pieces, not one area name.",
-        body: "A usable Karachi address combines area or society, block/sector/phase, road or junction, nearest known landmark, and a map pin. The administrative district may not appear at all.",
-        remember: "Area + block + road + landmark + pin.",
+        title: "Address = area + block + road + landmark + pin.",
+        body: "An area name alone is not enough.",
       },
     },
-    districtProgress: (current: number, total = 7) => `${String(current).padStart(2, "0")} / ${String(total).padStart(2, "0")} districts`,
-    spineProgress: (current: number, total = 5) => `${String(current).padStart(2, "0")} / ${String(total).padStart(2, "0")} spines`,
     people: (formattedPopulation: string) => `${formattedPopulation} people`,
     districtsStat: "districts",
     subdivisionsStat: "subdivisions",
     divisionStat: "division",
-    attachTo: "Attach it to:",
-    dataNote: "Printed areas are Census 2023 statistical figures. The orientation overlay follows OSM administrative geometry, which can include broad maritime or peripheral extents; do not measure area from the drawing.",
+    dataNote: "Areas are Census 2023 figures; the OSM overlay is for orientation only.",
     hierarchy: ["Sindh", "Karachi Division", "7 districts", "31 subdivisions", "area / block / sector"],
     operating: "Operating",
     developing: "Developing",
@@ -704,54 +537,42 @@ const english = {
   },
   districtNarrative: {
     central: {
-      body: "The compact, very dense middle-north: established grid neighbourhoods between the old centre and the northern edge.",
-      remember: "North Karachi, New Karachi and North Nazimabad sound interchangeable to a newcomer, but they are distinct areas.",
+      body: "Dense middle-north around Liaquatabad, Nazimabad, New Karachi, and North Karachi; similar names are separate places.",
     },
     east: {
-      body: "The education-and-services belt east of the inner city: Gulshan, Johar, universities, hospitals and the M-9 gateway meet here.",
-      remember: "Gulshan, Johar and Scheme 33 are broad everyday labels; an address still needs its block, road or nearby landmark.",
+      body: "Gulshan, Johar, universities, hospitals, and the M-9 gateway; always add a block or road to an address.",
     },
     south: {
-      body: "The historic and commercial south: old city markets, Saddar, the financial core, Lyari, Clifton and the seafront.",
-      remember: "Clifton and DHA are familiar location names, but cantonment administration and district administration overlap as separate systems.",
+      body: "The historic-commercial south: old city, Saddar, Lyari, Clifton, and the seafront.",
     },
     west: {
-      body: "The hilly, fast-grown north-west: Orangi and Manghopir sit beyond the dense centre, with routes funnelling through a few passes and junctions.",
-      remember: "West and Keamari were redrawn when Keamari became a separate district; older addresses may use the former Karachi West.",
+      body: "The hilly northwest around Orangi and Manghopir; routes funnel through a few passes and junctions.",
     },
     keamari: {
-      body: "The port-and-industry west: harbour land, SITE, Baldia and the western beaches share one long district.",
-      remember: "Keamari can mean the district, the harbour-side neighbourhood or the port area; ask which one the speaker means.",
+      body: "Harbour, SITE, Baldia, and western beaches; ‘Keamari’ may mean the district, neighbourhood, or port area.",
     },
     korangi: {
-      body: "The south-eastern residential-and-industrial belt: Shah Faisal and Model Colony sit near the airport approach; Korangi and Landhi stretch toward heavy industry.",
-      remember: "Korangi district is wider than Korangi neighbourhood; Landhi, Shah Faisal and Model Colony are part of the same district.",
+      body: "The southeast belt from Shah Faisal/Model Colony to Korangi/Landhi industry; the district is larger than the neighbourhood.",
     },
     malir: {
-      body: "Karachi’s huge eastern and north-eastern envelope: airport, older Malir settlements, villages, new housing, Steel Town and Port Qasim.",
-      remember: "Malir is by far the largest district by area; in a route, ‘Malir’ usually means the built-up Malir 15/Halt side, not the whole district.",
+      body: "The vast east from the airport to villages, Steel Town, and Port Qasim; in directions, ‘Malir’ often means Malir 15/Halt.",
     },
   },
   corridorNarrative: {
     "shahrah-e-pakistan": {
       body: "The main northbound axis from the inner city into Central and the M-9 gateway.",
-      remember: "Southbound names count down toward Numaish; northbound movement eventually meets Sohrab Goth and the Super Highway.",
     },
     "shahrah-e-faisal": {
       body: "Karachi’s best-known airport-to-centre spine, running along the railway and linking offices, hotels and major cross-roads.",
-      remember: "If a newcomer remembers one east–west road first, make it Shahrah-e-Faisal: airport on one end, Saddar/Metropole on the other.",
     },
     "university-road": {
       body: "East Karachi’s education, hospital and civic spine, continuing from the inner city toward Safoora.",
-      remember: "Hasan Square and NIPA are its two strongest orientation anchors; many east-side routes touch one of them.",
     },
     "korangi-spine": {
       body: "The long industrial-residential approach from central Karachi through Korangi to Landhi.",
-      remember: "Chowrangi names are the milestones: Crossing, Singer and Dawood mark movement deeper into Korangi/Landhi.",
     },
     "mauripur-hub-river": {
       body: "The western freight-and-neighbourhood approach connecting the old core to Keamari district, Baldia and the Balochistan side.",
-      remember: "Port traffic is heavy here; a nearby point can be slow to reach even when it looks close on the map.",
     },
   },
   glossaryMeanings: {
@@ -764,108 +585,65 @@ const english = {
   },
   photos: {
     "empress-market": {
-      title: "Saddar is an area, a subdivision—and a feeling.",
-      body: "The historic commercial core gives newcomers their first dense chain of landmarks.",
+      title: "Empress Market, Saddar’s historic commercial core.",
       alt: "The historic Empress Market building in Saddar, Karachi",
     },
     "mazar-e-quaid": {
-      title: "A landmark can orient a whole side of town.",
-      body: "Mazar-e-Quaid sits near the central hinge between the old core, Jamshed side and the northbound spine.",
+      title: "Mazar-e-Quaid: between the old core and northbound spine.",
       alt: "Mazar-e-Quaid’s white marble mausoleum seen from its garden",
     },
     "jinnah-airport": {
-      title: "The eastern gateway",
-      body: "Choose the exact terminal pin: Airport, Star Gate and Jinnah Terminal are not interchangeable destinations.",
+      title: "Airport, Star Gate, and Jinnah Terminal are different pins.",
       alt: "The terminal at Karachi’s Jinnah International Airport",
     },
     "karachi-port": {
-      title: "The city began by the harbour",
-      body: "Karachi Port grew beside the old city; Port Qasim belongs to a different, far-southeastern industrial landscape.",
+      title: "Karachi Port is near the old city; Port Qasim is far southeast.",
       alt: "Ships and harbour cranes on the water at Karachi Port",
     },
     "clifton-skyline": {
-      title: "The coast is a compass—not just a destination",
-      body: "Clifton’s skyline faces the Arabian Sea, the fixed southern edge that makes the rest of the city easier to read.",
+      title: "Clifton’s coast marks Karachi’s southern edge.",
       alt: "Clifton’s apartment skyline beside the Arabian Sea in Karachi",
     },
   },
   journeys: {
-    eyebrow: "Apply the model",
-    title: "Six trips. One algorithm.",
-    intro: "Orient by the sea. Join a spine. Transfer at an anchor. Finish the last mile.",
+    title: "6 example trips",
     items: {
       "airport-to-saddar": {
-        title: "Jinnah International Airport → Saddar",
-        steps: [
-          "Leave the airport onto the main city spine — Malir Halt/Natha Khan are outward-side markers; Karsaz, Nursery and FTC mean the centre is getting closer.",
-          "Turn off around Metropole for the exact Saddar stop — Saddar is not a single pin; name Empress, Regal, Lucky Star or the exact hotel/office.",
-        ],
-        note: "Shahrah-e-Faisal is the one-road explanation of how the airport connects to central Karachi.",
+        steps: ["Airport → Shahrah-e-Faisal → Karsaz → Nursery/FTC → Metropole → exact Saddar stop"],
       },
       "surjani-to-numaish": {
-        title: "Surjani Town → Numaish / Mazar-e-Quaid",
-        steps: [
-          "Follow the north–centre axis inward — Nagan, Ayesha Manzil, Liaquatabad and Teen Hatti are the descending milestones toward the inner city.",
-          "Finish at the Numaish hub — Numaish sits beside the Mazar and connects onward toward Tower or east toward University Road.",
-        ],
-        note: "Central Karachi is a north–south ladder whose useful rungs are named junctions.",
+        steps: ["Surjani → Nagan → Ayesha Manzil → Liaquatabad → Teen Hatti → Numaish"],
       },
       "nipa-to-tower": {
-        title: "NIPA Chowrangi → Tower",
-        steps: [
-          "Travel inward on University Road — Hasan Square and Jail Chowrangi show progress from East Karachi into the inner city.",
-          "Cross the old-city axis from Numaish to Tower — Tibet Centre and Jama Cloth are old-city milestones; Tower is the port-side end.",
-        ],
-        note: "NIPA → Numaish → Tower is the simplest east-to-old-city chain to memorise.",
+        steps: ["NIPA → Hasan Square → Jail Chowrangi → Numaish → M.A. Jinnah Road → Tower"],
       },
       "korangi-to-numaish": {
-        title: "Korangi Crossing → Numaish",
-        steps: [
-          "Move inward along the Korangi spine — Qayyumabad and Kala Pul are the bridge points between industrial Korangi and central Karachi.",
-          "Use the centre-side cross connection — FTC/Nursery marks where the Korangi approach meets the main airport–centre spine.",
-        ],
-        note: "Korangi connects to the centre through a small set of river/road crossings, so those names control the trip.",
+        steps: ["Korangi Crossing → Qayyumabad → Kala Pul → FTC/Nursery → Numaish"],
       },
       "orangi-to-tower": {
-        title: "Orangi No. 5 → Tower",
-        steps: [
-          "Exit the north-west through a named pass — Banaras is the key hinge; Board Office and SITE are different onward directions.",
-          "Approach the old core from the west — Gulbai/ICI and Tower explain the freight-heavy western side of central Karachi.",
-        ],
-        note: "To understand West, first identify which pass—Banaras, Board Office, Manghopir or Hub River—the trip uses.",
+        steps: ["Orangi No. 5 → Banaras → SITE/Gulbai → ICI → Tower"],
       },
       "port-to-port": {
-        title: "Port Qasim → Karachi Port / Keamari",
-        steps: [
-          "Leave the far eastern port on the National Highway — Steel Town, Quaidabad, Malir 15 and Malir Halt count back toward the continuous city.",
-          "Cross the metropolitan centre — the airport–centre spine carries you toward Saddar before the old-city/harbour approach.",
-          "Finish on the western harbour side — Tower and Keamari belong to the western port system, many kilometres from Port Qasim.",
-        ],
-        note: "Karachi has two major port worlds at opposite ends of the built-up metropolis.",
+        steps: ["Port Qasim → N-5 → Steel Town → Quaidabad → Malir 15/Halt → Shahrah-e-Faisal → Saddar → Tower/Keamari"],
       },
     },
   },
   explorer: {
-    eyebrow: "Where is…?",
-    title: "Attach a name to the city.",
+    title: "Search a place",
     searchLabel: "Search Karachi places, districts and roads",
     placeholder: "Try Guru Mandir, NIPA, Malir 15…",
-    noResults: "No curated match yet. Try an area, junction or gateway.",
+    noResults: "No match. Try another name.",
     kindLabels: { district: "district", corridor: "road spine", place: "place" },
   },
   safety: {
-    eyebrow: "Move like a local",
-    title: "Plan the trip. Then check live.",
-    body: "This guide gives you the mental map—not live traffic or emergency routing. Before leaving, confirm the exact pin, terminal or stop, current route status, traffic, rain and closures.",
+    title: "Check before leaving",
     rules: [
-      "Area + block + landmark + live pin",
       "Share trip details with someone you trust",
       "Never enter unknown standing water",
       "Keep valuables discreet in traffic and crowds",
     ],
-    saveOffline: "Save these offline",
     emergencyTitle: "Emergency numbers",
-    verifiedNote: "Numbers verified 13 Aug 2026. In an emergency, use the service appropriate to your situation.",
+    verifiedNote: "Verified 13 Aug 2026.",
     serviceLabels: {
       "rescue-1122": "Sindh Emergency Rescue Service",
       "police-15": "Madadgar Police",
@@ -879,8 +657,7 @@ const english = {
     },
   },
   quiz: {
-    eyebrow: "30-second check",
-    title: "Do you understand Karachi now?",
+    title: "3 questions",
     questions: [
       {
         id: "q1",
@@ -914,12 +691,10 @@ const english = {
       },
     ],
     correct: "Correct.",
-    wrongSuffix: "— try again",
     wrongFeedback: "Not quite—try another answer.",
   },
   cheatSheet: {
-    eyebrow: "Karachi in one screen",
-    title: "Keep the anchors. Forget the overwhelm.",
+    title: "Karachi: 4 things to remember",
     print: "Print cheat sheet",
     cards: [
       { label: "01 · COMPASS", body: "Sea south · old core southwest · airport east · M-9 northeast · Hub west." },
@@ -929,7 +704,6 @@ const english = {
     ],
   },
   footer: {
-    description: "An independent educational orientation guide. Not an official navigation, emergency, or live-service product.",
     primarySources: "Primary sources",
     moreVerification: "More verification",
     reviewed: "Facts and transport status reviewed 13 August 2026",
