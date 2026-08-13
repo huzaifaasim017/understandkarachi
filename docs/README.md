@@ -24,9 +24,9 @@ document; other documents link to it instead of copying it.
 | What accessibility bar must a change meet? | [Accessibility standard](standards/accessibility.md) | Active |
 | What must pass before release? | [QA and release checklist](quality/qa-release-checklist.md) | Active |
 | How is the service run or recovered? | [Operations runbook](operations/runbook.md) | Active |
-| What is being implemented now? | [District atlas v4 plan](plans/district-atlas-v4.md) | Active |
+| What shipped in the district-atlas workstream? | [District atlas v4 plan](plans/district-atlas-v4.md) | Complete |
 | What shipped in the completed P0 workstream? | [P0 plan](plans/active.md) | Complete |
-| What is currently deployed? | [Release v3](releases/2026-08-14-v3.md) | Released |
+| What is currently deployed? | [Release v4](releases/2026-08-14-v4.md) | Released |
 | What could happen later? | [Roadmap](roadmap.md) | Directional |
 
 ## Product specifications

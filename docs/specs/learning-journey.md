@@ -1,7 +1,7 @@
 ---
 title: Learning journey specification
 status: accepted
-implementation: in-progress
+implementation: complete
 owner: product and content maintainers
 last-reviewed: 2026-08-14
 review-cycle: every learning-flow change

@@ -12,24 +12,24 @@ The roadmap communicates sequence, not a delivery promise. Detailed current
 work belongs in [the district atlas v4 plan](plans/district-atlas-v4.md);
 behavior belongs in specs.
 
-## Now — ship the district atlas v4
+## Shipped — district atlas v4
 
-- Keep `/` focused on Karachi-wide orientation, with a 3D Karachi geometry
+- Kept `/` focused on Karachi-wide orientation, with a 3D Karachi geometry
   introduction instead of the former world scene.
-- Make `/districts` and seven stable district URLs the deeper local learning
+- Made `/districts` and seven stable district URLs the deeper local learning
   path, rendered from one comparable template.
-- Keep the full `MODE → GATE → SPINE → HUB → LOCAL` module at `/crossings` so a
+- Kept the full `MODE → GATE → SPINE → HUB → LOCAL` module at `/crossings` so a
   general explorer does not have to complete trip preparation first.
-- Finish splitting district facts and bilingual presentation into their
+- Split district facts and bilingual presentation into their
   canonical owners, then validate the shared page model.
-- Complete route, locale, source, keyboard, touch, reduced-motion, failure,
-  photo, and narrow-layout QA before the private v4 release.
+- Completed route, locale, source, keyboard, touch, reduced-motion, failure,
+  photo, and narrow-layout QA for the private v4 release.
 
-Exit signal: the v4 plan's source/content matrix and automated/manual release
-gates pass, all route classes smoke successfully, and an immutable private
-release has a recorded rollback target.
+Exit signal met: the v4 plan's source/content matrix and release gates passed,
+all route classes smoked successfully, and the immutable private release has a
+recorded rollback target in [release v4](releases/2026-08-14-v4.md).
 
-## Next — validate and deepen
+## Now — validate and deepen
 
 - Conduct task-based testing with visitors, new residents, motorcyclists,
   public-transport users, and accessibility participants.

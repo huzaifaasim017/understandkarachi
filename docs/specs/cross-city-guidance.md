@@ -1,7 +1,7 @@
 ---
 title: Cross-city guidance specification
 status: accepted
-implementation: in-progress
+implementation: complete
 owner: product and data maintainers
 last-reviewed: 2026-08-14
 review-cycle: every corridor or crossing change

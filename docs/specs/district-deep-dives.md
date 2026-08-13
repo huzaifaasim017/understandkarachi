@@ -1,7 +1,7 @@
 ---
 title: District deep-dives specification
 status: accepted
-implementation: in-progress
+implementation: complete
 owner: product, content, data, design, and engineering maintainers
 last-reviewed: 2026-08-14
 review-cycle: every district-profile, route, or template change

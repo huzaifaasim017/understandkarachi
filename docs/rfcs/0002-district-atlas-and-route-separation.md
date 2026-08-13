@@ -1,7 +1,7 @@
 ---
 title: "RFC-0002: District atlas and route separation"
 status: accepted
-implementation: in-progress
+implementation: complete
 owner: huzaifaasim017 (project maintainer), product, content, and data maintainers
 created: 2026-08-14
 accepted: 2026-08-14

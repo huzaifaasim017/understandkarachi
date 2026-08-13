@@ -1,6 +1,6 @@
 ---
 title: District atlas v4 implementation plan
-status: active
+status: complete
 owner: project maintainers
 started: 2026-08-14
 last-updated: 2026-08-14
@@ -51,13 +51,13 @@ This plan implements [RFC-0002](../rfcs/0002-district-atlas-and-route-separation
 | V4.7 | Implement seven static `/districts/[district-id]` pages from one template | Complete | [District deep dives](../specs/district-deep-dives.md) |
 | V4.8 | Repair photo crop/caption/alt/source/creator/licence behavior and verify every external source link | Complete | [District deep dives](../specs/district-deep-dives.md) |
 | V4.9 | Add schema, route, locale, source, fallback, and critical interaction tests | Complete | [QA checklist](../quality/qa-release-checklist.md) |
-| V4.10 | Complete bilingual browser/accessibility/performance QA, release privately, and record rollback | In progress | [Operations runbook](../operations/runbook.md) |
+| V4.10 | Complete bilingual browser/accessibility/performance QA, release privately, and record rollback | Complete | [Operations runbook](../operations/runbook.md) |
 
 The route split, canonical district model, shared shell, Karachi 3D
-introduction, photo treatment, safety handoff, and automated contracts are
-implemented. Private release evidence remains open. A package changes to
-`Complete` only when its applicable checks and documentation match the
-behavior.
+introduction, photo treatment, safety handoff, and automated contracts shipped
+in [private production release v4](../releases/2026-08-14-v4.md). The release
+record captures the tested browser scope, production smoke evidence, immutable
+artifact, known limits, and rollback target.
 
 ## Sequencing
 
@@ -158,5 +158,8 @@ learning outcome; deployed route, asset, privacy, and source-link smoke checks
 pass; and the v4 release record includes commit, visibility, rollback target,
 known limitations, and review dates.
 
-Until that gate is met, this plan remains `active` and the implementation is
-not described as complete.
+This gate was met by [private production release
+v4](../releases/2026-08-14-v4.md). Broader participant research, additional
+browser/screen-reader coverage, and a larger reviewed road inventory remain
+post-release validation work; they do not change the shipped orientation-only
+boundary.
