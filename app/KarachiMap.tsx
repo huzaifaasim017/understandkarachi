@@ -102,9 +102,9 @@ export default function KarachiMap({ chapter, reducedMotion, locale, selectedPla
           minZoom: 8,
           maxZoom: 15,
           locale: {
-            "NavigationControl.ZoomIn": copy.zoomIn,
-            "NavigationControl.ZoomOut": copy.zoomOut,
-            "AttributionControl.ToggleAttribution": copy.toggleAttribution,
+            "NavigationControl.ZoomIn": mapCopy.en.zoomIn,
+            "NavigationControl.ZoomOut": mapCopy.en.zoomOut,
+            "AttributionControl.ToggleAttribution": mapCopy.en.toggleAttribution,
           },
         });
         mapRef.current = map;
