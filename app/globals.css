@@ -136,6 +136,7 @@ main[data-locale="ur-roman"] :is(.hero-copy > p, .step-card > p, .section-headin
 .photo-pause h3 { margin: .4rem 0; font-size: 1.4rem; line-height: 1.05; }
 .photo-pause p { max-width: 370px; margin: 0; color: rgba(255,247,232,.68); font-size: .7rem; line-height: 1.5; }
 .photo-pause figcaption > a { flex: 0 0 auto; display: flex; align-items: center; gap: .35rem; font-size: .52rem; opacity: .7; }
+.photo-pause figcaption .credit-text { color: inherit; font-family: inherit; font-size: inherit; letter-spacing: normal; text-transform: none; }
 
 .journeys-section { padding: clamp(6rem, 12vw, 12rem) clamp(1.2rem, 7vw, 7rem); background: var(--sand); }
 .section-heading { max-width: 680px; }

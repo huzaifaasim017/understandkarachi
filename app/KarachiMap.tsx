@@ -32,6 +32,9 @@ const mapCopy = {
     prepares: "Aap qareeb aayenge to naqsha tayyar hoga…",
     sea: "ARABIAN SEA · SOUTH / NEECHE",
     verified: "Boundary overlay 13 Aug 2026 ko review hua · live basemap ka credit alag diya gaya hai",
+    zoomIn: "Nazdeek karein",
+    zoomOut: "Door karein",
+    toggleAttribution: "Map credits kholein ya band karein",
   },
   en: {
     region: "Interactive map of Karachi",
@@ -40,6 +43,9 @@ const mapCopy = {
     prepares: "Map prepares as you approach…",
     sea: "ARABIAN SEA · SOUTH",
     verified: "Boundary overlay reviewed 13 Aug 2026 · live basemap separately attributed",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
+    toggleAttribution: "Toggle map attribution",
   },
 } as const;
 
@@ -95,6 +101,11 @@ export default function KarachiMap({ chapter, reducedMotion, locale, selectedPla
           maxPitch: 55,
           minZoom: 8,
           maxZoom: 15,
+          locale: {
+            "NavigationControl.ZoomIn": copy.zoomIn,
+            "NavigationControl.ZoomOut": copy.zoomOut,
+            "AttributionControl.ToggleAttribution": copy.toggleAttribution,
+          },
         });
         mapRef.current = map;
 
@@ -178,7 +189,7 @@ export default function KarachiMap({ chapter, reducedMotion, locale, selectedPla
             map.addSource("network", {
               type: "geojson",
               data: network,
-              attribution: "Schematic orientation lines · zehni rehnumai ke liye, turn-by-turn navigation nahi",
+              attribution: "Schematic orientation lines · mental map / zehni rehnumai only · not turn-by-turn navigation",
             });
             map.addLayer({
               id: "corridor-casing",
@@ -274,6 +285,20 @@ export default function KarachiMap({ chapter, reducedMotion, locale, selectedPla
       mapRef.current = null;
     };
   }, [interactive, shouldLoad]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const updateControl = (selector: string, label: string) => {
+      const control = container.querySelector<HTMLButtonElement>(selector);
+      if (!control) return;
+      control.title = label;
+      control.setAttribute("aria-label", label);
+    };
+    updateControl(".maplibregl-ctrl-zoom-in", copy.zoomIn);
+    updateControl(".maplibregl-ctrl-zoom-out", copy.zoomOut);
+    updateControl(".maplibregl-ctrl-attrib-button", copy.toggleAttribution);
+  }, [copy.toggleAttribution, copy.zoomIn, copy.zoomOut, ready]);
 
   useEffect(() => {
     const map = mapRef.current;

@@ -73,6 +73,16 @@ const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 const languageStorageKey = "understand-karachi-language";
 const languageEvent = "understand-karachi-language-change";
 let inMemoryLocale: Locale = DEFAULT_LOCALE;
+const pageMetadata = {
+  "ur-roman": {
+    title: "Understand Karachi — Shehar ko zero se samjhein",
+    description: "Karachi ko zero se samjhein: samandar, saat districts, bari roads, transport, gateways, infrastructure aur rozmarra direction language.",
+  },
+  en: {
+    title: "Understand Karachi — Learn the city from zero",
+    description: "Understand Karachi from zero: the sea, seven districts, major roads, transit, gateways, infrastructure, and everyday direction language.",
+  },
+} as const;
 
 const corridorStoryConfig = [
   { dataId: "shahrah-e-pakistan", mapId: "north-spine", center: [67.055, 24.925] as [number, number], zoom: 9.55 },
@@ -148,8 +158,8 @@ function PhotoPause({ photoId, copy }: { photoId: PhotoStoryId; copy: SiteCopy }
       <figcaption>
         <div><span>{copy.common.cityPause}</span><h3>{content.title}</h3><p>{content.body}</p></div>
         {photo && (
-          <a href={photo.sourcePage} target="_blank" rel="noreferrer" aria-label={`${copy.common.photoCreditAria}: ${photo.creator}, ${photo.license}. ${copy.common.externalLinkHint}`} lang="en">
-            {photo.creator} · {photo.license} <ExternalLink size={13} aria-hidden="true" />
+          <a href={photo.sourcePage} target="_blank" rel="noreferrer" aria-label={`${copy.common.photoCreditAria}: ${photo.creator}, ${photo.license}. ${copy.common.externalLinkHint}`}>
+            <span className="credit-text" lang="en">{photo.creator} · {photo.license}</span> <ExternalLink size={13} aria-hidden="true" />
           </a>
         )}
       </figcaption>
@@ -345,6 +355,8 @@ export default function StoryExperience() {
 
   useEffect(() => {
     document.documentElement.lang = locale === "ur-roman" ? "ur-Latn-PK" : "en";
+    document.title = pageMetadata[locale].title;
+    document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute("content", pageMetadata[locale].description);
   }, [locale]);
 
   useEffect(() => {
