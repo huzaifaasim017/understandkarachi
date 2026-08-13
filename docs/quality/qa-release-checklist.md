@@ -2,7 +2,7 @@
 title: QA and release checklist
 status: active
 owner: release maintainer
-last-reviewed: 2026-08-13
+last-reviewed: 2026-08-14
 review-cycle: every release
 ---
 
@@ -38,13 +38,18 @@ npm test
 
 ## 3. Learning journey
 
-Complete one uninterrupted pass in each language:
+Complete the homepage, one representative district, and the crossing guide in
+each language; then smoke the remaining six district routes:
 
 - [ ] The sea/south rule is clear before corridor or district detail.
 - [ ] District, neighbourhood, junction, station, and gateway are not conflated.
 - [ ] All seven districts appear in a coherent order with a useful anchor.
+- [ ] `/districts` compares all seven profiles and every supported district URL
+      opens the shared deep-dive sequence.
 - [ ] Major corridors show ordered connections, not isolated road names.
-- [ ] A new crossing scenario can be described as
+- [ ] The homepage links to `/crossings` without rendering the full crossing
+      module inline.
+- [ ] On `/crossings`, a new scenario can be described as
       `MODE → GATE → SPINE → HUB → LOCAL`, followed by a current-condition
       check.
 - [ ] The page plainly states that it is not live navigation.
@@ -56,6 +61,8 @@ Check current Chrome, Firefox, and a WebKit-based browser where available:
 
 - [ ] Scroll activates the expected lesson and map camera without oscillation.
 - [ ] Every explorable feature works by tap/click; hover is only an enhancement.
+- [ ] The 3D introduction depicts Karachi geometry, and its district list and
+      detail remain usable without selecting the canvas.
 - [ ] Keyboard users can reach, select, dismiss, and revisit map/search details.
 - [ ] Language selection updates content, metadata, map controls, and document
       language and survives reload when storage is available.
@@ -64,6 +71,8 @@ Check current Chrome, Firefox, and a WebKit-based browser where available:
 - [ ] Mobile at 320–430 CSS px has no hidden controls or accidental page-wide
       horizontal scroll.
 - [ ] Desktop sticky content does not cover reading or focus targets.
+- [ ] Photo captions are outside the critical crop, readable at narrow widths,
+      and expose the exact source, creator, year, and licence actions.
 - [ ] Print output for the cheat sheet is legible.
 
 ## 5. Accessibility and resilience
@@ -76,7 +85,8 @@ Complete the matrix in the
 - [ ] Color is supplemented by labels, line treatment, or text.
 - [ ] Basemap unavailable: lesson, compass, limitation, and search result list
       remain understandable.
-- [ ] WebGL unavailable: title and start action remain complete.
+- [ ] WebGL unavailable: city orientation, labelled district choices, and onward
+      links remain complete without an empty critical panel.
 - [ ] localStorage unavailable: language switching still works for the visit.
 - [ ] Slow connection/loading states do not look like empty broken panels.
 
@@ -96,12 +106,14 @@ Complete the matrix in the
 - [ ] Create the production artifact from a clean, reviewed commit.
 - [ ] Record commit, artifact/version ID, release time, owner, and visibility.
 - [ ] Deploy using the linked Sites project in `.openai/hosting.json`.
-- [ ] Smoke-test the public/private URL from a fresh session at `/` and verify
-      static map data, photographs, favicon, and social image return successfully.
+- [ ] Smoke-test the public/private URL from a fresh session at `/`,
+      `/districts`, `/crossings`, every supported district route, and one
+      invalid district route; verify static map data, photographs, favicon, and
+      social image return successfully.
 - [ ] Verify Roman Urdu default, English switch, map fallback, and source links.
 - [ ] If checks fail, stop promotion or follow the rollback runbook.
-- [ ] Update [the active plan](../plans/active.md) and relevant `last-reviewed`
-      metadata.
+- [ ] Update [the current v4 plan](../plans/district-atlas-v4.md) and relevant
+      `last-reviewed` metadata.
 
 Release record template:
 

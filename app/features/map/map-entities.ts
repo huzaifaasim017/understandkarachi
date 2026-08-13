@@ -5,7 +5,7 @@ import {
   transitCategories,
   type DistrictId,
 } from "../../karachi-data";
-import { getCopy, romanTransitPresentation, type Locale } from "../../karachi-i18n";
+import { getCopy, romanLandmarkMeaning, romanTransitPresentation, type Locale } from "../../karachi-i18n";
 
 export type MapEntityKind = "district" | "corridor" | "place" | "transit";
 
@@ -211,7 +211,7 @@ export function resolveMapEntity(ref: MapEntityRef, locale: Locale): MapEntityDe
         { label: ui.near, value: corridorName },
       ],
       aliases: place.aliases,
-      caution: locale === "en" ? place.plainMeaning : ui.orientationOnly,
+      caution: locale === "en" ? place.plainMeaning : romanLandmarkMeaning[place.id],
       color: district?.color,
     };
   }

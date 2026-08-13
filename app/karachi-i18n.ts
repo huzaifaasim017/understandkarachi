@@ -1,4 +1,9 @@
-import type { CorridorId, DistrictId, TransitService } from "./karachi-data";
+import type {
+  CorridorId,
+  DistrictId,
+  LandmarkId,
+  TransitService,
+} from "./karachi-data";
 
 /** Roman Urdu is intentionally the default: most first-time local readers can
  * understand it without switching keyboard/script. Place and official road
@@ -7,6 +12,226 @@ import type { CorridorId, DistrictId, TransitService } from "./karachi-data";
 export type Locale = "ur-roman" | "en";
 
 export const DEFAULT_LOCALE: Locale = "ur-roman";
+
+export type LocalizedText = Readonly<Record<Locale, string>>;
+
+const localized = (romanUrdu: string, english: string): LocalizedText => ({
+  "ur-roman": romanUrdu,
+  en: english,
+});
+
+export type DistrictProfilePresentation = {
+  readonly districtId: DistrictId;
+  readonly position: LocalizedText;
+  readonly firstRule: LocalizedText;
+  readonly caution: LocalizedText;
+  readonly zones: readonly { readonly id: string; readonly explanation: LocalizedText }[];
+  readonly routes: readonly { readonly id: string; readonly title: LocalizedText; readonly purpose: LocalizedText }[];
+};
+
+export const districtAtlasCopy = {
+  "ur-roman": {
+    atlas: "District atlas",
+    title: "Har district ko alag samjhein",
+    intro: "Position, zones, bari roads aur pehchan points. Exact turn aur current traffic ke liye live map alag check karein.",
+    open: "District kholein",
+    back: "Karachi overview",
+    crossing: "Karachi crossing guide",
+    crossingOpen: "Guide kholein",
+    position: "Karachi mein position",
+    firstRule: "Pehla rule",
+    arrivals: "Aam entry names",
+    zones: "Is district ke route worlds",
+    routes: "Road chains",
+    routeHint: "Yeh selected learning chains hain, har road/area ki complete list nahi. Names isi order mein parhein; line schematic hai, turn-by-turn route nahi.",
+    routeSources: "Is chain ke references",
+    areas: "Areas aur anchors",
+    adjacent: "Agla district samjhein",
+    neighbours: "Agay samajhne wale connected districts",
+    boundaryNote: "Yeh learning connections hain; legal boundary ya direct road claim nahi.",
+    map: "District map",
+    mapHint: "Map par district, road ya landmark select karke detail parhein.",
+    subdivisions: "Official subdivisions",
+    subdivisionNote: "Commissioner pages kuch spellings/names par mukhtalif hain: North/New Nazimabad aur Keamari/Harbour, Mauripur/Maripur. Neeche current familiar form dikhayi gayi hai.",
+    scale: "District scale",
+    population: "Census 2023 population",
+    populationConflict: "PBS Table 1 ko primary mana gaya hai. Commissioner page East aur Malir ke liye mukhtalif 2023 totals dikhata hai.",
+    anchor: "Primary anchor",
+    corridor: "Primary corridor",
+    caution: "Naam ka confusion",
+    sources: "References",
+    reviewed: "Source snapshot 14 August 2026",
+    developing: "Developing—not current passenger service",
+    orientation: "Orientation chain",
+    previous: "Pichla district",
+    next: "Agla district",
+    sourceOpen: "Source nayi tab mein khulta hai",
+    beforeYouRide: "Nikalne se pehle",
+    rideRules: [
+      "Yeh orientation guide hai; exact turn ke liye live map use karein.",
+      "Traffic, road closure, mausam aur service status safar ke din check karein.",
+      "Bike ko motorway par na le jayein. Agar confusion ho to roshni wali safe jagah ruk kar anchor + road + last-mile confirm karein.",
+    ],
+  },
+  en: {
+    atlas: "District atlas",
+    title: "Understand every district separately",
+    intro: "Position, zones, major roads, and recognition points. Check a live map separately for exact turns and current traffic.",
+    open: "Open district",
+    back: "Karachi overview",
+    crossing: "Karachi crossing guide",
+    crossingOpen: "Open guide",
+    position: "Position in Karachi",
+    firstRule: "First rule",
+    arrivals: "Common entry names",
+    zones: "Route worlds inside this district",
+    routes: "Road chains",
+    routeHint: "These are selected learning chains, not a complete list of every road or area. Read the names in this order; the line is schematic, not turn-by-turn navigation.",
+    routeSources: "References for this chain",
+    areas: "Areas and anchors",
+    adjacent: "Understand the next district",
+    neighbours: "Connected districts to learn next",
+    boundaryNote: "These are learning connections, not a legal boundary or direct-road claim.",
+    map: "District map",
+    mapHint: "Select a district, road, or landmark on the map to read its detail.",
+    subdivisions: "Official subdivisions",
+    subdivisionNote: "Commissioner pages differ on some spellings/names: North/New Nazimabad and Keamari/Harbour, Mauripur/Maripur. The current familiar form is shown below.",
+    scale: "District scale",
+    population: "Census 2023 population",
+    populationConflict: "PBS Table 1 is treated as primary. The Commissioner page shows different 2023 totals for East and Malir.",
+    anchor: "Primary anchor",
+    corridor: "Primary corridor",
+    caution: "Name confusion",
+    sources: "References",
+    reviewed: "Source snapshot 14 August 2026",
+    developing: "Developing—not current passenger service",
+    orientation: "Orientation chain",
+    previous: "Previous district",
+    next: "Next district",
+    sourceOpen: "Source opens in a new tab",
+    beforeYouRide: "Before you ride",
+    rideRules: [
+      "This is an orientation guide; use a live map for exact turns.",
+      "Check traffic, closures, weather, and service status on the day of travel.",
+      "Do not take a motorcycle onto a motorway. If confused, stop in a safe, well-lit place and confirm anchor + road + last mile.",
+    ],
+  },
+} as const satisfies Record<Locale, object>;
+
+export const districtProfilePresentation = [
+  {
+    districtId: "south",
+    position: localized("Samandar ke saath inner south: old city, Saddar aur Clifton.", "The inner south beside the sea: old city, Saddar, and Clifton."),
+    firstRule: localized("Saddar, Tower aur Clifton teen alag route worlds hain; sirf ‘South’ destination nahi.", "Saddar, Tower, and Clifton are three different route worlds; ‘South’ alone is not a destination."),
+    caution: localized("Clifton aur DHA aam location names hain, lekin cantonment aur district administration alag systems hain.", "Clifton and DHA are familiar location names, but cantonment and district administration overlap as separate systems."),
+    zones: [
+      { id: "old-city-tower", explanation: localized("M.A. Jinnah Road, I.I. Chundrigar Road, markets aur Karachi Port approach.", "M.A. Jinnah Road, I.I. Chundrigar Road, markets, and the Karachi Port approach.") },
+      { id: "saddar-civil-lines", explanation: localized("Empress Market, Cantt Station, Metropole aur major hospitals.", "Empress Market, Cantt Station, Metropole, and major hospitals.") },
+      { id: "clifton-dha", explanation: localized("Teen Talwar, Do Talwar, Sea View aur phase/khayaban address system.", "Teen Talwar, Do Talwar, Sea View, and the phase/khayaban address system.") },
+    ],
+    routes: [
+      { id: "south-old-core", title: localized("Old city east–west", "Old-city east–west"), purpose: localized("Numaish ko Tower se jorta hai.", "Connects Numaish with Tower.") },
+      { id: "south-centre", title: localized("Airport spine ka centre end", "Centre end of the airport spine"), purpose: localized("Airport side se Saddar aur old core ka handoff.", "The handoff from the airport side into Saddar and the old core.") },
+      { id: "south-coast", title: localized("Clifton coastal chain", "Clifton coastal chain"), purpose: localized("Central south se seafront aur DHA side.", "From the inner south toward the seafront and DHA.") },
+    ],
+  },
+  {
+    districtId: "keamari",
+    position: localized("South-west harbour se Hub River aur western beaches tak.", "From the southwest harbour to Hub River and the western beaches."),
+    firstRule: localized("Keamari locality, Keamari district aur Karachi Port ek scale nahi.", "Keamari locality, Keamari district, and Karachi Port are not the same scale."),
+    caution: localized("Keamari se district, harbour-side locality ya port area murad ho sakta hai; exact jagah poochein.", "Keamari can mean the district, the harbour-side neighbourhood, or the port area; ask which one is meant."),
+    zones: [
+      { id: "harbour-keamari", explanation: localized("Port, docks, Jackson aur old-city ka western end.", "The port, docks, Jackson, and the western end of the old city.") },
+      { id: "site-baldia", explanation: localized("Industrial aur dense residential belt, Gulbai aur Hub River approaches ke darmiyan.", "An industrial and dense residential belt between Gulbai and the Hub River approaches.") },
+      { id: "mauripur-coast", explanation: localized("Truck route, Hawks Bay, Sandspit aur Manora side.", "The truck route and the Hawks Bay, Sandspit, and Manora side.") },
+    ],
+    routes: [
+      { id: "keamari-hub", title: localized("Hub River se old core", "Hub River to the old core"), purpose: localized("Balochistan-side entry ko Tower se jorne wali western chain.", "The western chain connecting the Balochistan-side entry to Tower.") },
+      { id: "keamari-coast", title: localized("Western coast se Tower", "Western coast to Tower"), purpose: localized("Hawks Bay aur Mauripur ko old core se jorta hai.", "Connects Hawks Bay and Mauripur with the old core.") },
+      { id: "keamari-port", title: localized("Tower se harbour", "Tower to the harbour"), purpose: localized("Old city se Keamari locality ka short western handoff.", "The short western handoff from the old city to Keamari locality.") },
+    ],
+  },
+  {
+    districtId: "west",
+    position: localized("Hilly north-west: Orangi, Mominabad aur Manghopir.", "The hilly northwest: Orangi, Mominabad, and Manghopir."),
+    firstRule: localized("Orangi, North Karachi aur North Nazimabad alag jagahen hain; exact sector/chowk poochein.", "Orangi, North Karachi, and North Nazimabad are different places; ask for the exact sector or chowk."),
+    caution: localized("Keamari alag district banne ke baad West ki boundaries badli thin; purane addresses mein former Karachi West mil sakta hai.", "West and Keamari were redrawn when Keamari became a separate district; older addresses may use the former Karachi West."),
+    zones: [
+      { id: "orangi-mominabad", explanation: localized("Dense sectors jo Banaras aur Board Office-side passes use karte hain.", "Dense sectors using the Banaras and Board Office-side passes.") },
+      { id: "manghopir", explanation: localized("Hills, shrine/industrial landscape aur Northern Bypass side.", "Hills, the shrine/industrial landscape, and the Northern Bypass side.") },
+      { id: "maymar-surjani-edge", explanation: localized("Northern edge jahan M-9-side approaches aur Central ki grid milti hai.", "The northern edge where M-9-side approaches meet Central's grid.") },
+    ],
+    routes: [
+      { id: "west-orangi", title: localized("Orangi feeder chain", "Orangi feeder chain"), purpose: localized("Orangi ko Board Office/Green Line handoff se jorta hai.", "Connects Orangi to the Board Office/Green Line handoff.") },
+      { id: "west-maymar", title: localized("Maymar se inner city", "Maymar to the inner city"), purpose: localized("Northern edge ko Sohrab Goth aur centre se jorne wali pehchan chain.", "The recognition chain connecting the northern edge with Sohrab Goth and the centre.") },
+      { id: "west-banara", title: localized("Banaras–SITE approach", "Banaras–SITE approach"), purpose: localized("Orangi ke south side se industrial west aur old core ka mental connection.", "The mental connection from south Orangi into the industrial west and old core.") },
+    ],
+  },
+  {
+    districtId: "central",
+    position: localized("Compact middle-north: Liaquatabad se New Karachi tak.", "The compact middle-north: from Liaquatabad to New Karachi."),
+    firstRule: localized("Yeh north–south ladder hai; chowrangi order distance se zyada useful hai.", "This is a north–south ladder; junction order is more useful than straight-line distance."),
+    caution: localized("North Karachi, New Karachi aur North Nazimabad milte-julte names hain lekin alag areas hain.", "North Karachi, New Karachi, and North Nazimabad sound similar but are distinct areas."),
+    zones: [
+      { id: "liaquatabad-nazimabad", explanation: localized("Inner-city ke qareeb dense grid aur Shahrah-e-Pakistan rungs.", "A dense grid near the inner city and the rungs of Shahrah-e-Pakistan.") },
+      { id: "north-nazimabad-gulberg", explanation: localized("Board Office, Five Star, Ayesha Manzil aur Water Pump anchors.", "Board Office, Five Star, Ayesha Manzil, and Water Pump anchors.") },
+      { id: "new-karachi", explanation: localized("Nagan, Power House aur Surjani/Green Line side ka northern grid.", "The northern grid around Nagan, Power House, and the Surjani/Green Line side.") },
+    ],
+    routes: [
+      { id: "central-main", title: localized("North–centre spine", "North–centre spine"), purpose: localized("Northern Karachi ko Numaish aur old centre ki direction deta hai.", "Gives northern Karachi its direction toward Numaish and the old centre.") },
+      { id: "central-cross", title: localized("Central cross-chain", "Central cross-chain"), purpose: localized("North Karachi se Nazimabad aur East-side connection samjhata hai.", "Explains the connection from North Karachi through Nazimabad toward the east side.") },
+      { id: "central-green", title: localized("Green Line axis", "Green Line axis"), purpose: localized("Surjani se Numaish tak current high-capacity north–centre structure.", "The current high-capacity north–centre structure from Surjani to Numaish.") },
+    ],
+  },
+  {
+    districtId: "east",
+    position: localized("Inner centre ke east: Gulshan, Johar, universities aur M-9 gateway.", "East of the inner centre: Gulshan, Johar, universities, and the M-9 gateway."),
+    firstRule: localized("Gulshan/Johar bohat broad hain; block, road ya landmark lazmi add karein.", "Gulshan and Johar are very broad; always add a block, road, or landmark."),
+    caution: localized("Gulshan, Johar aur Scheme 33 broad labels hain; address ke saath block, road ya qareebi landmark chahiye.", "Gulshan, Johar, and Scheme 33 are broad labels; an address still needs its block, road, or nearby landmark."),
+    zones: [
+      { id: "jamshed-ferozabad", explanation: localized("Mazar, Numaish, Bahadurabad aur Shahrah-e-Faisal ke qareeb inner east.", "The inner east near Mazar, Numaish, Bahadurabad, and Shahrah-e-Faisal.") },
+      { id: "gulshan-e-iqbal", explanation: localized("Hasan Square, Civic Centre, NIPA aur universities.", "Hasan Square, Civic Centre, NIPA, and the universities.") },
+      { id: "johar-gulzar-e-hijri", explanation: localized("Johar, Safoora, Scheme 33 aur Sohrab Goth-side expansion.", "Johar, Safoora, Scheme 33, and expansion toward Sohrab Goth.") },
+    ],
+    routes: [
+      { id: "east-university", title: localized("University Road", "University Road"), purpose: localized("Inner city ko NIPA, universities aur Safoora se jorti hai.", "Connects the inner city with NIPA, the universities, and Safoora.") },
+      { id: "east-diagonal", title: localized("Rashid Minhas diagonal", "Rashid Minhas diagonal"), purpose: localized("Airport/Drigh side ko NIPA aur north-central Karachi se milata hai.", "Links the airport/Drigh side with NIPA and north-central Karachi.") },
+      { id: "east-safoora", title: localized("Safoora se Numaish", "Safoora to Numaish"), purpose: localized("Johar ke hospital/university belt ko inner centre se jorta hai.", "Connects Johar's hospital/university belt with the inner centre.") },
+    ],
+  },
+  {
+    districtId: "korangi",
+    position: localized("South-east residential/industrial belt, Malir River ke south aur airport approach ke paas.", "The southeast residential/industrial belt, south of the Malir River and near the airport approach."),
+    firstRule: localized("Korangi Crossing, Korangi 5, Singer aur Dawood alag milestones hain.", "Korangi Crossing, Korangi 5, Singer, and Dawood are different milestones."),
+    caution: localized("Korangi district, Korangi area se bara hai; Landhi, Shah Faisal aur Model Colony bhi isi district mein hain.", "Korangi District is wider than Korangi neighbourhood; Landhi, Shah Faisal, and Model Colony are in the same district."),
+    zones: [
+      { id: "shah-faisal-model-colony", explanation: localized("Airport-side northern edge; administration Korangi district ki hai.", "The airport-side northern edge; administratively it belongs to Korangi District.") },
+      { id: "korangi", explanation: localized("Crossing, Korangi sectors aur industrial area ka central belt.", "The central belt around the Crossing, Korangi sectors, and the industrial area.") },
+      { id: "landhi", explanation: localized("Singer, Dawood, 89 Chowrangi aur Quaidabad-side connection.", "Singer, Dawood, 89 Chowrangi, and the Quaidabad-side connection.") },
+    ],
+    routes: [
+      { id: "korangi-centre", title: localized("Korangi se centre", "Korangi to the centre"), purpose: localized("Industrial/residential belt ko Shahrah-e-Faisal aur Numaish side se jorta hai.", "Connects the industrial/residential belt with Shahrah-e-Faisal and the Numaish side.") },
+      { id: "korangi-north", title: localized("North Karachi se Korangi", "North Karachi to Korangi"), purpose: localized("NIPA/Johar ke zariye northern grid aur Korangi ko milata hai.", "Links the northern grid and Korangi through NIPA/Johar.") },
+      { id: "korangi-yellow", title: localized("Yellow Line future corridor", "Future Yellow Line corridor"), purpose: localized("Dawood se Numaish planned high-capacity connection; abhi rideable nahi.", "The planned high-capacity connection from Dawood to Numaish; it is not rideable yet.") },
+    ],
+  },
+  {
+    districtId: "malir",
+    position: localized("Bohat bara east/north-east envelope: airport se Port Qasim aur M-9 edge tak.", "The vast east/northeast envelope: from the airport to Port Qasim and the M-9 edge."),
+    firstRule: localized("‘Malir’ sun kar poochein: Malir 15/Halt, Cantt, district ya rural edge? Faaslay bohat mukhtalif hain.", "When you hear ‘Malir,’ ask: Malir 15/Halt, Cantt, the district, or the rural edge? The distances are radically different."),
+    caution: localized("Route ki baat mein ‘Malir’ aksar Malir 15/Halt side hota hai, poora bohat bara district nahi.", "In route conversations, ‘Malir’ usually means the built-up Malir 15/Halt side, not the whole much larger district."),
+    zones: [
+      { id: "airport-built-up-malir", explanation: localized("Terminal, Malir Halt, Malir 15 aur Cantt-side gates.", "The terminal, Malir Halt, Malir 15, and the Cantt-side gates.") },
+      { id: "gadap-m9-edge", explanation: localized("Safoora ke bahar villages, new housing, Toll Plaza aur Bahria/DHA City side.", "Villages and new housing beyond Safoora, plus Toll Plaza and the Bahria/DHA City side.") },
+      { id: "bin-qasim-eastern-coast", explanation: localized("Quaidabad se Steel Town, Port Qasim aur Ibrahim Hydri coast tak.", "From Quaidabad to Steel Town, Port Qasim, and the Ibrahim Hydri coast.") },
+    ],
+    routes: [
+      { id: "malir-n5", title: localized("N-5 built-up Malir", "N-5 through built-up Malir"), purpose: localized("Airport approach se Thatta/Port Qasim direction ka south-eastern spine.", "The southeastern spine from the airport approach toward Thatta and Port Qasim.") },
+      { id: "malir-m9", title: localized("M-9 north-east gateway", "M-9 northeast gateway"), purpose: localized("Sohrab Goth ke baad Toll Plaza aur outer developments ka intercity-scale chain.", "The intercity-scale chain beyond Sohrab Goth through Toll Plaza and the outer developments.") },
+      { id: "malir-cantt", title: localized("Malir Cantt se inner east", "Malir Cantt to the inner east"), purpose: localized("Controlled Cantt gates ko Safoora, Johar aur Numaish se jorta hai.", "Links controlled Cantt gates with Safoora, Johar, and Numaish.") },
+    ],
+  },
+] as const satisfies readonly DistrictProfilePresentation[];
 
 export type ActKey = "orient" | "districts" | "movement" | "systems" | "apply";
 
@@ -327,16 +552,16 @@ const romanUrdu = {
       alt: "Bagh se nazar aata Mazar-e-Quaid ka safed sang-e-marmar maqbara",
     },
     "jinnah-airport": {
-      title: "Airport, Star Gate aur Jinnah Terminal alag pins hain.",
+      title: "Jinnah Terminal airport approach se — source image 2005 ki hai.",
       alt: "Karachi ke Jinnah International Airport ka terminal",
     },
     "karachi-port": {
-      title: "Karachi Port old city ke paas; Port Qasim far south-east.",
-      alt: "Karachi Port ke pani mein jahaz aur harbour cranes",
+      title: "Karachi seaport par container cranes — tasveer 2022 ki hai.",
+      alt: "Karachi seaport par container cranes aur pani",
     },
     "clifton-skyline": {
-      title: "Clifton coast Karachi ka southern edge hai.",
-      alt: "Arabian Sea ke saath Clifton Karachi ki apartment skyline",
+      title: "Clifton skyline — tasveer 2015 ki hai.",
+      alt: "Clifton Karachi ki apartment skyline",
     },
   },
   journeys: {
@@ -386,7 +611,7 @@ const romanUrdu = {
       "Traffic aur bheer mein qeemti cheezen numayan na rakhein",
     ],
     emergencyTitle: "Emergency numbers",
-    verifiedNote: "13 Aug 2026 ko verify hua.",
+    verifiedNote: "14 Aug 2026 ko verify hua.",
     serviceLabels: {
       "rescue-1122": "Sindh Emergency Rescue Service",
       "police-15": "Madadgar Police",
@@ -449,7 +674,7 @@ const romanUrdu = {
   footer: {
     primarySources: "Bunyadi sources",
     moreVerification: "Mazeed tasdeeq",
-    reviewed: "Facts aur transport status 13 August 2026 ko review huay",
+    reviewed: "Facts aur transport status 14 August 2026 ko review huay",
     mapAttribution: "District geometry © OpenStreetMap contributors · ODbL",
     backToTop: "Wapas upar",
   },
@@ -611,16 +836,16 @@ const english = {
       alt: "Mazar-e-Quaid’s white marble mausoleum seen from its garden",
     },
     "jinnah-airport": {
-      title: "Airport, Star Gate, and Jinnah Terminal are different pins.",
+      title: "Jinnah Terminal from the airport approach — source image from 2005.",
       alt: "The terminal at Karachi’s Jinnah International Airport",
     },
     "karachi-port": {
-      title: "Karachi Port is near the old city; Port Qasim is far southeast.",
-      alt: "Ships and harbour cranes on the water at Karachi Port",
+      title: "Container cranes at Karachi seaport — photographed in 2022.",
+      alt: "Container cranes and water at Karachi seaport",
     },
     "clifton-skyline": {
-      title: "Clifton’s coast marks Karachi’s southern edge.",
-      alt: "Clifton’s apartment skyline beside the Arabian Sea in Karachi",
+      title: "Clifton skyline — photographed in 2015.",
+      alt: "Clifton's apartment skyline in Karachi",
     },
   },
   journeys: {
@@ -670,7 +895,7 @@ const english = {
       "Keep valuables discreet in traffic and crowds",
     ],
     emergencyTitle: "Emergency numbers",
-    verifiedNote: "Verified 13 Aug 2026.",
+    verifiedNote: "Verified 14 Aug 2026.",
     serviceLabels: {
       "rescue-1122": "Sindh Emergency Rescue Service",
       "police-15": "Madadgar Police",
@@ -733,7 +958,7 @@ const english = {
   footer: {
     primarySources: "Primary sources",
     moreVerification: "More verification",
-    reviewed: "Facts and transport status reviewed 13 August 2026",
+    reviewed: "Facts and transport status reviewed 14 August 2026",
     mapAttribution: "District geometry © OpenStreetMap contributors · ODbL",
     backToTop: "Back to top",
   },
@@ -815,3 +1040,76 @@ export function getCorridorNarrative(locale: Locale, corridorId: CorridorId): Na
   if (!(corridorId in copyByLocale[locale].corridorNarrative)) return undefined;
   return copyByLocale[locale].corridorNarrative[corridorId as StoryCorridorId];
 }
+
+/** Short, place-specific Roman Urdu orientation meanings. Proper nouns stay
+ * unchanged so the same result remains searchable on signs and maps. The
+ * complete LandmarkId record makes a new canonical landmark fail typecheck
+ * until its Roman Urdu meaning is added here. */
+export const romanLandmarkMeaning = {
+  saddar: "Purana central shopping aur transport area; exact stop Regal, Empress Market ya Lucky Star ho sakta hai.",
+  "empress-market": "Historic market aur Saddar ka bohat clear visual anchor.",
+  tower: "Merewether Clock Tower ke qareeb old-city/port-side route anchor; bus mein ‘Tower’ isi area ko kehte hain.",
+  "ii-chundrigar": "Tower aur Shaheen Complex ke darmiyan Karachi ki purani banking aur corporate street.",
+  "karachi-city-station": "Purana downtown railway station; Karachi Cantt Station se alag hai.",
+  "karachi-cantt-station": "Karachi ka main intercity railway station, Metropole/Shahrah-e-Faisal side ke south mein.",
+  "frere-hall": "Saddar, Civil Lines aur Clifton ke darmiyan colonial-era civic landmark.",
+  "teen-talwar": "Three Swords monument aur Clifton ka major junction; common meeting aur direction point.",
+  "do-talwar": "Clifton ka alag Two Swords junction; yeh Teen Talwar nahi hai.",
+  "boat-basin": "Mai Kolachi se Clifton aate hue waterfront food aur park area.",
+  "sea-view": "Mashhoor public seafront; Sea View lamba stretch hai is liye named landmark bhi poochein.",
+  "dolmen-clifton": "Seafront ka bara mall aur asani se pehchana jane wala pickup/drop-off anchor.",
+  "civil-hospital": "Ghanay old-city medical aur market zone mein bara public hospital.",
+  jpmc: "Cantt Station aur Saddar/FTC side ke qareeb bara public teaching hospital.",
+  lyari: "Old city ke bilkul north-west mein historic neighbourhoods ka bara area; ek pin poore Lyari ko represent nahi karta.",
+  "mazar-e-quaid": "Muhammad Ali Jinnah ka mausoleum aur Karachi ka strong central visual landmark.",
+  numaish: "Mazar ke qareeb junction jahan M.A. Jinnah Road, Shahrah-e-Pakistan aur major bus corridors milte hain.",
+  "guru-mandir": "Numaish ke north-east mein busy route area; directions mein junction/neighbourhood hai, district nahi.",
+  "jail-chowrangi": "University Road mental line ka inner-city start aur Shaheed-e-Millat cross-connection ka west end.",
+  "hasan-square": "Stadium, Expo Centre aur Civic Centre ke qareeb East Karachi ka central junction.",
+  "civic-centre": "Hasan Square aur University Road ke qareeb public offices ka cluster.",
+  "expo-centre": "Civic Centre aur National Stadium side ke qareeb Karachi ka main exhibition complex.",
+  nipa: "University Road aur Rashid Minhas Road ka major crossing; East Karachi ka bohat useful route anchor.",
+  "karachi-university": "Bara public university campus jo University Road ko uski everyday pehchan deta hai.",
+  "ned-university": "University belt ke samne major engineering university aur bus-route landmark.",
+  "aga-khan-hospital": "Stadium Road aur University Road networks ke darmiyan bara teaching hospital.",
+  safoora: "University Road chain ka eastern end aur Scheme 33/Malir Cantt approaches ka gateway.",
+  "sohrab-goth": "M-9 ki taraf familiar north-east city gateway; controlled motorway aur Toll Plaza is se agay hain.",
+  "teen-hatti": "Lyari River par bridge aur junction, inner city aur Liaquatabad ke darmiyan.",
+  "liaquatabad-10": "Liaquatabad ka ghana commercial aur transport anchor; Lalookhet iska purana everyday naam hai.",
+  "ayesha-manzil": "Federal B Area aur Shahrah-e-Pakistan spine ko serve karne wala major north-central junction.",
+  "water-pump": "Federal B Area ka mashhoor junction; yeh jagah ka naam hai, pump dhoondhne ki instruction nahi.",
+  "board-office": "Nazimabad/Orangi handoff aur Green/Orange Line connection ke qareeb major junction.",
+  "five-star": "North Nazimabad ka roundabout jo route milestone ke taur par use hota hai.",
+  "nagan-chowrangi": "North Karachi ka major junction jahan routes New Karachi, North Karachi aur Buffer Zone ki taraf bantte hain.",
+  "power-house": "Nagan se agay North Karachi ka route terminus/anchor; yeh shehar ka electricity headquarters nahi.",
+  "banaras-chowk": "SITE, Qasba, Orangi aur Manghopir approaches ke darmiyan key western junction.",
+  "orangi-five": "Orangi ka mashhoor commercial aur transport anchor; poora Orangi is se bohat bara hai.",
+  "kati-pahari": "North Nazimabad aur Orangi/Qasba sides ke darmiyan pahari cut ka route landmark.",
+  manghopir: "Bara north-western area aur district subdivision; colony, road ya shrine/industrial landmark bhi batayein.",
+  "surjani-town": "Door north ka residential area aur Green Line BRT corridor ka outer end.",
+  "karachi-port": "Old city aur Keamari se mila historic western seaport; far-east Port Qasim se alag hai.",
+  "keamari-harbour": "Harbour-side neighbourhood aur jetty area jiska naam bohat baray Keamari district ke liye bhi use hota hai.",
+  "site-area": "Inner city, Orangi aur Baldia approaches ke darmiyan bara western industrial estate.",
+  "baldia-town": "Bara western residential/industrial area; exact safar ke liye sector ya named stop chahiye.",
+  "hawks-bay": "Mauripur se pohanchne wala western beach; road se Clifton Sea View se bohat door hai.",
+  sandspit: "Mauripur/Hawks Bay network se pohanchne wala western beach aur wetland side.",
+  manora: "Harbour mouth par peninsula/island; aam tor par Keamari se boat ya western road connection se pohanchte hain.",
+  "natha-khan": "Airport approach ka key junction jahan Shahrah-e-Faisal se Shah Faisal Colony aur Korangi routes nikalte hain.",
+  "model-colony": "Airport/Malir approach ke qareeb area jo aam bol-chal mein Malir ke sath aata hai, lekin district Korangi hai.",
+  "shah-faisal-colony": "Malir River ke north mein ghana area, airport approach ke saath aur Korangi routes ke samne.",
+  qayyumabad: "Korangi Road, DHA/Khayaban-e-Ittehad aur KPT/Shaheed-e-Millat approaches ka hinge.",
+  "korangi-crossing": "Korangi Road side ka major junction; Korangi 5, Singer aur Dawood se alag milestone.",
+  "indus-hospital": "Korangi Crossing ke qareeb bara hospital aur bus-route anchor.",
+  "singer-chowrangi": "Korangi/Landhi industry ka major route milestone; nearby industrial chowrangiyon ke names badal sakte hain.",
+  landhi: "Bara south-eastern residential aur industrial area; exact destination ke liye number, chowrangi ya station batayein.",
+  "jinnah-airport": "Karachi ka main passenger airport; terminal, Star Gate aur airport road alag points hain.",
+  "malir-halt": "Airport/N-5 approach par railway aur road recognition point; Malir 15 se alag hai.",
+  "malir-15": "‘15’ stop/area ka naam hai, District 15 ya poora Malir nahi.",
+  "malir-cantt": "Controlled cantonment area; gate/checkpost aur exact destination confirm karein.",
+  "memon-goth": "Malir ke eastern interior ka purana settlement aur route anchor, main Airport–Malir 15 strip se alag.",
+  "ibrahim-hyderi": "Eastern creek coast ki historic fishing settlement; Korangi-side approach ke bawajood district Malir hai.",
+  quaidabad: "Steel Town aur Port Qasim approaches se pehle National Highway ka outer built-up junction.",
+  "gulshan-e-hadeed": "Steel Town ke qareeb Karachi ke far south-eastern industrial edge par planned residential area.",
+  "port-qasim": "Eastern industrial port system; Karachi Port/Keamari se alag aur bohat door hai.",
+  "bahria-town-karachi": "Inner city se bohat bahar M-9 par large gated development; intercity-scale travel time rakhein.",
+} as const satisfies Readonly<Record<LandmarkId, string>>;

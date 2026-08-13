@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowRight,
@@ -8,34 +8,35 @@ import {
   ExternalLink,
   LocateFixed,
   MapPin,
-  Menu,
-  Moon,
   Plane,
   Printer,
   Search,
   Ship,
-  Sparkles,
   TrainFront,
   X,
   Zap,
 } from "lucide-react";
+import Link from "next/link";
 import BrandMark from "./BrandMark";
 import IntroWorld from "./IntroWorld";
-import KarachiMap, { type MapChapter, type MapRouteOverlay } from "./KarachiMap";
-import {
-  CrossCityGuide,
-  crossCityScenarios,
-  type CrossCityMapFocus,
-} from "./features/cross-city";
+import KarachiMap, { type MapChapter } from "./KarachiMap";
 import MapDetailsCard from "./features/map/MapDetailsCard";
 import { resolveMapEntity, type MapEntityRef } from "./features/map/map-entities";
+import { districtAtlasCopy } from "./features/districts/districtAtlasData";
+import {
+  setReducedMotionPreference,
+  useDocumentMetadata,
+  useLocalePreference,
+  useReducedMotionPreference,
+} from "./features/preferences";
+import PhotoCard from "./PhotoCard";
+import SiteHeader from "./SiteHeader";
 import {
   districts,
   emergencies,
   landmarks,
   mainCorridors,
   normaliseSearchTerm,
-  photoManifest,
   searchIndex,
   sources,
   streetGlossary,
@@ -43,15 +44,8 @@ import {
   utilitySystems,
 } from "./karachi-data";
 import {
-  DEFAULT_LOCALE,
   getCopy,
-  isLocale,
-  localeOptions,
   type ActKey,
-  type JourneyId,
-  type Locale,
-  type PhotoStoryId,
-  type SiteCopy,
 } from "./karachi-i18n";
 
 type StoryStep = {
@@ -74,28 +68,16 @@ const districtCameras: Record<string, { center: [number, number]; zoom: number }
 };
 
 const ACT_KEYS: readonly ActKey[] = ["orient", "movement", "districts", "systems", "apply"];
-const JOURNEY_IDS: readonly JourneyId[] = [
-  "airport-to-saddar",
-  "surjani-to-numaish",
-  "nipa-to-tower",
-  "korangi-to-numaish",
-  "orangi-to-tower",
-  "port-to-port",
-];
 const districtStoryOrder = ["south", "keamari", "west", "central", "east", "korangi", "malir"] as const;
 const EXPLORE_CHAPTER: MapChapter = { id: "explore", mode: "explore", center: [67.08, 24.93], zoom: 9.2, pitch: 25 };
-const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
-const languageStorageKey = "understand-karachi-language";
-const languageEvent = "understand-karachi-language-change";
-let inMemoryLocale: Locale = DEFAULT_LOCALE;
 const pageMetadata = {
   "ur-roman": {
     title: "Understand Karachi — Shehar ko zero se samjhein",
-    description: "Bike, car ya transit se Karachi cross karna samjhein: entry gates, bari roads, junctions, landmarks, districts aur last-mile handoff.",
+    description: "Karachi ke districts, bari roads, junctions, landmarks aur city systems ko zero se samjhein.",
   },
   en: {
     title: "Understand Karachi — Learn the city from zero",
-    description: "Learn how to cross Karachi by bike, car, or transit using entry gates, major roads, junctions, landmarks, districts, and a last-mile handoff.",
+    description: "Learn Karachi's districts, major roads, junctions, landmarks, and city systems from zero.",
   },
 } as const;
 
@@ -108,81 +90,6 @@ const corridorStoryConfig = [
   { dataId: "national-highway", mapId: "airport-spine", center: [67.24, 24.86] as [number, number], zoom: 9.15 },
   { dataId: "m9-motorway", mapId: "north-spine", center: [67.2, 25.01] as [number, number], zoom: 8.75 },
 ] as const;
-
-const photoFiles: Readonly<Record<PhotoStoryId, string>> = {
-  "empress-market": "empress-market.jpg",
-  "mazar-e-quaid": "mazar-e-quaid.jpg",
-  "jinnah-airport": "jinnah-airport.jpg",
-  "karachi-port": "karachi-port.jpg",
-  "clifton-skyline": "clifton-skyline.jpg",
-};
-
-function subscribeToReducedMotion(callback: () => void) {
-  const media = window.matchMedia(reducedMotionQuery);
-  media.addEventListener("change", callback);
-  return () => media.removeEventListener("change", callback);
-}
-
-function getReducedMotionSnapshot() {
-  return window.matchMedia(reducedMotionQuery).matches;
-}
-
-function subscribeToLocale(callback: () => void) {
-  window.addEventListener("storage", callback);
-  window.addEventListener(languageEvent, callback);
-  return () => {
-    window.removeEventListener("storage", callback);
-    window.removeEventListener(languageEvent, callback);
-  };
-}
-
-function getLocaleSnapshot(): Locale {
-  try {
-    const stored = window.localStorage.getItem(languageStorageKey);
-    return isLocale(stored) ? stored : inMemoryLocale;
-  } catch {
-    return inMemoryLocale;
-  }
-}
-
-function setLocalePreference(locale: Locale) {
-  inMemoryLocale = locale;
-  try {
-    window.localStorage.setItem(languageStorageKey, locale);
-  } catch {
-    // The selector still works for this visit when storage is unavailable.
-  }
-  window.dispatchEvent(new Event(languageEvent));
-}
-
-function PhotoPause({ photoId, copy }: { photoId: PhotoStoryId; copy: SiteCopy }) {
-  const file = photoFiles[photoId];
-  const photo = photoManifest.find((item) => item.localFile.endsWith(file));
-  const content = copy.photos[photoId];
-
-  return (
-    <figure className="photo-pause">
-      {/* The licensed, local photographs keep their recorded intrinsic dimensions and lazy loading. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={`/photos/${file}`}
-        alt={content.alt}
-        loading="lazy"
-        width={photo?.width ?? 1280}
-        height={photo?.height ?? 840}
-        style={{ objectPosition: photo?.objectPosition }}
-      />
-      <figcaption>
-        <h3>{content.title}</h3>
-        {photo && (
-          <a href={photo.sourcePage} target="_blank" rel="noreferrer" aria-label={`${copy.common.photoCreditAria}: ${photo.creator}, ${photo.license}. ${copy.common.externalLinkHint}`}>
-            <span className="credit-text" lang="en">{photo.creator} · {photo.license}</span> <ExternalLink size={13} aria-hidden="true" />
-          </a>
-        )}
-      </figcaption>
-    </figure>
-  );
-}
 
 function IconForType({ type }: { type: string }) {
   if (type.toLowerCase().includes("airport")) return <Plane size={17} />;
@@ -204,23 +111,14 @@ function distanceKm(a: [number, number], b: readonly [number, number]) {
 }
 
 export default function StoryExperience() {
-  const locale = useSyncExternalStore(subscribeToLocale, getLocaleSnapshot, () => DEFAULT_LOCALE);
+  const locale = useLocalePreference();
   const copy = getCopy(locale);
   const [activeId, setActiveId] = useState("compass");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const systemReducedMotion = useSyncExternalStore(subscribeToReducedMotion, getReducedMotionSnapshot, () => false);
-  const [motionOverride, setMotionOverride] = useState<boolean | null>(null);
-  const reducedMotion = motionOverride ?? systemReducedMotion;
+  const reducedMotion = useReducedMotionPreference();
   const [search, setSearch] = useState("");
   const [selectedPlace, setSelectedPlace] = useState<{ name: string; coordinates: [number, number] } | null>(null);
   const [selectedEntity, setSelectedEntity] = useState<MapEntityRef | null>(null);
   const [locationStatus, setLocationStatus] = useState("");
-  const [crossMapFocus, setCrossMapFocus] = useState<CrossCityMapFocus>({
-    scenarioId: "hub-to-thatta",
-    checkpointId: "hub-n25-entry",
-    coordinates: [67.08, 24.9],
-    zoom: 8.75,
-  });
   const [quizAnswers, setQuizAnswers] = useState<Record<string, string>>({});
   const storyRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);
@@ -378,18 +276,7 @@ export default function StoryExperience() {
     return () => observer.disconnect();
   }, [storySteps]);
 
-  useEffect(() => {
-    document.documentElement.dataset.motion = reducedMotion ? "reduce" : "full";
-    return () => {
-      delete document.documentElement.dataset.motion;
-    };
-  }, [reducedMotion]);
-
-  useEffect(() => {
-    document.documentElement.lang = locale === "ur-roman" ? "ur-Latn-PK" : "en";
-    document.title = pageMetadata[locale].title;
-    document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute("content", pageMetadata[locale].description);
-  }, [locale]);
+  useDocumentMetadata(pageMetadata[locale].title, pageMetadata[locale].description);
 
   useEffect(() => {
     let frame = 0;
@@ -418,17 +305,10 @@ export default function StoryExperience() {
         event.preventDefault();
         searchInputRef.current?.focus();
       }
-      if (event.key === "Escape") setMenuOpen(false);
-    };
-    const desktop = window.matchMedia("(min-width: 1051px)");
-    const closeOnDesktop = (event: MediaQueryListEvent) => {
-      if (event.matches) setMenuOpen(false);
     };
     window.addEventListener("keydown", onKeyDown);
-    desktop.addEventListener("change", closeOnDesktop);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
-      desktop.removeEventListener("change", closeOnDesktop);
     };
   }, []);
 
@@ -451,45 +331,6 @@ export default function StoryExperience() {
     () => selectedEntity ? resolveMapEntity(selectedEntity, locale) : null,
     [locale, selectedEntity],
   );
-
-  const scrollToAct = (act: ActKey) => {
-    const step = storySteps.find((item) => item.act === act);
-    if (step) document.getElementById(`step-${step.id}`)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
-    setMenuOpen(false);
-  };
-
-  const crossScenario = useMemo(
-    () => crossCityScenarios.find((scenario) => scenario.id === crossMapFocus.scenarioId) ?? crossCityScenarios[0],
-    [crossMapFocus.scenarioId],
-  );
-  const crossRouteOverlay = useMemo<MapRouteOverlay>(() => ({
-    id: crossScenario.id,
-    name: crossScenario.title[locale],
-    checkpoints: crossScenario.checkpoints.map((checkpoint) => ({
-      id: checkpoint.id,
-      label: checkpoint.label[locale],
-      stage: checkpoint.stage,
-      coordinates: checkpoint.coordinates,
-    })),
-    selectedCheckpointId: crossMapFocus.checkpointId,
-  }), [crossMapFocus.checkpointId, crossScenario, locale]);
-  const crossMapChapter = useMemo<MapChapter>(() => ({
-    id: `cross-${crossScenario.id}-${crossMapFocus.checkpointId ?? "all"}`,
-    mode: "corridors",
-    center: [crossMapFocus.coordinates[0], crossMapFocus.coordinates[1]],
-    zoom: crossMapFocus.zoom,
-    pitch: reducedMotion ? 0 : 24,
-  }), [crossMapFocus.checkpointId, crossMapFocus.coordinates, crossMapFocus.zoom, crossScenario.id, reducedMotion]);
-  const selectCrossMapCheckpoint = (checkpointId: string) => {
-    const checkpoint = crossScenario.checkpoints.find((item) => item.id === checkpointId);
-    if (!checkpoint) return;
-    setCrossMapFocus({
-      scenarioId: crossScenario.id,
-      checkpointId,
-      coordinates: checkpoint.coordinates,
-      zoom: checkpoint.zoom,
-    });
-  };
 
   const locateUser = () => {
     if (!("geolocation" in navigator)) {
@@ -526,59 +367,34 @@ export default function StoryExperience() {
 
   return (
     <main className={reducedMotion ? "reduced-motion" : ""} data-locale={locale}>
-      <a href="#cross-city" className="skip-link">{copy.common.skipToGuide}</a>
+      <a href="#story" className="skip-link">{copy.common.skipToGuide}</a>
       <div className="progress-rail" aria-hidden="true"><span ref={progressRef} /></div>
 
-      <header className="site-header">
-        <a className="wordmark" href="#top" aria-label={copy.common.homeAria}><BrandMark /></a>
-        <nav aria-label={copy.common.guideChaptersAria}>
-          {ACT_KEYS.map((act) => <button key={act} onClick={() => scrollToAct(act)}>{copy.acts[act]}</button>)}
-        </nav>
-        <div className="header-actions">
-          <label className="language-control">
-            <span>{copy.language.label}</span>
-            <select value={locale} onChange={(event) => setLocalePreference(event.target.value as Locale)} aria-label={copy.language.ariaLabel}>
-              {localeOptions.map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}
-            </select>
-          </label>
-          <span className="sr-only" aria-live="polite">{copy.language.currentLanguage}: {copy.localeName}</span>
-          <button className="motion-toggle" onClick={() => setMotionOverride(!reducedMotion)} aria-pressed={reducedMotion} title={copy.common.toggleMotionTitle}>
-            {reducedMotion ? <Moon size={16} /> : <Sparkles size={16} />}<span>{reducedMotion ? copy.common.still : copy.common.motion}</span>
-          </button>
-          <button className="menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label={menuOpen ? copy.common.closeMenuAria : copy.common.openMenuAria} aria-controls="mobile-guide-menu" aria-expanded={menuOpen}>{menuOpen ? <X /> : <Menu />}</button>
-        </div>
-      </header>
-
-      {menuOpen && <nav className="mobile-menu" id="mobile-guide-menu" aria-label={copy.common.mobileGuideChaptersAria}>{ACT_KEYS.map((act) => <button key={act} onClick={() => scrollToAct(act)}>{copy.acts[act]}<ArrowRight size={16} /></button>)}</nav>}
+      <SiteHeader
+        locale={locale}
+        items={[
+          ...ACT_KEYS.map((act) => ({ href: `/#step-${storySteps.find((step) => step.act === act)?.id ?? "compass"}`, label: copy.acts[act] })),
+          { href: "/districts", label: districtAtlasCopy[locale].atlas },
+          { href: "/crossings", label: districtAtlasCopy[locale].crossing },
+        ]}
+        languageLabel={copy.language.label}
+        languageAriaLabel={copy.language.ariaLabel}
+        currentLanguageLabel={copy.language.currentLanguage}
+        homeAriaLabel={copy.common.homeAria}
+        navigationAriaLabel={copy.common.guideChaptersAria}
+        mobileNavigationAriaLabel={copy.common.mobileGuideChaptersAria}
+        openMenuAriaLabel={copy.common.openMenuAria}
+        closeMenuAriaLabel={copy.common.closeMenuAria}
+      />
 
       <section className="hero" id="top">
         <div className="hero-noise" />
-        <IntroWorld reducedMotion={reducedMotion} />
+        <IntroWorld locale={locale} reducedMotion={reducedMotion} onReducedMotionChange={setReducedMotionPreference} />
         <div className="hero-copy">
           <h1>{copy.hero.title}</h1>
-          <a href="#cross-city" className="start-button"><span>{copy.hero.start}</span><ArrowDown size={18} /></a>
+          <a href="#story" className="start-button"><span>{copy.hero.start}</span><ArrowDown size={18} /></a>
         </div>
       </section>
-
-      <div id="cross-city">
-        <CrossCityGuide
-          locale={locale}
-          reducedMotion={reducedMotion}
-          onFocusMap={setCrossMapFocus}
-          externalCheckpointId={crossMapFocus.checkpointId}
-          mapSlot={(
-            <KarachiMap
-              chapter={crossMapChapter}
-              reducedMotion={reducedMotion}
-              locale={locale}
-              routeOverlay={crossRouteOverlay}
-              onRouteCheckpointSelect={selectCrossMapCheckpoint}
-              interactive
-              inspectable
-            />
-          )}
-        />
-      </div>
 
       <section className="story" id="story" ref={storyRef}>
         <aside className="story-stage">
@@ -593,24 +409,33 @@ export default function StoryExperience() {
                 {step.body && <p>{step.body}</p>}
                 {step.detail}
               </div>
-              {step.id === "landmark-language" && <PhotoPause photoId="empress-market" copy={copy} />}
-              {step.id === "district-south" && <PhotoPause photoId="mazar-e-quaid" copy={copy} />}
-              {step.id === "corridor-shahrah-e-faisal" && <PhotoPause photoId="jinnah-airport" copy={copy} />}
-              {step.id === "gateways" && <PhotoPause photoId="karachi-port" copy={copy} />}
-              {step.id === "weather" && <PhotoPause photoId="clifton-skyline" copy={copy} />}
+              {step.id === "landmark-language" && <PhotoCard photoId="empress-market" copy={copy} locale={locale} />}
+              {step.id === "district-east" && <PhotoCard photoId="mazar-e-quaid" copy={copy} locale={locale} />}
+              {step.id === "corridor-shahrah-e-faisal" && <PhotoCard photoId="jinnah-airport" copy={copy} locale={locale} />}
+              {step.id === "gateways" && <PhotoCard photoId="karachi-port" copy={copy} locale={locale} />}
+              {step.id === "weather" && <PhotoCard photoId="clifton-skyline" copy={copy} locale={locale} />}
             </article>
           ))}
         </div>
       </section>
 
-      <section className="journeys-section">
-        <div className="section-heading"><h2>{copy.journeys.title}</h2></div>
-        <div className="journey-grid">
-          {JOURNEY_IDS.map((journeyId) => {
-            const item = copy.journeys.items[journeyId];
-            return <article key={journeyId}><p className="journey-route">{item.steps[0]}</p></article>;
-          })}
+      <section className="district-atlas-cta" aria-labelledby="district-atlas-title">
+        <div>
+          <h2 id="district-atlas-title">{districtAtlasCopy[locale].title}</h2>
+          <p>{districtAtlasCopy[locale].intro}</p>
         </div>
+        <div className="district-atlas-links">
+          {districts.map((district) => (
+            <Link key={district.id} href={`/districts/${district.id}`} style={{ "--district": district.color } as React.CSSProperties}>
+              <span>{district.name}</span><ArrowRight size={17} aria-hidden="true" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="crossing-cta">
+        <h2>{districtAtlasCopy[locale].crossing}</h2>
+        <Link href="/crossings">{districtAtlasCopy[locale].crossingOpen}<ArrowRight size={17} aria-hidden="true" /></Link>
       </section>
 
       <section className="explorer-section" id="explore">

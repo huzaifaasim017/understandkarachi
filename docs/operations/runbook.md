@@ -53,9 +53,10 @@ npm test
 4. Create a new immutable site version and deploy that version with the intended
    visibility. Do not expose a private project publicly by assumption.
 5. Poll deployment status to a terminal state and record the version ID.
-6. Smoke-test from a fresh session: HTML, locale switch, interactive/fallback
-   map, GeoJSON, photographs, favicon, social image, source links, and emergency
-   links.
+6. Smoke-test from a fresh session: `/`, `/districts`, all seven generated
+   district routes, `/crossings`, one invalid district route, locale switch,
+   interactive/fallback maps, GeoJSON, photographs, favicon, social image,
+   source links, and emergency links.
 7. Record the release using the template in the QA checklist.
 
 ## Rollback
@@ -80,7 +81,7 @@ claim, inaccessible blocking interaction, or persistent deployment errors.
 | Site does not load | Deployment status, root response, recent version, asset manifest | Roll back if root HTML is unavailable |
 | Map is blank but page works | Browser console/network, basemap reachability, local GeoJSON status, attribution | Keep textual journey available; do not call it a total outage |
 | Districts/corridors missing | Fetch `/data/karachi-districts.geojson` and `karachi-network.geojson`; validate JSON metadata | Restore last known-good assets/version |
-| 3D hero missing | WebGL support, dynamic import, console | Accept fallback if title/start remain intact; fix separately |
+| 3D Karachi introduction missing | WebGL support, local district GeoJSON, dynamic import, console | Accept fallback if the labelled district list and onward links remain intact; fix separately |
 | Wrong or stale critical claim | Source registry, review date, responsible authority | Remove “current”, add date/caution, or roll back |
 | Language mismatch | locale storage, document `lang`, localized key parity | Default safely to Roman Urdu and repair before promotion |
 | Suspected secret or private data | Diff, logs, hosting configuration | Restrict access and follow `SECURITY.md` immediately |

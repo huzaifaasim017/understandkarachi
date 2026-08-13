@@ -2,7 +2,7 @@
 title: Project charter
 status: active
 owner: product maintainers
-last-reviewed: 2026-08-13
+last-reviewed: 2026-08-14
 review-cycle: quarterly
 ---
 
@@ -28,7 +28,8 @@ operators, and public-sector teams reviewing how the city is explained.
 
 ## User promise
 
-After one complete journey through the guide, a learner should be able to:
+After the city overview and the focused guide relevant to their intent, a
+learner should be able to:
 
 1. Keep the Arabian Sea to the south and place the old core, airport, M-9, and
    Hub exits in the correct broad directions.
@@ -65,10 +66,12 @@ local signs, or current operational checks.
 In scope now:
 
 - Karachi Division orientation and seven-district mental model
+- A comparable index and shared deep-dive page for each reviewed district
 - Selected major corridors, gateways, landmark language, and transit status
 - Curated place search and interactive explanatory map details
 - Roman Urdu and English content parity
-- Traveller-focused cross-city examples, safety reminders, and source dates
+- Dedicated traveller-focused cross-city examples, safety reminders, and
+  source dates
 - Accessible, responsive, progressively enhanced presentation
 
 Out of scope until separately approved:

@@ -82,7 +82,7 @@ export const crossCityCopy = {
     callHint: "Call",
     disclaimer:
       "Page use karne se pehle safe jagah rukain. Yeh zehni orientation hai—live traffic, turn-by-turn navigation ya safety guarantee nahi. Road closure, weather, construction, access aur transit service rawangi ke waqt verify karein.",
-    reviewed: "Conceptual road chain · 13 Aug 2026 review",
+    reviewed: "Conceptual road chain · 14 Aug 2026 review",
   },
   en: {
     regionLabel: "Guide to understanding a Karachi crossing",
@@ -133,7 +133,7 @@ export const crossCityCopy = {
     callHint: "Call",
     disclaimer:
       "Stop safely before using this page. This is mental orientation—not live traffic, turn-by-turn navigation, or a safety guarantee. Verify closures, weather, works, access, and transit service when you leave.",
-    reviewed: "Conceptual road chain · reviewed 13 Aug 2026",
+    reviewed: "Conceptual road chain · reviewed 14 Aug 2026",
   },
 } as const satisfies Record<Locale, unknown>;
 

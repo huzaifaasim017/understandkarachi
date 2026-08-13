@@ -2,7 +2,7 @@
 title: Content and localization style
 status: active
 owner: content maintainers
-last-reviewed: 2026-08-13
+last-reviewed: 2026-08-14
 review-cycle: every content release
 ---
 
@@ -19,6 +19,13 @@ translations.
 Locale IDs are `ur-roman` and `en`. The document language should update to
 `ur-Latn-PK` or `en`, and the selected preference may be stored locally. Stable
 place, source, and feature IDs are language-neutral.
+
+One shared selector and locale store serve `/`, `/districts`, every district
+profile, and `/crossings`. A direct load still starts safely in Roman Urdu when
+no valid preference exists; a valid selection carries across route changes.
+Navigation labels, page-specific metadata meaning, map/detail controls, photo
+captions, source actions, cautions, and failure states are part of parity—not
+optional chrome around the main lesson.
 
 ## Writing rules
 

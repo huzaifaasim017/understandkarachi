@@ -39,6 +39,7 @@ export type SourceId =
   | "commissioner-karachi-area-map"
   | "commissioner-karachi-population"
   | "openstreetmap-district-boundaries"
+  | "understand-karachi-schematic-network"
   | "smta-current-route-map"
   | "smta-yellow-line"
   | "transkarachi-red-line"
@@ -103,7 +104,7 @@ export interface MainCorridor extends Provenanced {
   readonly remember: string;
 }
 
-export const dataVerifiedOn: IsoDate = "2026-08-13";
+export const dataVerifiedOn: IsoDate = "2026-08-14";
 
 export type RoadConditionContactId = "city" | "highway";
 
@@ -274,7 +275,7 @@ export const districts = [
     osmAlias: "Orangi District",
     areaKm2: 370,
     population2023: 2_679_380,
-    subdivisions: ["Manghopir", "Mominabad", "Orangi Town"],
+    subdivisions: ["Manghopir", "Mominabad", "Orangi"],
     mentalModel:
       "The hilly, fast-grown north-west: Orangi and Manghopir sit beyond the dense centre, with routes funnelling through a few passes and junctions.",
     keyAreas: [
@@ -758,12 +759,154 @@ export const mainCorridors = mainCorridorRecords.map((corridor, index) => {
   return {
     ...corridor,
     sourceIds: nationallyDesignatedCorridors.has(corridor.id)
-      ? (["nha-national-highway-code", "karachi-traffic-1915"] as const)
-      : (["smta-current-route-map", "karachi-traffic-1915"] as const),
+      ? (["understand-karachi-schematic-network", "nha-national-highway-code"] as const)
+      : (["understand-karachi-schematic-network"] as const),
     cameraCenter: [middle[0], middle[1]] as [number, number],
     cameraZoom: index < 6 ? 9.8 : 9.25,
   };
 });
+
+export type DistrictRouteStatus = "orientation" | "developing";
+
+export interface DistrictRouteChainFacts extends Provenanced {
+  readonly id: string;
+  readonly stops: readonly string[];
+  readonly corridorIds: readonly CorridorId[];
+  readonly status: DistrictRouteStatus;
+}
+
+export interface DistrictProfileFacts extends Provenanced {
+  readonly districtId: DistrictId;
+  readonly zones: readonly { readonly id: string; readonly name: string }[];
+  readonly routes: readonly DistrictRouteChainFacts[];
+  readonly arriveFrom: readonly string[];
+  readonly nextDistricts: readonly DistrictId[];
+}
+
+/**
+ * Canonical district-atlas relationships. Human explanations live in
+ * `karachi-i18n.ts`; these records contain only stable names, IDs, ordering,
+ * status, and provenance. Every chain is schematic unless explicitly marked
+ * as a developing project.
+ */
+export const districtProfileFacts = [
+  {
+    districtId: "south",
+    zones: [
+      { id: "old-city-tower", name: "Old City / Tower" },
+      { id: "saddar-civil-lines", name: "Saddar / Civil Lines" },
+      { id: "clifton-dha", name: "Clifton / DHA" },
+    ],
+    routes: [
+      { id: "south-old-core", stops: ["Numaish", "Tibet Centre", "Jama Cloth", "Tower"], corridorIds: ["ma-jinnah-road"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+      { id: "south-centre", stops: ["Nursery", "FTC", "Metropole", "Press Club", "Tower"], corridorIds: ["shahrah-e-faisal", "ii-chundrigar-road"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+      { id: "south-coast", stops: ["Frere Hall", "Teen Talwar", "Do Talwar", "Dolmen Mall", "Khayaban-e-Ittehad"], corridorIds: ["coastal-dha-spine"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+    ],
+    arriveFrom: ["Karachi Cantt Station", "Shahrah-e-Faisal", "M.A. Jinnah Road", "Mai Kolachi"],
+    nextDistricts: ["keamari", "east", "korangi"],
+    sourceIds: ["pbs-census-2023-table-1", "commissioner-karachi-area-map", "commissioner-karachi-population", "smta-current-route-map"],
+  },
+  {
+    districtId: "keamari",
+    zones: [
+      { id: "harbour-keamari", name: "Harbour / Keamari" },
+      { id: "site-baldia", name: "SITE / Baldia" },
+      { id: "mauripur-coast", name: "Mauripur / coast" },
+    ],
+    routes: [
+      { id: "keamari-hub", stops: ["Yousuf Goth", "Baldia", "Sher Shah", "Gulbai", "ICI", "Tower"], corridorIds: ["mauripur-hub-river"], status: "orientation", sourceIds: ["smta-current-route-map", "nha-national-highway-code"] },
+      { id: "keamari-coast", stops: ["Hawks Bay", "Mauripur", "Truck Adda", "Gulbai", "ICI", "Tower"], corridorIds: ["mauripur-hub-river"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+      { id: "keamari-port", stops: ["Tower", "Jackson Market", "Keamari"], corridorIds: ["ii-chundrigar-road", "mauripur-hub-river"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+    ],
+    arriveFrom: ["N-25 / Hub", "Tower", "Lyari Expressway", "Mauripur Road"],
+    nextDistricts: ["south", "west"],
+    sourceIds: ["pbs-census-2023-table-1", "commissioner-karachi-area-map", "commissioner-karachi-population", "smta-current-route-map", "nha-national-highway-code"],
+  },
+  {
+    districtId: "west",
+    zones: [
+      { id: "orangi-mominabad", name: "Orangi / Mominabad" },
+      { id: "manghopir", name: "Manghopir" },
+      { id: "maymar-surjani-edge", name: "Maymar / Surjani edge" },
+    ],
+    routes: [
+      { id: "west-orangi", stops: ["TMA Orangi", "Orangi Town Office", "Matric Board", "Board Office"], corridorIds: ["orangi-manghopir"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+      { id: "west-maymar", stops: ["Maymar", "Ahsanabad", "Jamali Pull", "Al-Asif", "Sohrab Goth", "Ayesha Manzil"], corridorIds: ["m9-motorway", "shahrah-e-pakistan"], status: "orientation", sourceIds: ["smta-current-route-map", "nha-national-highway-code"] },
+      { id: "west-banara", stops: ["Orangi No. 5", "Banaras", "SITE edge", "Gulbai", "Tower"], corridorIds: ["orangi-manghopir", "mauripur-hub-river"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+    ],
+    arriveFrom: ["Banaras Chowk", "Board Office", "Manghopir Road", "Northern Bypass side"],
+    nextDistricts: ["keamari", "central", "east"],
+    sourceIds: ["pbs-census-2023-table-1", "commissioner-karachi-area-map", "commissioner-karachi-population", "smta-current-route-map"],
+  },
+  {
+    districtId: "central",
+    zones: [
+      { id: "liaquatabad-nazimabad", name: "Liaquatabad / Nazimabad" },
+      { id: "north-nazimabad-gulberg", name: "North Nazimabad / Gulberg" },
+      { id: "new-karachi", name: "New Karachi" },
+    ],
+    routes: [
+      { id: "central-main", stops: ["Nagan", "Ayesha Manzil", "Liaquatabad", "Teen Hatti", "Guru Mandir", "Numaish"], corridorIds: ["shahrah-e-pakistan"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+      { id: "central-cross", stops: ["Nagan", "Five Star", "Board Office", "Nazimabad", "Essa Nagri"], corridorIds: ["shahrah-e-pakistan"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+      { id: "central-green", stops: ["Surjani", "Nagan", "Nazimabad", "Numaish"], corridorIds: ["shahrah-e-pakistan"], status: "orientation", sourceIds: ["smta-current-route-map", "sindh-assembly-transit-status"] },
+    ],
+    arriveFrom: ["Numaish", "Sohrab Goth", "Board Office", "Nagan Chowrangi"],
+    nextDistricts: ["west", "east", "south"],
+    sourceIds: ["pbs-census-2023-table-1", "commissioner-karachi-area-map", "commissioner-karachi-population", "smta-current-route-map"],
+  },
+  {
+    districtId: "east",
+    zones: [
+      { id: "jamshed-ferozabad", name: "Jamshed / Ferozabad" },
+      { id: "gulshan-e-iqbal", name: "Gulshan-e-Iqbal" },
+      { id: "johar-gulzar-e-hijri", name: "Johar / Gulzar-e-Hijri" },
+    ],
+    routes: [
+      { id: "east-university", stops: ["Jail Chowrangi", "Hasan Square", "NIPA", "Karachi University", "Safoora"], corridorIds: ["university-road"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+      { id: "east-diagonal", stops: ["Natha Khan", "Millennium Mall", "NIPA", "Shafiq Mor", "Nagan"], corridorIds: ["rashid-minhas-road"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+      { id: "east-safoora", stops: ["Safoora", "Mosamiyat", "Johar", "Millennium Mall", "Aga Khan", "New Town", "Numaish"], corridorIds: ["university-road", "rashid-minhas-road"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+    ],
+    arriveFrom: ["Numaish", "Shahrah-e-Faisal", "Sohrab Goth", "Safoora"],
+    nextDistricts: ["central", "south", "korangi", "malir"],
+    sourceIds: ["pbs-census-2023-table-1", "commissioner-karachi-area-map", "commissioner-karachi-population", "smta-current-route-map"],
+  },
+  {
+    districtId: "korangi",
+    zones: [
+      { id: "shah-faisal-model-colony", name: "Shah Faisal / Model Colony" },
+      { id: "korangi", name: "Korangi" },
+      { id: "landhi", name: "Landhi" },
+    ],
+    routes: [
+      { id: "korangi-centre", stops: ["Dawood", "Singer", "Korangi Crossing", "Qayyumabad", "Kala Pul", "FTC"], corridorIds: ["korangi-spine", "shaheed-e-millat", "shahrah-e-faisal"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+      { id: "korangi-north", stops: ["North Karachi", "Sohrab Goth", "NIPA", "Johar", "Shah Faisal", "Singer", "Korangi Crossing"], corridorIds: ["rashid-minhas-road", "korangi-spine"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+      { id: "korangi-yellow", stops: ["Dawood", "8000 Road", "Jam Sadiq", "Korangi Road", "Shahrah-e-Faisal", "Numaish"], corridorIds: ["korangi-spine", "shahrah-e-faisal"], status: "developing", sourceIds: ["smta-yellow-line", "world-bank-yellow-line"] },
+    ],
+    arriveFrom: ["Qayyumabad", "Natha Khan", "Quaidabad", "Korangi Creek"],
+    nextDistricts: ["south", "east", "malir"],
+    sourceIds: ["pbs-census-2023-table-1", "commissioner-karachi-area-map", "commissioner-karachi-population", "smta-current-route-map", "smta-yellow-line"],
+  },
+  {
+    districtId: "malir",
+    zones: [
+      { id: "airport-built-up-malir", name: "Airport / built-up Malir" },
+      { id: "gadap-m9-edge", name: "Gadap / M-9 edge" },
+      { id: "bin-qasim-eastern-coast", name: "Bin Qasim / eastern coast" },
+    ],
+    routes: [
+      { id: "malir-n5", stops: ["Natha Khan", "Malir Halt", "Malir 15", "Quaidabad", "Steel Town", "Port Qasim turn"], corridorIds: ["national-highway", "shahrah-e-faisal"], status: "orientation", sourceIds: ["smta-current-route-map", "nha-national-highway-code"] },
+      { id: "malir-m9", stops: ["Sohrab Goth", "Al-Asif", "Toll Plaza", "Bahria Town", "Hyderabad direction"], corridorIds: ["m9-motorway"], status: "orientation", sourceIds: ["nha-national-highway-code", "nha-motorway-motorcycle-policy"] },
+      { id: "malir-cantt", stops: ["Malir Cantt", "Checkpost 5", "Safoora", "Mosamiyat", "Johar", "Numaish"], corridorIds: ["university-road", "rashid-minhas-road"], status: "orientation", sourceIds: ["smta-current-route-map"] },
+    ],
+    arriveFrom: ["Jinnah Airport", "N-5 / Thatta", "M-9", "Port Qasim"],
+    nextDistricts: ["east", "korangi"],
+    sourceIds: ["pbs-census-2023-table-1", "commissioner-karachi-area-map", "commissioner-karachi-population", "smta-current-route-map", "nha-national-highway-code", "nha-motorway-motorcycle-policy"],
+  },
+] as const satisfies readonly DistrictProfileFacts[];
+
+export const districtProfileFactsById = Object.fromEntries(
+  districtProfileFacts.map((profile) => [profile.districtId, profile]),
+) as unknown as Readonly<Record<DistrictId, DistrictProfileFacts>>;
 
 export type PlaceType =
   | "gateway"
@@ -2385,7 +2528,7 @@ const sourceRecords = [
       "Table 1: Area, population by sex, density, urban population and household size — Census 2023, Sindh",
     publisher: "Pakistan Bureau of Statistics",
     kind: "official-data",
-    url: "https://www.pbs.gov.pk/sites/default/files/population/2023/tables/sindh/pcr/table_1.pdf",
+    url: "https://www.pbs.gov.pk/wp-content/uploads/census_tables/tables/table_1_sindh_province.pdf",
     usedFor:
       "Karachi Division and seven-district area/population totals. These figures take precedence over conflicting secondary summaries.",
     accessedOn: dataVerifiedOn,
@@ -2418,6 +2561,16 @@ const sourceRecords = [
     url: "https://www.openstreetmap.org/copyright",
     usedFor:
       "The local 2026-08-13 district GeoJSON geometry and revised OSM aliases: Nazimabad, Gulshan, Karachi and Orangi District.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "understand-karachi-schematic-network",
+    title: "Understand Karachi schematic network provenance",
+    publisher: "Understand Karachi maintainers",
+    kind: "project",
+    url: "https://github.com/huzaifaasim017/understandkarachi/blob/main/public/data/README.md",
+    usedFor:
+      "Project-authored, manually simplified corridor paths and connection chains. They teach city-scale orientation and are not extracted road geometry or routable directions.",
     accessedOn: dataVerifiedOn,
   },
   {
@@ -2523,7 +2676,7 @@ const sourceRecords = [
     title: "Karachi infrastructure and institutions modernization underway",
     publisher: "World Bank",
     kind: "project",
-    url: "https://www.worldbank.org/en/news/press-release/2019/06/27/karachi-infrastructure-and-institutions-modernization-gets-underway",
+    url: "https://www.worldbank.org/en/news/factsheet/2021/03/29/fact-sheet-world-bank-engagement-in-karachi",
     usedFor:
       "The Yellow Corridor's Dawood Chowrangi–Korangi industrial area–Numaish purpose and 21 km length.",
     accessedOn: dataVerifiedOn,
@@ -2684,6 +2837,7 @@ export interface PhotoManifestEntry {
   readonly sourceId: SourceId;
   readonly sourceUrl: `https://${string}`;
   readonly derivativeNote: string;
+  readonly capturedOn: string;
   readonly objectPosition: `${number}% ${number}%`;
 }
 
@@ -2704,6 +2858,7 @@ const photoRecords = [
     sourceId: "commons-clifton-skyline",
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Karachi_Clifton_Skyline.JPG",
     derivativeNote: "Resized from the Wikimedia Commons original; no new endorsement implied.",
+    capturedOn: "2015-10-25",
     objectPosition: "50% 52%",
   },
   {
@@ -2722,6 +2877,7 @@ const photoRecords = [
     sourceId: "commons-empress-market",
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Empress_Market,_Karachi.jpg",
     derivativeNote: "Resized from the Wikimedia Commons original; no new endorsement implied.",
+    capturedOn: "2016-09-04",
     objectPosition: "50% 48%",
   },
   {
@@ -2740,6 +2896,7 @@ const photoRecords = [
     sourceId: "commons-mazar-e-quaid",
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Mausoleum_of_the_quaid_e_azam_muhammad_ali_jinnah_farrah_1.jpg",
     derivativeNote: "Resized from the Wikimedia Commons original; no new endorsement implied.",
+    capturedOn: "2015-09-26",
     objectPosition: "50% 50%",
   },
   {
@@ -2758,6 +2915,7 @@ const photoRecords = [
     sourceId: "commons-karachi-seaport",
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Karachi_Seaport.jpg",
     derivativeNote: "Resized from the Wikimedia Commons original; no new endorsement implied.",
+    capturedOn: "2022-11-30",
     objectPosition: "50% 50%",
   },
   {
@@ -2776,6 +2934,7 @@ const photoRecords = [
     sourceId: "commons-jinnah-airport",
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Karachi_Jinnah_Airport.jpg",
     derivativeNote: "Resized from the author-released public-domain original.",
+    capturedOn: "2005-10-25",
     objectPosition: "50% 54%",
   },
 ] as const satisfies readonly PhotoManifestEntry[];

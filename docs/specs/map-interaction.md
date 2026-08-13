@@ -3,7 +3,7 @@ title: Map interaction specification
 status: accepted
 implementation: partial
 owner: product, design, and engineering maintainers
-last-reviewed: 2026-08-13
+last-reviewed: 2026-08-14
 review-cycle: every map-interaction change
 ---
 
@@ -20,6 +20,12 @@ The map has two modes with different responsibilities:
 
 Both use the same canonical feature IDs and explanations. Neither is a routing
 map.
+
+The homepage and district index also use a separate, optional Three.js
+introduction. It depicts reviewed Karachi district geometry and selected
+movement spines, not a third routing mode. Its district buttons and readable
+detail panel provide the non-canvas interaction path, and its motion control is
+contextual to that surface rather than a global header setting.
 
 ## Feature selection
 

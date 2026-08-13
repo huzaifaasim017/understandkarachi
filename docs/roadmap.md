@@ -2,35 +2,40 @@
 title: Product roadmap
 status: directional
 owner: product maintainers
-last-reviewed: 2026-08-13
+last-reviewed: 2026-08-14
 review-cycle: monthly
 ---
 
 # Product roadmap
 
 The roadmap communicates sequence, not a delivery promise. Detailed current
-work belongs in [the active plan](plans/active.md); behavior belongs in specs.
+work belongs in [the district atlas v4 plan](plans/district-atlas-v4.md);
+behavior belongs in specs.
 
-## Now — make the mental model usable
+## Now — ship the district atlas v4
 
-- Establish the Understand Karachi identity, responsive logo, favicon, and a
-  purposeful, interactive entry into the city.
-- Turn the map from a scroll-only illustration into an explanatory surface for
-  touch, click, keyboard, and hover preview.
-- Teach cross-city movement as `MODE → GATE → SPINE → HUB → LOCAL`.
-- Add comprehension checks based on transfer to a new crossing, not fact
-  recall.
-- Keep architecture, data governance, localization, accessibility, and release
-  documentation aligned with implementation.
+- Keep `/` focused on Karachi-wide orientation, with a 3D Karachi geometry
+  introduction instead of the former world scene.
+- Make `/districts` and seven stable district URLs the deeper local learning
+  path, rendered from one comparable template.
+- Keep the full `MODE → GATE → SPINE → HUB → LOCAL` module at `/crossings` so a
+  general explorer does not have to complete trip preparation first.
+- Finish splitting district facts and bilingual presentation into their
+  canonical owners, then validate the shared page model.
+- Complete route, locale, source, keyboard, touch, reduced-motion, failure,
+  photo, and narrow-layout QA before the private v4 release.
 
-Exit signal: moderated first-time users can orient south, distinguish layers,
-and explain a plausible crossing plan without mistaking the guide for live
-navigation.
+Exit signal: the v4 plan's source/content matrix and automated/manual release
+gates pass, all route classes smoke successfully, and an immutable private
+release has a recorded rollback target.
 
 ## Next — validate and deepen
 
 - Conduct task-based testing with visitors, new residents, motorcyclists,
   public-transport users, and accessibility participants.
+- Measure whether users can move from the city overview into an unfamiliar
+  district and explain one selected corridor chain without treating it as exact
+  navigation.
 - Expand curated junctions, exits, transfer anchors, fuel/rest considerations,
   and alternate corridor concepts only where sources support them.
 - Build automated schema validation for source IDs, localization parity,

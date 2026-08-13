@@ -24,6 +24,7 @@ document; other documents link to it instead of copying it.
 | What accessibility bar must a change meet? | [Accessibility standard](standards/accessibility.md) | Active |
 | What must pass before release? | [QA and release checklist](quality/qa-release-checklist.md) | Active |
 | How is the service run or recovered? | [Operations runbook](operations/runbook.md) | Active |
+| What is being implemented now? | [District atlas v4 plan](plans/district-atlas-v4.md) | Active |
 | What shipped in the completed P0 workstream? | [P0 plan](plans/active.md) | Complete |
 | What is currently deployed? | [Release v3](releases/2026-08-14-v3.md) | Released |
 | What could happen later? | [Roadmap](roadmap.md) | Directional |
@@ -36,6 +37,8 @@ document; other documents link to it instead of copying it.
   failure-state behavior.
 - [Cross-city guidance](specs/cross-city-guidance.md): safe corridor-level
   guidance for a traveller crossing Karachi.
+- [District deep dives](specs/district-deep-dives.md): the shared content,
+  interaction, sourcing, and safety contract for all seven district pages.
 
 ## Decisions
 
@@ -45,10 +48,12 @@ Accepted ADRs describe decisions already in force:
 - [ADR-0002: Roman Urdu default with complete English](adrs/0002-bilingual-policy.md)
 - [ADR-0003: Canonical data flows into localized views](adrs/0003-canonical-data-direction.md)
 - [ADR-0004: Bounded browser location estimate](adrs/0004-bounded-browser-location-estimate.md)
+- [ADR-0005: Static multi-page learning surfaces](adrs/0005-static-multi-page-learning-surfaces.md)
 
 Accepted product direction:
 
 - [RFC-0001: Traveller crossing model](rfcs/0001-traveller-crossing-model.md)
+- [RFC-0002: District atlas and route separation](rfcs/0002-district-atlas-and-route-separation.md)
 
 ## Status vocabulary
 

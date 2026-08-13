@@ -2,7 +2,7 @@
 title: Accessibility standard
 status: active
 owner: engineering and design maintainers
-last-reviewed: 2026-08-13
+last-reviewed: 2026-08-14
 review-cycle: every interaction release
 target: WCAG 2.2 AA
 ---
@@ -31,14 +31,19 @@ does not replace testing with disabled users.
 
 ## Motion and 3D
 
-Respect `prefers-reduced-motion` on first render and provide a persistent
-session-level motion control. Reduced motion disables decorative rotation,
-pulsing, smooth camera travel, and nonessential transitions. Motion must not be
-needed to understand geography. Avoid flashing and auto-moving content that a
-user cannot pause.
+Respect `prefers-reduced-motion` on first render and provide a contextual
+control on an auto-moving 3D surface; its session-level preference persists
+across the shared learning routes. Do not put a decorative animation/still
+switch in the global header. Reduced motion disables decorative rotation,
+pulsing, route particles, smooth camera travel, and nonessential transitions.
+Motion must not be needed to understand geography. Avoid flashing and
+auto-moving content that a user cannot pause.
 
-The introduction is decorative and hidden from assistive technology. Its
-failure must leave the title and start action intact.
+The WebGL canvas itself is presentational and hidden from assistive technology.
+The surrounding Karachi introduction is informational: ordinary district
+buttons, selected-detail text, compass labels, and onward links expose its
+meaning. WebGL failure must leave those elements intact rather than an empty
+critical panel.
 
 ## Interactive map
 

@@ -3,7 +3,7 @@ import StoryExperience from "./StoryExperience";
 
 export const metadata: Metadata = {
   title: "Understand Karachi — Shehar ko zero se samjhein",
-  description: "Bike, car ya transit se Karachi cross karna samjhein: entry gates, bari roads, junctions, landmarks, districts aur last-mile handoff.",
+  description: "Karachi ke districts, bari roads, junctions, landmarks aur city systems ko zero se samjhein.",
 };
 
 export default function Home() {

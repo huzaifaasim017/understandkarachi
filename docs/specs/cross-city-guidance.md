@@ -1,9 +1,9 @@
 ---
 title: Cross-city guidance specification
 status: accepted
-implementation: partial
+implementation: in-progress
 owner: product and data maintainers
-last-reviewed: 2026-08-13
+last-reviewed: 2026-08-14
 review-cycle: every corridor or crossing change
 ---
 
@@ -15,6 +15,10 @@ Teach a traveller how to reason about crossing Karachi at city scale without
 claiming a current turn-by-turn route. This specification defines the user
 contract; the accepted reusable data structure is in
 [RFC-0001](../rfcs/0001-traveller-crossing-model.md).
+
+The complete module lives at `/crossings`. The homepage and district atlas link
+to it but do not duplicate the scenario interaction or place it before general
+city exploration.
 
 ## Crossing grammar
 
@@ -97,7 +101,7 @@ Before a traveller acts, the experience states:
 - A user cannot reasonably mistake the output for live turn-by-turn navigation.
 - All changing claims are within the data-policy review interval.
 
-The current prototype inventory carries source IDs and a 2026-08-13 evidence
+The current prototype inventory carries source IDs and a 2026-08-14 evidence
 check. That supports conceptual teaching only. Material relationship changes,
 new scenarios, or claims of access and operation remain subject to named
 data-steward review; this spec does not approve a particular road as passable or
