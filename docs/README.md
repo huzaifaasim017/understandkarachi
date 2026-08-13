@@ -2,7 +2,7 @@
 title: Documentation index
 status: active
 owner: maintainers
-last-reviewed: 2026-08-13
+last-reviewed: 2026-08-14
 review-cycle: every release
 ---
 
@@ -24,7 +24,8 @@ document; other documents link to it instead of copying it.
 | What accessibility bar must a change meet? | [Accessibility standard](standards/accessibility.md) | Active |
 | What must pass before release? | [QA and release checklist](quality/qa-release-checklist.md) | Active |
 | How is the service run or recovered? | [Operations runbook](operations/runbook.md) | Active |
-| What is being done now? | [Active plan](plans/active.md) | Active |
+| What shipped in the completed P0 workstream? | [P0 plan](plans/active.md) | Complete |
+| What is currently deployed? | [Release v3](releases/2026-08-14-v3.md) | Released |
 | What could happen later? | [Roadmap](roadmap.md) | Directional |
 
 ## Product specifications
@@ -54,6 +55,8 @@ Accepted product direction:
 - **Proposed:** open for review; not a shipping commitment.
 - **Accepted:** approved direction or decision.
 - **Active:** current operating policy, plan, or maintained reference.
+- **Complete:** the scoped plan met its completion gate.
+- **Released:** an immutable version was deployed and smoke-checked.
 - **Directional:** useful sequencing without a delivery promise.
 - **Superseded:** retained for history and linked to its replacement.
 - **Deprecated:** still present temporarily but should not receive new use.

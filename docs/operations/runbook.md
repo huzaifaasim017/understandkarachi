@@ -2,7 +2,7 @@
 title: Operations runbook
 status: active
 owner: deployment maintainer
-last-reviewed: 2026-08-13
+last-reviewed: 2026-08-14
 review-cycle: every release or incident
 ---
 
@@ -15,6 +15,7 @@ review-cycle: every release or incident
 - Hosting link: `.openai/hosting.json`
 - Current project ID: `appgprj_6a7db59e8f888191ac913e8c2be34536`
 - Current site URL: `https://understand-karachi.ssfgroup.chatgpt.site`
+- Current release: version 3; see [release record](../releases/2026-08-14-v3.md)
 - Current visibility: private; confirm before each release
 - Persistent application data: none required by the current traveller flow
 - External runtime dependency: OpenFreeMap basemap/tile delivery

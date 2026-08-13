@@ -1,6 +1,6 @@
 ---
 title: Active implementation plan
-status: active
+status: complete
 owner: project maintainers
 started: 2026-08-13
 last-updated: 2026-08-14
@@ -39,7 +39,7 @@ city at corridor level.
 | P0.5 | Consolidate duplicate facts/components behind stable IDs | Complete | [ADR-0003](../adrs/0003-canonical-data-direction.md) |
 | P0.6 | Establish canonical project, data, quality, operations, decision, and agent documentation | Complete | [Documentation index](../README.md) |
 | P0.7 | Add/adjust automated contracts and complete bilingual interaction QA | Complete | [QA checklist](../quality/qa-release-checklist.md) |
-| P0.8 | Release an immutable private version and record smoke/rollback details | In progress | [Operations runbook](../operations/runbook.md) |
+| P0.8 | Release an immutable private version and record smoke/rollback details | Complete | [Release v3](../releases/2026-08-14-v3.md) |
 
 ## Required validation scenarios
 
@@ -72,3 +72,10 @@ are recorded.
 
 These move to a new active plan when accepted; they should not expand this
 workstream silently.
+
+## Completion
+
+This workstream completed with private release v3 on 2026-08-14 PKT. The
+immutable source, checks, live smoke results, and rollback target are recorded
+in the [release record](../releases/2026-08-14-v3.md). Any follow-up starts a
+new plan rather than reopening these P0 statuses silently.
