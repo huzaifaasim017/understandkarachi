@@ -1,0 +1,710 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "title": "Understand Karachi schematic orientation network",
+    "created": "2026-08-13",
+    "method": "Manually simplified from named corridor chains and official public project descriptions",
+    "precision": "Educational orientation only; not routable geometry, live navigation, or a service promise",
+    "license": "Project-authored data"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "north-spine",
+        "name": "North / M-9 spine",
+        "color": "#F06F55",
+        "kind": "corridor"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            66.9975,
+            24.8508
+          ],
+          [
+            67.0175,
+            24.8626
+          ],
+          [
+            67.0328,
+            24.8731
+          ],
+          [
+            67.0475,
+            24.8894
+          ],
+          [
+            67.0533,
+            24.9066
+          ],
+          [
+            67.0638,
+            24.9270
+          ],
+          [
+            67.0696,
+            24.9492
+          ],
+          [
+            67.0840,
+            24.9876
+          ],
+          [
+            67.1473,
+            25.0259
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "airport-spine",
+        "name": "Airport / N-5 spine",
+        "color": "#F3C76B",
+        "kind": "corridor"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            67.0288,
+            24.8548
+          ],
+          [
+            67.0547,
+            24.8610
+          ],
+          [
+            67.0731,
+            24.8670
+          ],
+          [
+            67.0960,
+            24.8741
+          ],
+          [
+            67.1200,
+            24.8878
+          ],
+          [
+            67.1440,
+            24.8958
+          ],
+          [
+            67.1682,
+            24.9003
+          ],
+          [
+            67.1900,
+            24.8920
+          ],
+          [
+            67.2135,
+            24.8810
+          ],
+          [
+            67.2442,
+            24.8678
+          ],
+          [
+            67.3002,
+            24.8420
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "university-spine",
+        "name": "University Road spine",
+        "color": "#6FC5B5",
+        "kind": "corridor"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            67.0476,
+            24.8895
+          ],
+          [
+            67.0635,
+            24.9020
+          ],
+          [
+            67.0760,
+            24.9151
+          ],
+          [
+            67.0900,
+            24.9206
+          ],
+          [
+            67.1088,
+            24.9213
+          ],
+          [
+            67.1300,
+            24.9250
+          ],
+          [
+            67.1513,
+            24.9327
+          ],
+          [
+            67.1800,
+            24.9420
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "korangi-spine",
+        "name": "Korangi / Landhi spine",
+        "color": "#A88CC8",
+        "kind": "corridor"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            67.0550,
+            24.8460
+          ],
+          [
+            67.0730,
+            24.8410
+          ],
+          [
+            67.0980,
+            24.8340
+          ],
+          [
+            67.1250,
+            24.8300
+          ],
+          [
+            67.1540,
+            24.8400
+          ],
+          [
+            67.1880,
+            24.8490
+          ],
+          [
+            67.2290,
+            24.8510
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "west-spine",
+        "name": "Port / Hub spine",
+        "color": "#4AA5B3",
+        "kind": "corridor"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            66.9735,
+            24.8175
+          ],
+          [
+            66.9870,
+            24.8370
+          ],
+          [
+            66.9975,
+            24.8508
+          ],
+          [
+            66.9830,
+            24.8740
+          ],
+          [
+            66.9650,
+            24.9000
+          ],
+          [
+            66.9380,
+            24.9220
+          ],
+          [
+            66.9000,
+            24.9470
+          ],
+          [
+            66.8350,
+            24.9700
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lyari-expressway",
+        "name": "Lyari Expressway",
+        "color": "#FFF7E8",
+        "kind": "expressway"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            66.9590,
+            24.8860
+          ],
+          [
+            66.9900,
+            24.8990
+          ],
+          [
+            67.0200,
+            24.9100
+          ],
+          [
+            67.0520,
+            24.9280
+          ],
+          [
+            67.0780,
+            24.9550
+          ],
+          [
+            67.1000,
+            24.9840
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "green-line",
+        "name": "Green Line BRT",
+        "color": "#44B278",
+        "kind": "operating-transit"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            67.0327,
+            24.8732
+          ],
+          [
+            67.0476,
+            24.8894
+          ],
+          [
+            67.0528,
+            24.9065
+          ],
+          [
+            67.0615,
+            24.9280
+          ],
+          [
+            67.0670,
+            24.9510
+          ],
+          [
+            67.0590,
+            24.9820
+          ],
+          [
+            67.0490,
+            25.0130
+          ],
+          [
+            67.0370,
+            25.0490
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "orange-line",
+        "name": "Orange Line BRT",
+        "color": "#F28C36",
+        "kind": "operating-transit"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            67.0180,
+            24.9400
+          ],
+          [
+            67.0250,
+            24.9510
+          ],
+          [
+            67.0300,
+            24.9630
+          ],
+          [
+            67.0250,
+            24.9760
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "red-line",
+        "name": "Red Line — developing",
+        "color": "#E44B4B",
+        "kind": "planned-transit"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            67.0327,
+            24.8732
+          ],
+          [
+            67.0770,
+            24.9150
+          ],
+          [
+            67.1220,
+            24.9250
+          ],
+          [
+            67.1640,
+            24.9140
+          ],
+          [
+            67.2040,
+            24.9460
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "yellow-line",
+        "name": "Yellow Line — developing",
+        "color": "#F2C84B",
+        "kind": "planned-transit"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            67.0470,
+            24.8720
+          ],
+          [
+            67.0710,
+            24.8470
+          ],
+          [
+            67.1100,
+            24.8320
+          ],
+          [
+            67.1550,
+            24.8350
+          ],
+          [
+            67.1980,
+            24.8500
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lyari-river",
+        "name": "Lyari River drainage corridor",
+        "color": "#168FA3",
+        "kind": "drainage",
+        "precision": "orientation-only"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            66.953,
+            24.878
+          ],
+          [
+            66.982,
+            24.891
+          ],
+          [
+            67.018,
+            24.906
+          ],
+          [
+            67.053,
+            24.929
+          ],
+          [
+            67.082,
+            24.961
+          ],
+          [
+            67.104,
+            24.988
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "malir-river",
+        "name": "Malir River drainage corridor",
+        "color": "#168FA3",
+        "kind": "drainage",
+        "precision": "orientation-only"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            67.068,
+            24.858
+          ],
+          [
+            67.091,
+            24.840
+          ],
+          [
+            67.118,
+            24.826
+          ],
+          [
+            67.151,
+            24.817
+          ],
+          [
+            67.193,
+            24.813
+          ],
+          [
+            67.238,
+            24.801
+          ],
+          [
+            67.286,
+            24.777
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tower",
+        "name": "Tower",
+        "type": "Old core / interchange",
+        "kind": "anchor"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          66.9975,
+          24.8508
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "numaish",
+        "name": "Numaish",
+        "type": "Central interchange",
+        "kind": "anchor"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          67.0327,
+          24.8732
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gurumandir",
+        "name": "Guru Mandir",
+        "type": "Junction, not a district",
+        "kind": "anchor"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          67.0358,
+          24.8835
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sohrab-goth",
+        "name": "Sohrab Goth",
+        "type": "M-9 / upcountry gateway",
+        "kind": "gateway"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          67.0840,
+          24.9876
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "airport",
+        "name": "Jinnah Airport",
+        "type": "Air gateway",
+        "kind": "gateway"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          67.1608,
+          24.9065
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "karachi-port",
+        "name": "Karachi Port",
+        "type": "Historic southwest port",
+        "kind": "gateway"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          66.9833,
+          24.8207
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "port-qasim",
+        "name": "Port Qasim",
+        "type": "Southeast industrial port",
+        "kind": "gateway"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          67.3290,
+          24.7770
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cantt-station",
+        "name": "Karachi Cantt",
+        "type": "Main intercity rail gateway",
+        "kind": "gateway"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          67.0435,
+          24.8438
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nipa",
+        "name": "NIPA",
+        "type": "University Road anchor",
+        "kind": "anchor"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          67.1030,
+          24.9180
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "malir-15",
+        "name": "Malir 15",
+        "type": "N-5 / Malir anchor",
+        "kind": "anchor"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          67.1990,
+          24.8820
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "korangi-crossing",
+        "name": "Korangi Crossing",
+        "type": "Southeast hinge",
+        "kind": "anchor"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          67.1280,
+          24.8170
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hub-exit",
+        "name": "Hub / N-25",
+        "type": "Balochistan exit",
+        "kind": "gateway"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          66.7900,
+          25.0000
+        ]
+      }
+    }
+  ]
+}
