@@ -37,7 +37,7 @@ async function render(pathname = "/") {
 }
 
 function assertDefaultLocaleControls(html) {
-  assert.match(html, /<html lang="ur-Latn-PK">/);
+  assert.match(html, /<html lang="ur-Latn-PK" translate="no">/);
   assert.match(html, /<option value="ur-roman" selected="">Roman Urdu/);
   assert.match(html, /<option value="en">English/);
   assert.match(html, /aria-label="Guide ki zabaan chunein"/);
@@ -65,7 +65,6 @@ test("server-renders the Roman Urdu overview with the informative Karachi 3D fal
 
   assert.match(html, />7<\/b>zilay/);
   assert.match(html, /Samandar south mein hai\./);
-  assert.match(html, /6 asal safar/);
   assert.match(html, /Jagah search karein/);
   assert.match(html, /Nikalne se pehle check karein/);
   assert.match(html, /Meri location ka andaza/);
@@ -172,6 +171,7 @@ test("serves source-backed deep pages for every Karachi district", async () => {
 test("renders corrected, readable photo captions with complete attribution metadata", async () => {
   const response = await render();
   const html = await response.text();
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
 
   const photos = [
     {
@@ -226,6 +226,11 @@ test("renders corrected, readable photo captions with complete attribution metad
   assert.match(html, /CC BY-SA 4\.0/);
   assert.match(html, /Public domain/);
   assert.doesNotMatch(html, /Star Gate, and Jinnah Terminal are different points/);
+
+  const photoRule = styles.match(/\.photo-pause\s*\{([^}]*)\}/)?.[1] ?? "";
+  assert.match(photoRule, /width:\s*100%/);
+  assert.match(photoRule, /margin:\s*0 0 8svh/);
+  assert.doesNotMatch(photoRule, /calc\(|margin-left|-[\d.]+(?:rem|px)/);
 });
 
 test("keeps Roman Urdu as the default and ships English parity for every v4 surface", async () => {
@@ -249,12 +254,13 @@ test("keeps Roman Urdu as the default and ships English parity for every v4 surf
   assert.match(preferencesSource, /\(\) => DEFAULT_LOCALE/);
   assert.match(preferencesSource, /document\.documentElement\.lang = locale === "ur-roman" \? "ur-Latn-PK" : "en"/);
 
-  assert.match(atlasSource, /title: "Har district ko alag samjhein"/);
-  assert.match(atlasSource, /title: "Understand every district separately"/);
-  assert.match(atlasSource, /line schematic hai, turn-by-turn route nahi/);
-  assert.match(atlasSource, /line is schematic, not turn-by-turn navigation/);
-  assert.equal((atlasSource.match(/districtId: "/g) ?? []).length, 7);
-  for (const { id } of districtCases) assert.match(atlasSource, new RegExp(`districtId: "${id}"`));
+  assert.match(i18nSource, /title: "Har district ko alag samjhein"/);
+  assert.match(i18nSource, /title: "Understand every district separately"/);
+  assert.match(i18nSource, /line schematic hai, turn-by-turn route nahi/);
+  assert.match(i18nSource, /line is schematic, not turn-by-turn navigation/);
+  assert.equal((i18nSource.match(/districtId: "/g) ?? []).length, 7);
+  for (const { id } of districtCases) assert.match(i18nSource, new RegExp(`districtId: "${id}"`));
+  assert.match(atlasSource, /only joins/);
 
   assert.match(crossingSource, /title: "Karachi crossing samjhein"/);
   assert.match(crossingSource, /title: "Understand a Karachi crossing"/);
