@@ -26,7 +26,7 @@ document; other documents link to it instead of copying it.
 | How is the service run or recovered? | [Operations runbook](operations/runbook.md) | Active |
 | What shipped in the district-atlas workstream? | [District atlas v4 plan](plans/district-atlas-v4.md) | Complete |
 | What shipped in the completed P0 workstream? | [P0 plan](plans/active.md) | Complete |
-| What is currently deployed? | [Release v4](releases/2026-08-14-v4.md) | Released |
+| What is currently deployed? | [Release v5](releases/2026-08-14-v5.md) | Released |
 | What could happen later? | [Roadmap](roadmap.md) | Directional |
 
 ## Product specifications
