@@ -64,7 +64,12 @@ export type SourceId =
   | "nhmp-highway-ordinance"
   | "nhmp-contact-130"
   | "karachi-traffic-1915"
-  | "ndma-infra-advisory-2026";
+  | "ndma-infra-advisory-2026"
+  | "eaworld-sohrab-goth-interchange"
+  | "dawn-karachi-ring-road-master-plan"
+  | "tribune-lyari-expressway-upkeep"
+  | "tribune-karachi-monsoon-underpasses"
+  | "aajenglish-malir-riverbed-extraction";
 
 export interface Provenanced {
   readonly sourceIds: readonly SourceId[];
@@ -2810,6 +2815,56 @@ const sourceRecords = [
     kind: "image",
     url: "https://commons.wikimedia.org/wiki/File:Karachi_Jinnah_Airport.jpg",
     usedFor: "Jinnah airport photo attribution and author-released public-domain status.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "eaworld-sohrab-goth-interchange",
+    title: "Interchange at Sohrab Goth",
+    publisher: "EA World",
+    kind: "news",
+    url: "https://eaworld.com/interchange-at-sohrab-goth/",
+    usedFor:
+      "Documenting Sohrab Goth as a chronic intercity/city-traffic merge bottleneck at Karachi's north-eastern gateway.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "dawn-karachi-ring-road-master-plan",
+    title: "Karachi: Master plan defines routes of ring roads",
+    publisher: "Dawn",
+    kind: "news",
+    url: "https://www.dawn.com/news/255435/karachi-master-plan-defines-routes-of-ring-roads",
+    usedFor:
+      "The Karachi Strategic Master Plan's four proposed peripheral ring roads, most still proposed or partially built rather than complete bypasses.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "tribune-lyari-expressway-upkeep",
+    title: "Lyari Expressway marred by lack of upkeep",
+    publisher: "The Express Tribune",
+    kind: "news",
+    url: "https://tribune.com.pk/story/2446135/lyari-expressway-marred-by-lack-of-upkeep",
+    usedFor:
+      "Unfinished service roads, missing lighting and deteriorated barriers on the Lyari Expressway despite becoming operational in 2018.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "tribune-karachi-monsoon-underpasses",
+    title: "Karachi residents face traffic jams due to repair work on tattered roads in flood aftermath",
+    publisher: "Dawn",
+    kind: "news",
+    url: "https://www.dawn.com/news/1937093",
+    usedFor:
+      "Recurring monsoon waterlogging at named underpasses and flyovers (Drigh Road, Nazimabad, Liaquatabad, Gulistan-e-Jauhar, Clifton Submarine) as a standing seasonal capacity limit.",
+    accessedOn: dataVerifiedOn,
+  },
+  {
+    id: "aajenglish-malir-riverbed-extraction",
+    title: "Corps Commander to end Malir Riverbed extraction for Expressway",
+    publisher: "Aaj English TV",
+    kind: "news",
+    url: "https://english.aaj.tv/news/30313215/corps-commander-to-end-malir-riverbed-extraction-for-expressway",
+    usedFor:
+      "Confirming the Malir Expressway runs along the Malir riverbed and that riverbed material extraction during construction required a provincial coordination order to address.",
     accessedOn: dataVerifiedOn,
   },
 ] as const satisfies readonly CitationSource[];

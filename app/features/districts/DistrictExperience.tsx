@@ -13,7 +13,10 @@ import {
   sourcesById,
   type DistrictId,
 } from "../../karachi-data";
-import { getCopy } from "../../karachi-i18n";
+import { briefingCopy, getCopy } from "../../karachi-i18n";
+import { gapsForDistrict } from "../infrastructure/infrastructureData";
+import InfrastructureGapList from "../infrastructure/InfrastructureGapList";
+import PredictReveal from "../learning/PredictReveal";
 import MapDetailsCard from "../map/MapDetailsCard";
 import { resolveMapEntity, type MapEntityRef } from "../map/map-entities";
 import {
@@ -141,7 +144,18 @@ export default function DistrictExperience({ districtId }: { readonly districtId
           <p>{copy.routeHint}</p>
         </div>
         <div className="district-route-list">
-          {profile.routes.map((route) => (
+          {profile.routes.map((route, routeIndex) => {
+            const isFirstRoute = routeIndex === 0;
+            const finalStop = route.stops[route.stops.length - 1];
+            const visibleStops = isFirstRoute ? route.stops.slice(0, -1) : route.stops;
+            const distractorStops = isFirstRoute
+              ? profile.routes
+                .filter((other) => other.id !== route.id)
+                .map((other) => other.stops[other.stops.length - 1])
+                .filter((stop, index, all) => stop !== finalStop && all.indexOf(stop) === index)
+                .slice(0, 2)
+              : [];
+            return (
             <article key={route.id}>
               <div className="district-route-top">
                 <h3>{route.title[locale]}</h3>
@@ -149,7 +163,7 @@ export default function DistrictExperience({ districtId }: { readonly districtId
               </div>
               <p>{route.purpose[locale]}</p>
               <ol aria-label={route.title[locale]}>
-                {route.stops.map((stop, index) => {
+                {visibleStops.map((stop, index) => {
                   const landmark = districtLandmarks.find(
                     (item) => item.name === stop || (item.aliases as readonly string[]).includes(stop),
                   );
@@ -172,6 +186,17 @@ export default function DistrictExperience({ districtId }: { readonly districtId
                   );
                 })}
               </ol>
+              {isFirstRoute && distractorStops.length > 0 && (
+                <PredictReveal
+                  prompt={siteCopy.checkpoint.corridorPrompt(route.title[locale])}
+                  options={[finalStop, ...distractorStops].map((stop) => ({ id: stop, label: stop }))}
+                  correctId={finalStop}
+                  guessPrompt={siteCopy.checkpoint.guessPrompt}
+                  revealLabel={siteCopy.checkpoint.revealButton}
+                  correctFeedback={siteCopy.checkpoint.correctFeedback}
+                  incorrectFeedback={siteCopy.checkpoint.incorrectFeedback}
+                />
+              )}
               <div className="district-route-corridors">
                 {route.corridorIds.map((corridorId) => {
                   const corridor = mainCorridors.find((item) => item.id === corridorId);
@@ -194,7 +219,8 @@ export default function DistrictExperience({ districtId }: { readonly districtId
                 })}
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -244,6 +270,8 @@ export default function DistrictExperience({ districtId }: { readonly districtId
         </div>
       </section>
 
+      <InfrastructureGapList gaps={gapsForDistrict(districtId)} locale={locale} copy={copy.infrastructure} />
+
       <section className="district-handoff">
         <div>
           <h2>{copy.neighbours}</h2>
@@ -290,7 +318,7 @@ export default function DistrictExperience({ districtId }: { readonly districtId
 
       <footer>
         <div className="footer-main"><div className="footer-brand"><BrandMark showName={false} size={52} /><h2>Understand<br />Karachi</h2></div></div>
-        <div className="footer-bottom"><span>{copy.reviewed}</span><Link href="/districts">{copy.atlas}</Link></div>
+        <div className="footer-bottom"><span>{copy.reviewed}</span><Link href="/districts">{copy.atlas}</Link><Link href="/briefing">{briefingCopy[locale].navLabel}</Link></div>
       </footer>
     </main>
   );

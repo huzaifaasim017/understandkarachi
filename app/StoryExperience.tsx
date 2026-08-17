@@ -8,7 +8,9 @@ import {
   ExternalLink,
   LocateFixed,
   MapPin,
+  Pause,
   Plane,
+  Play,
   Printer,
   Search,
   Ship,
@@ -23,8 +25,9 @@ import KarachiMap, { type MapChapter } from "./KarachiMap";
 import MapDetailsCard from "./features/map/MapDetailsCard";
 import { resolveMapEntity, type MapEntityRef } from "./features/map/map-entities";
 import { districtAtlasCopy } from "./features/districts/districtAtlasData";
+import JourneySynthesis from "./features/learning/JourneySynthesis";
+import PredictReveal from "./features/learning/PredictReveal";
 import {
-  setReducedMotionPreference,
   useDocumentMetadata,
   useLocalePreference,
   useReducedMotionPreference,
@@ -32,6 +35,7 @@ import {
 import PhotoCard from "./PhotoCard";
 import SiteHeader from "./SiteHeader";
 import {
+  districtProfileFacts,
   districts,
   emergencies,
   landmarks,
@@ -42,8 +46,11 @@ import {
   streetGlossary,
   transitCategories,
   utilitySystems,
+  type DistrictId,
 } from "./karachi-data";
 import {
+  briefingCopy,
+  getCorridorNarrative,
   getCopy,
   type ActKey,
 } from "./karachi-i18n";
@@ -56,6 +63,10 @@ type StoryStep = {
   map: MapChapter;
   detail?: React.ReactNode;
 };
+
+type JourneyPlaybackState = "idle" | "playing" | "paused" | "complete";
+
+const JOURNEY_SCROLL_SPEED_PX_PER_SECOND = 60;
 
 const districtCameras: Record<string, { center: [number, number]; zoom: number }> = {
   south: { center: [67.02, 24.858], zoom: 10.45 },
@@ -120,9 +131,16 @@ export default function StoryExperience() {
   const [selectedEntity, setSelectedEntity] = useState<MapEntityRef | null>(null);
   const [locationStatus, setLocationStatus] = useState("");
   const [quizAnswers, setQuizAnswers] = useState<Record<string, string>>({});
+  const [checkpointResults, setCheckpointResults] = useState<Record<string, boolean>>({});
+  const recordCheckpoint = (id: string, correct: boolean) =>
+    setCheckpointResults((current) => ({ ...current, [id]: correct }));
+  const [journeyPlayback, setJourneyPlayback] = useState<JourneyPlaybackState>("idle");
   const storyRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const journeyControlRef = useRef<HTMLButtonElement>(null);
+  const journeyPositionRef = useRef(0);
+  const focusJourneyControlRef = useRef(false);
 
   const storySteps = useMemo<StoryStep[]>(() => {
     const fixed = copy.story.fixed;
@@ -137,6 +155,13 @@ export default function StoryExperience() {
       const district = districts.find((item) => item.id === districtId);
       if (!district) return [];
       const narrative = copy.districtNarrative[district.id];
+      const profile = districtProfileFacts.find((item) => item.districtId === district.id);
+      const nextDistricts = (profile?.nextDistricts ?? []) as DistrictId[];
+      const correctNextId = nextDistricts[0];
+      const distractorIds = districtStoryOrder
+        .filter((id) => id !== district.id && !nextDistricts.includes(id))
+        .slice(0, 2);
+      const checkpointId = `district-${district.id}`;
       return [{
         id: `district-${district.id}`,
         act: "districts",
@@ -158,14 +183,36 @@ export default function StoryExperience() {
             </div>
             <div className="subdivision-list">{district.subdivisions.map((item) => <span key={item}>{item}</span>)}</div>
             <p>{district.anchor} · {district.mainCorridor}</p>
+            {correctNextId && distractorIds.length === 2 && (
+              <PredictReveal
+                prompt={copy.checkpoint.districtPrompt(district.name)}
+                options={[correctNextId, ...distractorIds].map((id) => ({
+                  id,
+                  label: districts.find((item) => item.id === id)?.name ?? id,
+                }))}
+                correctId={correctNextId}
+                guessPrompt={copy.checkpoint.guessPrompt}
+                revealLabel={copy.checkpoint.revealButton}
+                correctFeedback={copy.checkpoint.correctFeedback}
+                incorrectFeedback={copy.checkpoint.incorrectFeedback}
+                onAnswered={(correct) => recordCheckpoint(checkpointId, correct)}
+              />
+            )}
           </div>
         ),
       }];
     });
 
-    const corridorSteps: StoryStep[] = corridorStoryConfig.flatMap((config) => {
+    const corridorSteps: StoryStep[] = corridorStoryConfig.flatMap((config, corridorIndex) => {
       const corridor = mainCorridors.find((item) => item.id === config.dataId);
       if (!corridor) return [];
+      const correctStop = corridor.routeChain[corridor.routeChain.length - 1];
+      const distractorStops = [1, 2]
+        .map((offset) => corridorStoryConfig[(corridorIndex + offset) % corridorStoryConfig.length])
+        .map((otherConfig) => mainCorridors.find((item) => item.id === otherConfig.dataId)?.routeChain.at(-1) as string | undefined)
+        .filter((stop): stop is string => Boolean(stop) && stop !== correctStop);
+      const narrative = getCorridorNarrative(locale, corridor.id);
+      const checkpointId = `corridor-${corridor.id}`;
       return [{
         id: `corridor-${corridor.id}`,
         act: "movement",
@@ -179,7 +226,24 @@ export default function StoryExperience() {
           zoom: config.zoom,
           pitch: 30,
         },
-        detail: <div className="route-chain">{corridor.routeChain.map((place, placeIndex) => <span key={place}>{place}<i>{placeIndex < corridor.routeChain.length - 1 ? "→" : ""}</i></span>)}</div>,
+        detail: (
+          <>
+            <div className="route-chain">{corridor.routeChain.map((place, placeIndex) => <span key={place}>{place}<i>{placeIndex < corridor.routeChain.length - 1 ? "→" : ""}</i></span>)}</div>
+            {distractorStops.length === 2 && (
+              <PredictReveal
+                prompt={copy.checkpoint.corridorPrompt(corridor.name)}
+                options={[correctStop, ...distractorStops].map((stop) => ({ id: stop, label: stop }))}
+                correctId={correctStop}
+                explanation={narrative?.body}
+                guessPrompt={copy.checkpoint.guessPrompt}
+                revealLabel={copy.checkpoint.revealButton}
+                correctFeedback={copy.checkpoint.correctFeedback}
+                incorrectFeedback={copy.checkpoint.incorrectFeedback}
+                onAnswered={(correct) => recordCheckpoint(checkpointId, correct)}
+              />
+            )}
+          </>
+        ),
       }];
     });
 
@@ -252,7 +316,7 @@ export default function StoryExperience() {
         <div className="address-parts">{copy.story.addressParts.map((item, index) => <span key={item}>{item}{index < copy.story.addressParts.length - 1 && <i aria-hidden="true">+</i>}</span>)}</div>,
       ),
     ];
-  }, [copy]);
+  }, [copy, locale]);
 
   const activeStep = storySteps.find((step) => step.id === activeId) ?? storySteps[0];
 
@@ -296,6 +360,97 @@ export default function StoryExperience() {
       window.cancelAnimationFrame(frame);
     };
   }, []);
+
+  useEffect(() => {
+    if (journeyPlayback !== "playing" || !focusJourneyControlRef.current) return;
+    const frame = window.requestAnimationFrame(() => {
+      journeyControlRef.current?.focus({ preventScroll: true });
+      focusJourneyControlRef.current = false;
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [journeyPlayback]);
+
+  useEffect(() => {
+    if (!reducedMotion || journeyPlayback !== "playing") return;
+    const frame = window.requestAnimationFrame(() => setJourneyPlayback("paused"));
+    return () => window.cancelAnimationFrame(frame);
+  }, [journeyPlayback, reducedMotion]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (journeyPlayback !== "playing" || reducedMotion) {
+      delete root.dataset.journeyPlayback;
+      return;
+    }
+
+    root.dataset.journeyPlayback = "playing";
+    journeyPositionRef.current = window.scrollY;
+    let previousTime = window.performance.now();
+    let stableBottomFrames = 0;
+    let animationFrame = 0;
+
+    const advanceJourney = (time: number) => {
+      const elapsed = Math.min(50, Math.max(0, time - previousTime));
+      previousTime = time;
+      const maximumScroll = Math.max(0, root.scrollHeight - window.innerHeight);
+      journeyPositionRef.current = Math.min(
+        maximumScroll,
+        journeyPositionRef.current + (JOURNEY_SCROLL_SPEED_PX_PER_SECOND * elapsed) / 1000,
+      );
+      window.scrollTo({ top: journeyPositionRef.current, behavior: "auto" });
+
+      const journeyEnd = document.getElementById("journey-end");
+      const endIsVisible = journeyEnd
+        ? journeyEnd.getBoundingClientRect().top <= window.innerHeight + 1
+        : maximumScroll - journeyPositionRef.current <= 1;
+      stableBottomFrames = endIsVisible ? stableBottomFrames + 1 : 0;
+
+      if (stableBottomFrames >= 3) {
+        setJourneyPlayback("complete");
+        return;
+      }
+      animationFrame = window.requestAnimationFrame(advanceJourney);
+    };
+
+    animationFrame = window.requestAnimationFrame(advanceJourney);
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      delete root.dataset.journeyPlayback;
+    };
+  }, [journeyPlayback, reducedMotion]);
+
+  useEffect(() => {
+    if (journeyPlayback !== "playing") return;
+
+    const pauseForInteraction = (event: Event) => {
+      if (event instanceof KeyboardEvent && event.key === "Escape") {
+        setJourneyPlayback("paused");
+        return;
+      }
+      const target = event.target;
+      if (target instanceof Element && target.closest("[data-journey-playback-control]")) return;
+      if (event instanceof KeyboardEvent && ["Alt", "Control", "Meta", "Shift"].includes(event.key)) return;
+      setJourneyPlayback("paused");
+    };
+    const pauseWhenHidden = () => {
+      if (document.hidden) setJourneyPlayback("paused");
+    };
+
+    window.addEventListener("wheel", pauseForInteraction, { passive: true });
+    window.addEventListener("touchstart", pauseForInteraction, { passive: true });
+    window.addEventListener("pointerdown", pauseForInteraction, true);
+    window.addEventListener("keydown", pauseForInteraction);
+    window.addEventListener("blur", pauseForInteraction);
+    document.addEventListener("visibilitychange", pauseWhenHidden);
+    return () => {
+      window.removeEventListener("wheel", pauseForInteraction);
+      window.removeEventListener("touchstart", pauseForInteraction);
+      window.removeEventListener("pointerdown", pauseForInteraction, true);
+      window.removeEventListener("keydown", pauseForInteraction);
+      window.removeEventListener("blur", pauseForInteraction);
+      document.removeEventListener("visibilitychange", pauseWhenHidden);
+    };
+  }, [journeyPlayback]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -365,10 +520,65 @@ export default function StoryExperience() {
     );
   };
 
+  const startJourney = () => {
+    if (reducedMotion) return;
+    const firstLesson = document.getElementById("step-compass");
+    if (!firstLesson) return;
+    document.documentElement.dataset.journeyPlayback = "playing";
+    firstLesson.scrollIntoView({ block: "start", behavior: "auto" });
+    journeyPositionRef.current = window.scrollY;
+    focusJourneyControlRef.current = true;
+    setJourneyPlayback("playing");
+  };
+
+  const toggleJourneyPlayback = () => {
+    if (journeyPlayback === "playing") {
+      setJourneyPlayback("paused");
+      return;
+    }
+    if (journeyPlayback === "idle" || journeyPlayback === "complete") {
+      startJourney();
+      return;
+    }
+    if (!reducedMotion) setJourneyPlayback("playing");
+  };
+
+  const journeyStatus = journeyPlayback === "playing"
+    ? copy.journeyPlayer.playing
+    : journeyPlayback === "complete"
+      ? copy.journeyPlayer.complete
+      : copy.journeyPlayer.paused;
+  const journeyAction = journeyPlayback === "playing"
+    ? copy.journeyPlayer.pause
+    : journeyPlayback === "complete"
+      ? copy.journeyPlayer.replay
+      : copy.journeyPlayer.resume;
+
   return (
-    <main className={reducedMotion ? "reduced-motion" : ""} data-locale={locale}>
+    <main className={reducedMotion ? "reduced-motion" : ""} data-locale={locale} data-journey-playback={journeyPlayback}>
       <a href="#story" className="skip-link">{copy.common.skipToGuide}</a>
       <div className="progress-rail" aria-hidden="true"><span ref={progressRef} /></div>
+
+      {journeyPlayback !== "idle" && (
+        <div className="journey-player" role="region" aria-label={copy.journeyPlayer.controls} data-journey-playback-control>
+          <div className="journey-player-state" aria-hidden="true">
+            <span>{journeyStatus}</span>
+            <b>{journeyPlayback === "complete" ? "100%" : copy.journeyPlayer.toEnd}</b>
+          </div>
+          <button
+            ref={journeyControlRef}
+            type="button"
+            onClick={toggleJourneyPlayback}
+            disabled={reducedMotion}
+            aria-describedby="journey-playback-status"
+            data-journey-playback-control
+          >
+            {journeyPlayback === "playing" ? <Pause size={17} aria-hidden="true" /> : <Play size={17} aria-hidden="true" />}
+            {reducedMotion ? copy.journeyPlayer.motionOff : journeyAction}
+          </button>
+          <p id="journey-playback-status" className="sr-only" aria-live="polite" aria-atomic="true">{reducedMotion ? copy.journeyPlayer.motionOff : journeyStatus}</p>
+        </div>
+      )}
 
       <SiteHeader
         locale={locale}
@@ -389,10 +599,24 @@ export default function StoryExperience() {
 
       <section className="hero" id="top">
         <div className="hero-noise" />
-        <IntroWorld locale={locale} reducedMotion={reducedMotion} onReducedMotionChange={setReducedMotionPreference} />
+        <IntroWorld locale={locale} reducedMotion={reducedMotion} />
         <div className="hero-copy">
           <h1>{copy.hero.title}</h1>
-          <a href="#story" className="start-button"><span>{copy.hero.start}</span><ArrowDown size={18} /></a>
+          <div className="hero-actions">
+            <a href="#story" className="start-button"><span>{copy.hero.start}</span><ArrowDown size={18} aria-hidden="true" /></a>
+            <button
+              type="button"
+              className="journey-play-button"
+              onClick={startJourney}
+              disabled={reducedMotion}
+              aria-controls="story"
+              data-journey-play
+              data-journey-playback-control
+            >
+              <Play size={17} aria-hidden="true" />
+              {reducedMotion ? copy.journeyPlayer.motionOff : copy.journeyPlayer.play}
+            </button>
+          </div>
         </div>
       </section>
 
@@ -485,10 +709,21 @@ export default function StoryExperience() {
         <div className="cheat-grid">{copy.cheatSheet.cards.map((card) => <div key={card.label}><span>{card.label}</span><p>{card.body}</p></div>)}</div>
       </section>
 
+      <JourneySynthesis locale={locale} copy={copy.synthesis} />
+      {Object.keys(checkpointResults).length > 0 && (
+        <p className="checkpoint-summary" role="status">
+          {copy.checkpoint.answeredSummary(
+            Object.values(checkpointResults).filter(Boolean).length,
+            Object.keys(checkpointResults).length,
+          )}
+        </p>
+      )}
+
       <footer>
         <div className="footer-main"><div className="footer-brand"><BrandMark showName={false} size={52} /><h2>Understand<br />Karachi</h2></div><nav className="source-list" aria-label={`${copy.footer.primarySources} / ${copy.footer.moreVerification}`}>{sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer" lang="en">{source.label}<ExternalLink size={12} /></a>)}</nav></div>
-        <div className="footer-bottom"><span>{copy.footer.reviewed}</span><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" lang="en">{copy.footer.mapAttribution}</a><a href="#top">{copy.footer.backToTop} <ChevronDown size={14} /></a></div>
+        <div className="footer-bottom"><span>{copy.footer.reviewed}</span><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" lang="en">{copy.footer.mapAttribution}</a><Link href="/briefing">{briefingCopy[locale].navLabel}</Link><a href="#top">{copy.footer.backToTop} <ChevronDown size={14} /></a></div>
       </footer>
+      <div id="journey-end" className="journey-end" aria-hidden="true" />
     </main>
   );
 }

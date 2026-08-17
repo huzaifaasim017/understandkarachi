@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { useMemo, useState } from "react";
 import KarachiMap, { type MapChapter, type MapRouteOverlay } from "../../KarachiMap";
 import SiteHeader from "../../SiteHeader";
-import { getCopy } from "../../karachi-i18n";
+import { briefingCopy, getCopy } from "../../karachi-i18n";
 import { districtAtlasCopy } from "../districts/districtAtlasData";
 import {
   useDocumentMetadata,
@@ -86,7 +86,10 @@ export default function CrossingExperience() {
         openMenuAriaLabel={siteCopy.common.openMenuAria}
         closeMenuAriaLabel={siteCopy.common.closeMenuAria}
       />
-      <div className="crossing-page-back"><Link href="/"><ArrowLeft size={16} aria-hidden="true" />{atlasCopy.back}</Link></div>
+      <div className="crossing-page-back">
+        <Link href="/"><ArrowLeft size={16} aria-hidden="true" />{atlasCopy.back}</Link>
+        <Link href="/briefing">{briefingCopy[locale].navLabel}</Link>
+      </div>
       <div id="cross-city">
         <CrossCityGuide
           locale={locale}

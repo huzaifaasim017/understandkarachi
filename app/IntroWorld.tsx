@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Pause, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { DistrictId } from "./karachi-data";
 import { districts, mainCorridors } from "./karachi-data";
@@ -10,7 +10,6 @@ import type { Locale } from "./karachi-i18n";
 type IntroWorldProps = {
   readonly locale: Locale;
   readonly reducedMotion: boolean;
-  readonly onReducedMotionChange: (reduced: boolean) => void;
 };
 
 type Coordinate = readonly [longitude: number, latitude: number];
@@ -51,8 +50,6 @@ const copy = {
     open: "District detail",
     loading: "Karachi geometry load ho rahi hai…",
     unavailable: "3D map load nahi hua. Neeche district buttons se wohi maloomat milti hai.",
-    pause: "Map rokain",
-    play: "Map chalayein",
   },
   en: {
     aria: "3D map of Karachi's seven districts and major roads",
@@ -65,8 +62,6 @@ const copy = {
     open: "District detail",
     loading: "Loading Karachi geometry…",
     unavailable: "The 3D map did not load. The district buttons below provide the same information.",
-    pause: "Pause map",
-    play: "Play map",
   },
 } as const;
 
@@ -79,7 +74,6 @@ function polygonsFor(feature: DistrictFeature) {
 export default function IntroWorld({
   locale,
   reducedMotion,
-  onReducedMotionChange,
 }: IntroWorldProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const meshesRef = useRef(new Map<DistrictId, DistrictMeshHandle>());
@@ -470,17 +464,6 @@ export default function IntroWorld({
           </Link>
         </div>
       </div>
-      {loadState === "ready" && (
-        <button
-          type="button"
-          className="intro-motion-control"
-          onClick={() => onReducedMotionChange(!reducedMotion)}
-          aria-pressed={reducedMotion}
-        >
-          {reducedMotion ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
-          {reducedMotion ? text.play : text.pause}
-        </button>
-      )}
     </section>
   );
 }

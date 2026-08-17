@@ -54,8 +54,13 @@ local signs, or current operational checks.
 - **One screen, one decision.** Each step should answer one learner question.
 - **Progressive disclosure.** The scroll gives the main lesson; interaction
   reveals precise supporting detail.
-- **Recognition over recall.** Reuse stable colors, anchors, corridor chains,
-  and wording.
+- **Recognition, then recall.** Reuse stable colors, anchors, corridor chains,
+  and wording so a concept is easy to recognize on first exposure. Before a
+  learner leaves that concept's context, at least one checkpoint requires
+  recalling it unaided, and the journey ends with a no-hint synthesis check.
+  Recognition earns the first exposure; recall earns the claim that the
+  learner now holds the model. See
+  [RFC-0003](rfcs/0003-route-internalization-infrastructure-diagnostics-and-civic-presentation.md).
 - **Safe uncertainty.** Label schematic, dated, disputed, proposed, or changing
   information plainly.
 - **No input-mode privilege.** Touch, click, keyboard, and reduced-motion users

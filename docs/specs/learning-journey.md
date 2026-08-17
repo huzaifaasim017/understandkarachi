@@ -37,6 +37,12 @@ The homepage follows this dependency order:
 8. **Address and last mile:** area + block + road + landmark + exact pin.
 9. **Application:** map exploration, approximate nearest-anchor help,
    recognition checks, printable summary, and clear onward links.
+10. **Synthesis:** a no-hint exercise asking the learner to state a plausible
+    `GATE → SPINE → HUB` path between two districts they did not just read
+    about, checked against canonical adjacency and route data rather than an
+    exact-string answer key. This is the journey's closing step, after
+    Application, and is the primary evidence that the model transferred
+    rather than was merely read.
 
 The linked learning surfaces then apply or deepen that model:
 
@@ -57,11 +63,36 @@ Each scroll step has one learner question, one direct heading, at most one short
 explanation, and one visual/detail payload. Avoid supporting headings, slogans,
 and “remember” blocks that duplicate the main idea.
 
+When a step teaches a corridor route chain or a district's arrival/next-district
+relationship, it MUST include one predict-then-reveal checkpoint: the chain or
+relationship is hidden one step ahead of where the learner currently is, the
+learner selects/recalls the next anchor, then the reveal confirms it with a
+one-sentence reason. A checkpoint never blocks progress — skipping to the
+reveal is always available — and never depends on hover alone. This is the
+"recall" half of the [Recognition, then recall](../project-charter.md#product-principles)
+principle; see [RFC-0003](../rfcs/0003-route-internalization-infrastructure-diagnostics-and-civic-presentation.md)
+for the accepted mechanic and acceptance gates.
+
 The synchronized map may highlight the current concept but cannot carry the
 only explanation. The opening 3D surface must depict reviewed Karachi geometry,
 not a decorative globe. Photos must reinforce a location relationship, use
 their natural aspect ratio, and keep caption and attribution outside the image
 crop.
+
+## Optional page playback
+
+The homepage offers an opt-in Play action alongside the manual start link. It
+starts at the compass step, preserves the document's reading order, and
+continues through the footer. It is page scrolling only, not a simulated route,
+vehicle movement, travel-time estimate, or replacement for navigation.
+
+While active, a fixed control remains reachable and exposes Pause. The same
+control exposes Resume after pausing and Replay after completion. Wheel, touch,
+pointer, keyboard, window blur, or a hidden tab pauses playback and does not
+cancel the learner's intended action. Playback does not move focus between
+lesson steps, and manual reading remains complete without using it. Reduced
+motion disables continuous playback and leaves the manual start/scroll path
+unchanged.
 
 ## Memory supports
 
@@ -80,7 +111,9 @@ At minimum, the experience checks:
 - entity-layer distinction;
 - separation of Karachi Port and Port Qasim;
 - selection of an appropriate first anchor/corridor for a new crossing;
-- recognition that live conditions and the last mile require another check.
+- recognition that live conditions and the last mile require another check;
+- unaided synthesis of a plausible district-to-district path (step 10) checked
+  against canonical adjacency/route data, not a hint-driven recognition task.
 
 Feedback explains the model briefly; it does not merely show correct/incorrect.
 Questions must work without map hover and in both languages.
@@ -90,6 +123,10 @@ Questions must work without map hover and in both languages.
 - A first-time user can explain south, four major anchors, and seven district
   positions after one homepage pass.
 - They can interpret a new landmark chain in the correct order.
+- They can complete the closing synthesis step (step 10) by stating a
+  graph-plausible path between two districts without re-reading an earlier
+  section, and can correctly anticipate at least one predict-then-reveal
+  checkpoint's answer before it is shown.
 - They can open any district profile or the crossing guide directly and retain
   a clear route back to the overall model.
 - After the crossing guide, they can apply

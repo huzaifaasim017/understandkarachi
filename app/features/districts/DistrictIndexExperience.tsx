@@ -6,9 +6,8 @@ import BrandMark from "../../BrandMark";
 import IntroWorld from "../../IntroWorld";
 import SiteHeader from "../../SiteHeader";
 import { districts, sourcesById } from "../../karachi-data";
-import { getCopy } from "../../karachi-i18n";
+import { briefingCopy, getCopy } from "../../karachi-i18n";
 import {
-  setReducedMotionPreference,
   useDocumentMetadata,
   useLocalePreference,
   useReducedMotionPreference,
@@ -50,7 +49,7 @@ export default function DistrictIndexExperience() {
           <h1>{copy.title}</h1>
           <p>{copy.intro}</p>
         </div>
-        <IntroWorld locale={locale} reducedMotion={reducedMotion} onReducedMotionChange={setReducedMotionPreference} />
+        <IntroWorld locale={locale} reducedMotion={reducedMotion} />
       </section>
 
       <section className="district-index-grid" id="district-list" aria-label={copy.title}>
@@ -86,7 +85,7 @@ export default function DistrictIndexExperience() {
             })}
           </nav>
         </div>
-        <div className="footer-bottom"><span>{copy.reviewed}</span><Link href="/">{copy.back}</Link></div>
+        <div className="footer-bottom"><span>{copy.reviewed}</span><Link href="/">{copy.back}</Link><Link href="/briefing">{briefingCopy[locale].navLabel}</Link></div>
       </footer>
     </main>
   );

@@ -72,6 +72,19 @@ export const districtAtlasCopy = {
       "Traffic, road closure, mausam aur service status safar ke din check karein.",
       "Bike ko motorway par na le jayein. Agar confusion ho to roshni wali safe jagah ruk kar anchor + road + last-mile confirm karein.",
     ],
+    infrastructure: {
+      title: "Maloom limitations",
+      disclosureCommonlyReported: "Commonly reported — independently verify nahi hui",
+      disclosureSourced: "Independently sourced",
+      verifiedOn: (date: string) => `${date} ko verify hui`,
+      categoryLabels: {
+        chokepoint: "Chokepoint",
+        "missing-link": "Missing link",
+        "planning-gap": "Planning gap",
+        "riding-hazard": "Riding hazard",
+        "capacity-limit": "Capacity limit",
+      },
+    },
   },
   en: {
     atlas: "District atlas",
@@ -115,6 +128,19 @@ export const districtAtlasCopy = {
       "Check traffic, closures, weather, and service status on the day of travel.",
       "Do not take a motorcycle onto a motorway. If confused, stop in a safe, well-lit place and confirm anchor + road + last mile.",
     ],
+    infrastructure: {
+      title: "Known limitations",
+      disclosureCommonlyReported: "Commonly reported — not independently verified",
+      disclosureSourced: "Independently sourced",
+      verifiedOn: (date: string) => `Verified ${date}`,
+      categoryLabels: {
+        chokepoint: "Chokepoint",
+        "missing-link": "Missing link",
+        "planning-gap": "Planning gap",
+        "riding-hazard": "Riding hazard",
+        "capacity-limit": "Capacity limit",
+      },
+    },
   },
 } as const satisfies Record<Locale, object>;
 
@@ -254,7 +280,9 @@ export type StoryCorridorId =
   | "shahrah-e-faisal"
   | "university-road"
   | "korangi-spine"
-  | "mauripur-hub-river";
+  | "mauripur-hub-river"
+  | "national-highway"
+  | "m9-motorway";
 
 export type JourneyId =
   | "airport-to-saddar"
@@ -332,6 +360,18 @@ export interface SiteCopy {
     readonly title: string;
     readonly start: string;
   };
+  readonly journeyPlayer: {
+    readonly play: string;
+    readonly pause: string;
+    readonly resume: string;
+    readonly replay: string;
+    readonly playing: string;
+    readonly paused: string;
+    readonly complete: string;
+    readonly controls: string;
+    readonly toEnd: string;
+    readonly motionOff: string;
+  };
   readonly story: {
     readonly fixed: Record<FixedLessonId, LessonCopy>;
     readonly people: (formattedPopulation: string) => string;
@@ -382,6 +422,26 @@ export interface SiteCopy {
     readonly correct: string;
     readonly wrongFeedback: string;
   };
+  readonly checkpoint: {
+    readonly guessPrompt: string;
+    readonly revealButton: string;
+    readonly correctFeedback: string;
+    readonly incorrectFeedback: (correctLabel: string) => string;
+    readonly answeredSummary: (correct: number, total: number) => string;
+    readonly corridorPrompt: (corridorName: string) => string;
+    readonly districtPrompt: (districtName: string) => string;
+  };
+  readonly synthesis: {
+    readonly title: string;
+    readonly instruction: (startName: string, endName: string) => string;
+    readonly addStepLabel: string;
+    readonly checkButton: string;
+    readonly resetButton: string;
+    readonly successMessage: string;
+    readonly incompleteMessage: string;
+    readonly disconnectedMessage: string;
+    readonly expertChainLabel: string;
+  };
   readonly cheatSheet: {
     readonly title: string;
     readonly print: string;
@@ -431,6 +491,18 @@ const romanUrdu = {
   hero: {
     title: "Karachi ko zero se samjhein.",
     start: "Shuru karein",
+  },
+  journeyPlayer: {
+    play: "Poora safar chalayein",
+    pause: "Safar rok dein",
+    resume: "Safar jari rakhein",
+    replay: "Dobara chalayein",
+    playing: "Safar chal raha hai",
+    paused: "Safar ruka hua hai",
+    complete: "Safar poora ho gaya",
+    controls: "Auto journey ke controls",
+    toEnd: "Aakhir tak",
+    motionOff: "Motion band hai — manual scroll karein",
   },
   story: {
     fixed: {
@@ -532,6 +604,12 @@ const romanUrdu = {
     },
     "mauripur-hub-river": {
       body: "Western freight aur neighbourhood approach jo old core ko Keamari district, Baldia aur Balochistan side se jorti hai.",
+    },
+    "national-highway": {
+      body: "Built-up Malir se guzar kar Steel Town, Port Qasim aur Thatta/Hyderabad ki taraf south-eastern gateway.",
+    },
+    "m9-motorway": {
+      body: "Sohrab Goth se shuru hone wala north-eastern intercity gateway; motorcycles motorway par prohibited hain.",
     },
   },
   glossaryMeanings: {
@@ -661,6 +739,26 @@ const romanUrdu = {
     correct: "Bilkul sahi.",
     wrongFeedback: "Abhi nahi—doosra jawab try karein.",
   },
+  checkpoint: {
+    guessPrompt: "Aage badhne se pehle guess karein:",
+    revealButton: "Jawab dikhayein",
+    correctFeedback: "Sahi andaza — yehi agla milestone hai.",
+    incorrectFeedback: (correctLabel: string) => `Is baar nahi — asal jawab ${correctLabel} hai.`,
+    answeredSummary: (correct: number, total: number) => `Aapne ${total} mein se ${correct} checkpoints sahi andaza kiye.`,
+    corridorPrompt: (corridorName: string) => `${corridorName} ka aakhri milestone kaunsa hai?`,
+    districtPrompt: (districtName: string) => `${districtName} se aa rahe ho — agla connected district kaunsa hoga?`,
+  },
+  synthesis: {
+    title: "Akhri test: khud raasta banayein",
+    instruction: (startName: string, endName: string) => `${startName} se ${endName} tak ek plausible raasta banayein — darmiyani districts isi order mein select karein.`,
+    addStepLabel: "Raaste mein shamil karein",
+    checkButton: "Mera raasta check karein",
+    resetButton: "Dobara shuru karein",
+    successMessage: "Yeh ek plausible, connected raasta hai.",
+    incompleteMessage: "Pehle kam az kam ek district select karein.",
+    disconnectedMessage: "Yeh chain connected nahi hai — canonical adjacency dobara dekhein.",
+    expertChainLabel: "Ek expert jawab",
+  },
   cheatSheet: {
     title: "Karachi: 4 cheezen yaad rakhein",
     print: "Cheat sheet print karein",
@@ -715,6 +813,18 @@ const english = {
   hero: {
     title: "Understand Karachi from zero.",
     start: "Start",
+  },
+  journeyPlayer: {
+    play: "Play full journey",
+    pause: "Pause journey",
+    resume: "Resume journey",
+    replay: "Replay journey",
+    playing: "Journey is playing",
+    paused: "Journey is paused",
+    complete: "Journey complete",
+    controls: "Journey playback controls",
+    toEnd: "To the end",
+    motionOff: "Motion is off — scroll manually",
   },
   story: {
     fixed: {
@@ -816,6 +926,12 @@ const english = {
     },
     "mauripur-hub-river": {
       body: "The western freight-and-neighbourhood approach connecting the old core to Keamari district, Baldia and the Balochistan side.",
+    },
+    "national-highway": {
+      body: "The southeastern gateway through built-up Malir toward Steel Town, Port Qasim, and Thatta/Hyderabad.",
+    },
+    "m9-motorway": {
+      body: "The northeastern intercity gateway starting at Sohrab Goth; motorcycles are prohibited on the motorway.",
     },
   },
   glossaryMeanings: {
@@ -944,6 +1060,26 @@ const english = {
     ],
     correct: "Correct.",
     wrongFeedback: "Not quite—try another answer.",
+  },
+  checkpoint: {
+    guessPrompt: "Guess before continuing:",
+    revealButton: "Show answer",
+    correctFeedback: "Correct — that is the next milestone.",
+    incorrectFeedback: (correctLabel: string) => `Not this time — the actual answer is ${correctLabel}.`,
+    answeredSummary: (correct: number, total: number) => `You correctly anticipated ${correct} of ${total} checkpoints.`,
+    corridorPrompt: (corridorName: string) => `What is ${corridorName}'s final milestone?`,
+    districtPrompt: (districtName: string) => `Coming from ${districtName} — which connected district comes next?`,
+  },
+  synthesis: {
+    title: "Closing test: build your own path",
+    instruction: (startName: string, endName: string) => `Build a plausible path from ${startName} to ${endName} — select the districts in between, in order.`,
+    addStepLabel: "Add to path",
+    checkButton: "Check my path",
+    resetButton: "Start over",
+    successMessage: "That is a plausible, connected path.",
+    incompleteMessage: "Select at least one district first.",
+    disconnectedMessage: "That chain is not connected — check the canonical adjacency again.",
+    expertChainLabel: "One expert answer",
   },
   cheatSheet: {
     title: "Karachi: 4 things to remember",
@@ -1113,3 +1249,113 @@ export const romanLandmarkMeaning = {
   "port-qasim": "Eastern industrial port system; Karachi Port/Keamari se alag aur bohat door hai.",
   "bahria-town-karachi": "Inner city se bohat bahar M-9 par large gated development; intercity-scale travel time rakhein.",
 } as const satisfies Readonly<Record<LandmarkId, string>>;
+
+/**
+ * Bilingual presentation for infrastructure-diagnostics facts. Joined by `id`
+ * with canonical records in `app/features/infrastructure/infrastructureData.ts`,
+ * mirroring how `districtProfilePresentation` joins `districtProfileFacts`.
+ * See `docs/specs/infrastructure-diagnostics.md`.
+ */
+export interface InfrastructureGapPresentation {
+  readonly id: string;
+  readonly summary: LocalizedText;
+  readonly detail: LocalizedText;
+}
+
+export const infrastructureGapPresentation: readonly InfrastructureGapPresentation[] = [
+  {
+    id: "sohrab-goth-interchange-merge",
+    summary: localized(
+      "Sohrab Goth Karachi ka north-eastern gateway junction hai jahan intercity aur city traffic ek hi merge point par milte hain.",
+      "Sohrab Goth is Karachi's north-eastern gateway junction, where intercity traffic and city traffic merge at one congested point.",
+    ),
+    detail: localized(
+      "M-9/Super Highway se aane wali gaddiyan yahan Shahrah-e-Pakistan aur city arterial traffic se milti hain; yeh ek chronic, well-documented bottleneck hai jiska redesign proposed hai.",
+      "Traffic entering from the M-9/Super Highway merges here with Shahrah-e-Pakistan and city arterial traffic; it is a chronic, well-documented bottleneck with a proposed redesign.",
+    ),
+  },
+  {
+    id: "karachi-ring-road-incomplete",
+    summary: localized(
+      "Karachi ke around-the-city ring roads abhi mostly proposed ya partial hain, is liye cross-city aur freight traffic inner corridors se hi guzarta hai.",
+      "Karachi's around-the-city ring roads remain mostly proposed or partially built, so cross-city and freight traffic still funnels through inner corridors instead of a peripheral bypass.",
+    ),
+    detail: localized(
+      "Karachi Strategic Master Plan char ring roads (R1–R4) propose karta hai; jab tak yeh complete nahi hote, western/northern/eastern approaches ka bohat sa through-traffic city centre ke qareeb se guzarta rahega.",
+      "The Karachi Strategic Master Plan proposes four ring roads (R1–R4); until they are complete, much of the western/northern/eastern through-traffic will keep passing close to the city centre instead of around it.",
+    ),
+  },
+  {
+    id: "lyari-expressway-service-roads",
+    summary: localized(
+      "Lyari Expressway 2018 se operational hai, lekin iske parallel service roads ke hisse abhi bhi incomplete hain.",
+      "The Lyari Expressway has been operational since 2018, but sections of its parallel service roads remain incomplete.",
+    ),
+    detail: localized(
+      "Reports ke mutabiq lighting missing hai aur barriers deteriorated hain; motorcycle aur pedestrian traffic ke liye yeh extra caution wali jagah hai, khaaskar raat ko.",
+      "Reporting documents missing lighting and deteriorated barriers along stretches of the service roads; this is an extra-caution area for motorcycle and pedestrian traffic, especially at night.",
+    ),
+  },
+  {
+    id: "monsoon-underpass-waterlogging",
+    summary: localized(
+      "Kuch named underpass/flyover points har monsoon mein regularly waterlog hote hain — yeh seasonal, standing capacity limit hai, live status nahi.",
+      "A recurring set of named underpasses and flyovers waterlogs during most monsoon seasons — a standing seasonal capacity limit, not a live status.",
+    ),
+    detail: localized(
+      "Drigh Road, Nazimabad, Liaquatabad, Gulistan-e-Jauhar aur Clifton Submarine jaisi jagahon par heavy rain mein traffic band ho sakta hai; monsoon season mein extra time aur alternate plan rakhein.",
+      "Locations such as Drigh Road, Nazimabad, Liaquatabad, Gulistan-e-Jauhar, and Clifton Submarine can close to traffic during heavy rain; allow extra time and an alternate plan during monsoon season.",
+    ),
+  },
+  {
+    id: "malir-expressway-riverbed-corridor",
+    summary: localized(
+      "Malir Expressway Malir riverbed ke saath saath banti hai, is liye is corridor ka floodplain se structural talluq hai.",
+      "The Malir Expressway runs alongside the Malir riverbed, so this corridor has a structural relationship to the floodplain.",
+    ),
+    detail: localized(
+      "Construction ke dauran riverbed material extraction itni significant thi ke ek provincial coordination order se rukwani padi; monsoon season mein is corridor ko extra caution ke saath treat karein, chahe official passability kuch bhi ho.",
+      "Riverbed material extraction during construction was significant enough to require a provincial coordination order to halt it; treat this corridor with extra caution during monsoon season regardless of official passability claims.",
+    ),
+  },
+] as const;
+
+/** Fixed bilingual copy for the `/briefing` civic-presentation surface. See
+ * `docs/specs/civic-presentation.md`. The boundary statement wording is
+ * non-negotiable per that spec and must not be edited per-audience. */
+export const briefingCopy = {
+  "ur-roman": {
+    navLabel: "Civic briefing",
+    metaTitle: "Karachi Civic Briefing — Understand Karachi",
+    metaDescription: "Karachi ke shape, districts, corridors aur infrastructure diagnostics ka sourced, printable briefing.",
+    heroTitle: "Karachi civic briefing",
+    heroSubtitle: "Yeh page canonical Understand Karachi data se generate hota hai — kisi institutional ya government audience ko dikhane ke liye.",
+    printLabel: "Briefing print karein",
+    cityShapeTitle: "Shehar ki shape aur scale",
+    districtsTitle: "Saat districts",
+    corridorsTitle: "City-scale corridors aur gateways",
+    diagnosticsTitle: "Infrastructure diagnostics summary",
+    diagnosticsIntro: "Yeh standing, structural gaps hain — live traffic ya passability status nahi.",
+    boundaryTitle: "Yeh briefing kya nahi hai",
+    boundaryBody: "Yeh ek structural/orientation briefing hai — live-operations, engineering ya navigation system nahi. Isay kisi bhi audience (government, partnership ya sale conversation samet) ke saamne isi boundary ke saath present karein.",
+    sourcesTitle: "Sources aur verification date",
+    backLabel: "Understand Karachi",
+  },
+  en: {
+    navLabel: "Civic briefing",
+    metaTitle: "Karachi Civic Briefing — Understand Karachi",
+    metaDescription: "A sourced, printable briefing on Karachi's shape, districts, corridors, and infrastructure diagnostics.",
+    heroTitle: "Karachi civic briefing",
+    heroSubtitle: "This page is generated from Understand Karachi's canonical dataset, for an institutional or government audience.",
+    printLabel: "Print this briefing",
+    cityShapeTitle: "City shape and scale",
+    districtsTitle: "The seven districts",
+    corridorsTitle: "City-scale corridors and gateways",
+    diagnosticsTitle: "Infrastructure diagnostics summary",
+    diagnosticsIntro: "These are standing, structural gaps — not a live traffic or passability status.",
+    boundaryTitle: "What this briefing is not",
+    boundaryBody: "This is a structural/orientation briefing — not a live-operations, engineering, or navigation system. Present it with this same boundary to any audience, including a government, partnership, or sale conversation.",
+    sourcesTitle: "Sources and verification date",
+    backLabel: "Understand Karachi",
+  },
+} as const satisfies Record<Locale, object>;

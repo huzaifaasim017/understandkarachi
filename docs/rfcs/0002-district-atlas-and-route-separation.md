@@ -166,6 +166,22 @@ They must never represent population, traffic, danger, road width, travel time,
 or administrative importance unless a future sourced specification explicitly
 defines that encoding.
 
+## Accepted optional document playback
+
+The homepage may offer an explicit Play action for a learner who wants the
+scroll-led lesson to advance without repeatedly operating the page. This is
+document playback, not route playback: it does not animate a vehicle, choose a
+road, imply travel time, or change the canonical lesson order.
+
+Playback starts at the compass lesson (`Samandar south mein hai.` / `The sea is
+south.`), moves through the complete document in reading order, and reaches an
+end sentinel after the footer. The ordinary manual start link and all manual
+scrolling remain available. A fixed control must expose Pause, Resume, and
+Replay; wheel, touch, pointer, keyboard, focus loss, or a hidden tab pauses the
+movement without blocking the learner's intended action. Playback never starts
+without a user action and continuous movement is unavailable when reduced
+motion is active.
+
 ## Data and content model
 
 District deep dives derive from shared stable IDs. Canonical records belong in

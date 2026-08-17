@@ -52,6 +52,10 @@ test("server-renders the Roman Urdu overview with the informative Karachi 3D fal
   assert.match(html, /<title>Understand Karachi/);
   assertDefaultLocaleControls(html);
   assert.match(html, />Karachi ko zero se samjhein\.<\/h1>/);
+  assert.match(html, /data-journey-play/);
+  assert.match(html, /aria-controls="story"/);
+  assert.match(html, /Poora safar chalayein<\/button>/);
+  assert.match(html, /data-journey-playback="idle"/);
   assert.match(html, /aria-label="Karachi ke saat zilon aur bari roads ka 3D naqsha"/);
   assert.match(html, /class="intro-world-canvas"/);
   assert.match(html, /Karachi geometry load ho rahi hai/);
@@ -99,6 +103,40 @@ test("server-renders the Roman Urdu overview with the informative Karachi 3D fal
   assert.doesNotMatch(html, /Yeh yaad rakhein/);
   assert.doesNotMatch(html, /class="(?:kicker|hero-coordinate|hero-promise|opening-statement|step-eyebrow|remember|journey-note|section-eyebrow|city-pause)"/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton/);
+});
+
+test("ships opt-in, pausable page playback from the compass lesson to the document end", async () => {
+  const [pageSource, i18nSource, styles, introSource] = await Promise.all([
+    readFile(new URL("../app/StoryExperience.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/karachi-i18n.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/IntroWorld.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(pageSource, /useState<JourneyPlaybackState>\("idle"\)/);
+  assert.match(pageSource, /getElementById\("step-compass"\)/);
+  assert.match(pageSource, /id="journey-end"/);
+  assert.match(pageSource, /requestAnimationFrame\(advanceJourney\)/);
+  assert.match(pageSource, /JOURNEY_SCROLL_SPEED_PX_PER_SECOND/);
+  for (const interruption of ["wheel", "touchstart", "pointerdown", "keydown", "blur", "visibilitychange"]) {
+    assert.ok(pageSource.includes(`"${interruption}"`), `missing playback interruption: ${interruption}`);
+  }
+  assert.match(pageSource, /data-journey-playback-control/);
+  assert.match(pageSource, /journeyPlayback !== "playing" \|\| reducedMotion/);
+  assert.match(pageSource, /disabled=\{reducedMotion\}/);
+  assert.match(pageSource, /aria-live="polite"/);
+
+  assert.match(i18nSource, /play: "Poora safar chalayein"/);
+  assert.match(i18nSource, /pause: "Safar rok dein"/);
+  assert.match(i18nSource, /play: "Play full journey"/);
+  assert.match(i18nSource, /pause: "Pause journey"/);
+  assert.match(i18nSource, /Motion is off — scroll manually/);
+
+  assert.match(styles, /html\[data-journey-playback="playing"\]\s*\{[^}]*scroll-behavior:\s*auto\s*!important/);
+  assert.match(styles, /\.journey-player\s*\{[^}]*position:\s*fixed/);
+  assert.match(styles, /\.journey-player button\s*\{[^}]*min-height:\s*46px/);
+  assert.match(styles, /@media print[\s\S]*\.journey-player/);
+  assert.doesNotMatch(introSource, /intro-motion-control|Pause map|Map rokain/);
 });
 
 test("serves the complete crossing lesson only on its dedicated page", async () => {

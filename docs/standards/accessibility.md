@@ -39,6 +39,12 @@ pulsing, route particles, smooth camera travel, and nonessential transitions.
 Motion must not be needed to understand geography. Avoid flashing and
 auto-moving content that a user cannot pause.
 
+Optional page playback is user-initiated, starts at the first compass lesson,
+and keeps a fixed Pause/Resume control reachable until it completes. Wheel,
+touch, pointer, keyboard input, focus loss, and a hidden tab pause it without
+stealing focus. It does not run when reduced motion is active; the same lesson
+remains available through ordinary scrolling.
+
 The WebGL canvas itself is presentational and hidden from assistive technology.
 The surrounding Karachi introduction is informational: ordinary district
 buttons, selected-detail text, compass labels, and onward links expose its
